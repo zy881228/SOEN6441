@@ -13,6 +13,19 @@ import java.util.Arrays;
 import java.util.Observable;
 import java.util.Random;
 
+
+/**
+ * This class is a character model contains methods that allows user to :
+ * <p>Create a new fighter character following the d20 game rules<br/>
+ * <p>Set level, ability scores, ability modifiers, hit points, armor class, attack bonus, damage bonus,multiple attacks, owned items<br/>
+ * <p>Edit elements of the character<br/>
+ * <p>Show the character including all the elements set/edited by the user<br/>
+ * <p>Save the character information in the file<br/>
+ * <p>Validate the character before saving<bt/>
+ * <p>Load the character from the file<br/>
+ * @version build 1
+ */
+
 class WarGameCharacterModel extends Observable {
 
     /*public void WarGameCharacterModel(){
@@ -24,6 +37,14 @@ class WarGameCharacterModel extends Observable {
 		damage_bonus = this.damage_bonus;
     }*/
 
+    
+    /**
+     * Create a new character by setting the character's level, ability scores(4d6), ability modifiers, hit points, armor class, attack bonus, damage bonus, multiple attacks, owned items.
+     * <p> The ability score of the character consists of Strength, Dexterity, Constitution, Intelligence, Wisdom or Charisma that are generated randomly using the 4d6 generation method.<br/>
+     */
+    
+    
+    
 	public void createCharacter() {
 		// TODO Auto-generated method character = new Character();
 		Random rand = new Random();
@@ -67,24 +88,63 @@ class WarGameCharacterModel extends Observable {
 		setChanged();
 		notifyObservers(this);
 	}
+    
+    
+    /**
+     * Calculate the hit points.
+     * @param cons the constitution of the character
+     * @param level the level of the character
+     * @return
+     */
+    
 	public int calHit_points(int cons,int level){
 		Random rand = new Random();
 		int a = rand.nextInt(10)+1;
 		int result = (a+cons)*level;
 		return result;
 	}
+    
+    
+    /**
+     * Calculate the armor class.
+     * @param dex_modifier the midifier value of the dexterity
+     * @param armor_item the sum of the items with armor class
+     * @return
+     */
+    
 	public int calArmor_class(int dex_modifier,int armor_item){
 		int result = 10+dex_modifier+armor_item;
 		return result;
 	}
+    
+    /**
+     * Calculate the attack bonus.
+     * @param level the level of the character
+     * @return
+     */
+    
 	public int calAttack(int level){
 		int result = level;
 		return result;
 	}
+    
+    /**
+     * Calculate the damage bonus.
+     * @param stren_modifier the midifier value of the strength
+     * @return
+     */
+    
 	public int calDamage(int stren_modifier){
 		int result = stren_modifier;
 		return result;
 	}
+    
+    /**
+     * Calculate the multiple attacks.
+     * @param attack_bonus the value of attack bonus
+     * @return
+     */
+    
 	public int getMultiple(int attack_bonus){
 		int result = 0;
 		if(attack_bonus<6)
@@ -105,6 +165,12 @@ class WarGameCharacterModel extends Observable {
 		}
 		return result;
 	}
+    
+    /**
+     * Roll foue six-sided dice and sum the biggest three number.
+     * @return
+     */
+    
 	public int get4d6Number(){
 		Random rand = new Random();
 		int randNum[] = new int[4];
@@ -128,6 +194,14 @@ class WarGameCharacterModel extends Observable {
 		
 		return result;
 	}
+    
+    /**
+     * Calculate the ability modifier.
+     * <p>get the ability modifier according to the table<br/>
+     * @param score the value of rolled dice
+     * @return
+     */
+    
 	public int getModifierNum(int score){
 		int result = 0;
 		if(score == 1)
@@ -178,6 +252,12 @@ class WarGameCharacterModel extends Observable {
 		return result;
 	}
 	
+    /**
+     * Calculate the armor class.
+     * @param newMessage[] change to the value of modifiers
+     * @return
+     */
+    
 	public String modifierChange(String newMessage[]){
 		String result = new String();
 		strength_modifier = getModifierNum(strength);
@@ -198,6 +278,13 @@ class WarGameCharacterModel extends Observable {
 		return result;
 	}
 	
+    /**
+     * Validate the new modifier value.
+     * @param newMessage[]
+     * @throws IOException
+     * @return
+     */
+    
 	public Boolean replaceCharacter(String newMessage[]) throws IOException{
 		String buffer = new String();
 		String modifier_message = new String();
@@ -266,6 +353,13 @@ class WarGameCharacterModel extends Observable {
 	    return true;
 	}
 	
+    /**
+     * Validate the output.
+     * @param message
+     * @throws IOException
+     * @return
+     */
+    
 	public Boolean saveChar(String message) throws IOException{
 		File logFile = new File("src/file/character.txt");
 		FileOutputStream os;
@@ -274,6 +368,13 @@ class WarGameCharacterModel extends Observable {
 	    os.close();
 	    return true;
 	}
+    
+    /**
+     * Get the character number.
+     * @throws IOException
+     * @return
+     */
+    
 	public int getTotalChar() throws IOException{
 		String buffer = new String();
 		int count = 0;
@@ -286,6 +387,12 @@ class WarGameCharacterModel extends Observable {
 		return count;
 	}
 	
+    /**
+     * Load the character information.
+     * @param newCharacterID
+     * @throws IOException
+     */
+    
 	public void loadChar(String newCharacterID) throws IOException {
 		// TODO Auto-generated method stub
 		//total 37 data
@@ -343,6 +450,14 @@ class WarGameCharacterModel extends Observable {
 		setChanged();
 		notifyObservers(this);
 	}
+    
+    /**
+     * Get the item information.
+     * @param itemID
+     * @throws IOException
+     * @return
+     */
+    
 	public String getItemInfo(String itemID) throws IOException{
 		String buffer_item = new String();
 		String result ="null";
@@ -359,6 +474,10 @@ class WarGameCharacterModel extends Observable {
 		return result;
 	}
 	
+    /**
+     * Edit the character.
+     */
+    
 	public void editCharacter(){
 		
 		viewType = 4;
@@ -366,7 +485,13 @@ class WarGameCharacterModel extends Observable {
 		notifyObservers(this);
 	}
 	
-	public void setEquipChanged(String changeBefore,String changeAfter){
+    /**
+     * Edit the character.
+     * @param changeBefore
+     * @param changeAfter
+     */
+    
+public void setEquipChanged(String changeBefore,String changeAfter){
 		
 		if(changeBefore == null)//equip item and equip position is null
 		{
@@ -385,10 +510,12 @@ class WarGameCharacterModel extends Observable {
 			if(strAfter[1].equals("Intelligence"))
 			{
 				intelligence = intelligence + Integer.parseInt(strAfter[2]);
+				intelligence_modifier = intelligence_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Wisdom"))
 			{
 				wisdom = wisdom + Integer.parseInt(strAfter[2]);
+				wisdom_modifier = wisdom_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Armor_class"))
 			{
@@ -409,6 +536,7 @@ class WarGameCharacterModel extends Observable {
 			if(strAfter[1].equals("Charisma"))
 			{
 				charisma = charisma + Integer.parseInt(strAfter[2]);
+				charisma_modifier = charisma_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Dexterity"))
 			{
@@ -441,10 +569,12 @@ class WarGameCharacterModel extends Observable {
 			if(strBefore[1].equals("Intelligence"))
 			{
 				intelligence = intelligence - Integer.parseInt(strBefore[2]);
+				intelligence_modifier = intelligence_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Wisdom"))
 			{
 				wisdom = wisdom - Integer.parseInt(strBefore[2]);
+				wisdom_modifier = wisdom_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Armor_class"))
 			{
@@ -465,6 +595,7 @@ class WarGameCharacterModel extends Observable {
 			if(strBefore[1].equals("Charisma"))
 			{
 				charisma = charisma - Integer.parseInt(strBefore[2]);
+				charisma_modifier = charisma_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Dexterity"))
 			{
@@ -503,10 +634,12 @@ class WarGameCharacterModel extends Observable {
 			if(strBefore[1].equals("Intelligence"))
 			{
 				intelligence = intelligence - Integer.parseInt(strBefore[2]);
+				intelligence_modifier = intelligence_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Wisdom"))
 			{
 				wisdom = wisdom - Integer.parseInt(strBefore[2]);
+				wisdom_modifier = wisdom_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Armor_class"))
 			{
@@ -527,6 +660,7 @@ class WarGameCharacterModel extends Observable {
 			if(strBefore[1].equals("Charisma"))
 			{
 				charisma = charisma - Integer.parseInt(strBefore[2]);
+				charisma_modifier = charisma_modifier - Integer.parseInt(strBefore[2]);
 			}
 			if(strBefore[1].equals("Dexterity"))
 			{
@@ -546,10 +680,12 @@ class WarGameCharacterModel extends Observable {
 			if(strAfter[1].equals("Intelligence"))
 			{
 				intelligence = intelligence + Integer.parseInt(strAfter[2]);
+				intelligence_modifier = intelligence_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Wisdom"))
 			{
 				wisdom = wisdom + Integer.parseInt(strAfter[2]);
+				wisdom_modifier = wisdom_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Armor_class"))
 			{
@@ -570,6 +706,7 @@ class WarGameCharacterModel extends Observable {
 			if(strAfter[1].equals("Charisma"))
 			{
 				charisma = charisma + Integer.parseInt(strAfter[2]);
+				charisma_modifier = charisma_modifier + Integer.parseInt(strAfter[2]);
 			}
 			if(strAfter[1].equals("Dexterity"))
 			{
@@ -593,6 +730,13 @@ class WarGameCharacterModel extends Observable {
 		
 	}
 	
+    /**
+     * Compare the value of two value and return the larger one.
+     * @param a
+     * @param b
+     * @return
+     */
+    
 	public int maxNumber(int a, int b){
 		if(a>b)
 		{
@@ -601,6 +745,12 @@ class WarGameCharacterModel extends Observable {
 		else
 			return b;
 	}
+    
+    /**
+     * Set the item.
+     * @param itemInfo
+     */
+    
 	public void setItem(String itemInfo){
 		String str[] = itemInfo.trim().split(" ");
 		int count = 0;
@@ -620,112 +770,351 @@ class WarGameCharacterModel extends Observable {
 /**************************added**************/
 	
 	private
+    
+    /**
+     *<p> level is the level of the character.<br/>
+     */
 	int level;
+    
+    /**
+     *<p> ability_scores is the ability score of the character.<br/>
+     */
     int ability_scores;
+    
+    /**
+     *<p> ability_modifiers is the ability modifier of the character.<br/>
+     */
     int ability_modifiers;
+    
+    /**
+     *<p> hit_points is the hit points of the character.<br/>
+     */
     int hit_points;
+    
+    /**
+     *<p> armor_class is the armor class of the character.<br/>
+     */
     int armor_class ;
+    
+    /**
+     *<p> attack_bonus is the attack bonus value of the character.<br/>
+     */
     int attack_bonus ;
+    
+    /**
+     *<p> damage_bonus is the damage bonus value of the character.<br/>
+     */
     int damage_bonus ;
+    
+    /**
+     *<p> level_ori is the original level of the character.<br/>
+     */
     int level_ori;
     
+    /**
+     *<p> strength is the strength value of the character.<br/>
+     */
     int strength;
+    
+    /**
+     *<p> dexterity is the dexterity value of the character.<br/>
+     */
     int dexterity;
+    
+    /**
+     *<p> constitution is the constitution value of the character.<br/>
+     */
     int constitution;
+    
+    /**
+     *<p> intelligence is the intelligence value of the character.<br/>
+     */
     int intelligence;
+    
+    /**
+     *<p> wisdom is the wisdom value of the character.<br/>
+     */
     int wisdom;
+    
+    /**
+     *<p> charisma is the charisma value of the character.<br/>
+     */
     int charisma;
+    
+    /**
+     *<p> strength_ori is the original strength value of the character.<br/>
+     */
     int strength_ori;
+    
+    /**
+     *<p> dexterity_ori is the original dexterity value of the character.<br/>
+     */
     int dexterity_ori;
+    
+    /**
+     *<p> constitution_ori is the original constitution value of the character.<br/>
+     */
     int constitution_ori;
+    
+    /**
+     *<p> intelligence_ori is the original intelligence value of the character.<br/>
+     */
     int intelligence_ori;
+    
+    /**
+     *<p> wisdom_ori is the original wisdom value of the character.<br/>
+     */
     int wisdom_ori;
+    
+    /**
+     *<p> charisma_ori is the original charisma value of the character.<br/>
+     */
     int charisma_ori;
     
+    /**
+     *<p> strength_modifier is the strength modifier value of the character.<br/>
+     */
     int strength_modifier;
+    
+    /**
+     *<p> dexterity_modifier is the dexterity modifier value of the character.<br/>
+     */
     int dexterity_modifier;
+    
+    /**
+     *<p> constitution_modifier is the constitution modifier value of the character.<br/>
+     */
     int constitution_modifier;
+    
+    /**
+     *<p> intelligence_modifier is the intelligence modifier value of the character.<br/>
+     */
     int intelligence_modifier;
+    
+    /**
+     *<p> wisdom_modifier is the wisdom modifier value of the character.<br/>
+     */
     int wisdom_modifier;
+    
+    /**
+     *<p> charisma_modifier is the charisma modifier value of the character.<br/>
+     */
     int charisma_modifier;
     
+    /**
+     *<p> ability_scores_ori is the original ability scores value of the character.<br/>
+     */
     int ability_scores_ori;
+    
+    /**
+     *<p> ability_modifiers_ori is the original ability modifiers value of the character.<br/>
+     */
     int ability_modifiers_ori;
+    
+    /**
+     *<p> hit_points_ori is the original hit points value of the character.<br/>
+     */
     int hit_points_ori;
-    int armor_class_ori ;
-    int attack_bonus_ori ;
-    int damage_bonus_ori ;
+    
+    /**
+     *<p> armor_class_ori is the original armor class value of the character.<br/>
+     */
+    int armor_class_ori;
+    
+    /**
+     *<p> attack_bonus_ori is the original attack bonus value of the character.<br/>
+     */
+    int attack_bonus_ori;
+    
+    /**
+     *<p> damage_bonus_ori is the original damage bonus of the character.<br/>
+     */
+    int damage_bonus_ori;
+    
+    /**
+     *<p> multiple_attacks is the value of multiple attacks of the character.<br/>
+     */
     int multiple_attacks; //
+    
+    /**
+     *<p> viewType is the type of the view of diifferent operations.<br/>
+     */
     int viewType = 0;//view type
+    
+    /**
+     *<p> picNumber is the ID numeber of the picture.<br/>
+     */
     int picNumber;
+    
+    /**
+     *<p> characterID is the ID number of the character.<br/>
+     */
     String characterID;
+    
+    /**
+     *<p> backpack[] is the item in the backpack of the character.<br/>
+     */
     String backpack[] = new String[10];
+    
+    /**
+     *<p> equip[] is the equipped item of the character.<br/>
+     */
     String equip[] = new String[7];//0:helmet 1:armor 2:shield 3:ring 4:belt 5:boots 6:weapon
+    
+    /**
+     *<p> backpackID[] is the ID number of the item in the backpack of the character.<br/>
+     */
     String backpackID[] = new String[10];
+    
+    /**
+     *<p> equipID[] is the the ID number of the item equipped of the character.<br/>
+     */
     String equipID[] = new String[7];
     
     
+    /**
+     * <p>get the level of the character<br/>
+     */
     public int getLevel(){
     	return level;
     }
+    
+    /**
+     * <p>get the ability score of the character<br/>
+     */
     public int getAbility_scores(){
     	return ability_scores;
     }
+    
+    /**
+     * <p>get the ability modifiers of the character<br/>
+     */
     public int getAbility_modifiers(){
     	return ability_modifiers;
     }
+    
+    /**
+     * <p>get the hit points of the character<br/>
+     */
     public int getHit_points(){
     	return hit_points;
     }
+    
+    /**
+     * <p>get the armor class of the character<br/>
+     */
     public int getArmor_class(){
     	return armor_class;
     }
+    
+    /**
+     * <p>get the attack bonus of the character<br/>
+     */
     public int getAttack_bonus(){
     	return attack_bonus;
     }
+    
+    /**
+     * <p>get the damage bonus of the character<br/>
+     */
     public int getDamage_bonus(){
     	return damage_bonus;
     }
+    
+    /**
+     * <p>get the multiple attacks of the character<br/>
+     */
     public int getMultiple_attacks(){
     	return multiple_attacks;
     }
+    
+    /**
+     * <p>get the original level of the character<br/>
+     */
     public int getLevelOri(){
     	return level_ori;
     }
+    
+    /**
+     * <p>get the original ability score of the character<br/>
+     */
     public int getAbility_scoresOri(){
     	return ability_scores_ori;
     }
+    
+    /**
+     * <p>get the original ability modifiers of the character<br/>
+     */
     public int getAbility_modifiersOri(){
     	return ability_modifiers_ori;
     }
+    
+    /**
+     * <p>get the original hit points of the character<br/>
+     */
     public int getHit_pointsOri(){
     	return hit_points_ori;
     }
+    
+    /**
+     * <p>get the original armor class of the character<br/>
+     */
     public int getArmor_classOri(){
     	return armor_class_ori;
     }
+    
+    /**
+     * <p>get the original attack bonus of the character<br/>
+     */
     public int getAttack_bonusOri(){
     	return attack_bonus_ori;
     }
+    
+    /**
+     * <p>get the original damage bonus of the character<br/>
+     */
     public int getDamage_bonusOri(){
     	return damage_bonus_ori;
     }
     
+    /**
+     * <p>get the corresponded frame<br/>
+     */
     public int getViewType(){
     	return viewType;
     }
+    
+    /**
+     * <p>get the items in the backpack of the character<br/>
+     */
     public String[] getBackpack(){
     	return backpack;
     }
+    
+    /**
+     * <p>get the equipped items of the character<br/>
+     */
     public String[] getEquip(){
     	return equip;
     }
+    
+    /**
+     * <p>get the ID number of the character<br/>
+     */
     public String getCharacterID(){
     	return characterID;
     }
+    
+    /**
+     * <p>get the picture ID number<br/>
+     */
     public int getPicNumber(){
     	return picNumber;
     }
+    
+    /**
+     * <p>get the information of the character<br/>
+     */
     public String[] getScore(int index){
     	String result[] = new String[2];//total 18
     	if(index == 0)
@@ -820,6 +1209,11 @@ class WarGameCharacterModel extends Observable {
     	}
     	return result;
     }
+    
+    /**
+     * <p>get the original information of the character<br/>
+     */
+    
     public String[] getScore_ori(int index){
     	String result[] = new String[2];//total 11
     	if(index == 0)
@@ -879,9 +1273,19 @@ class WarGameCharacterModel extends Observable {
     	}
     	return result;
     }
+    
+    /**
+     * <p>get the ID number of the equipped item<br/>
+     */
+    
     public String[] getEquipID(){
     	return equipID;
     }
+    
+    /**
+     * <p>get the ID number of the item in the backpack<br/>
+     */
+    
     public String[] getBackpackID(){
     	return backpackID;
     }

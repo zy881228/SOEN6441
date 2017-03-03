@@ -10,9 +10,18 @@ import java.util.Observer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+
+
+/**
+ * This viewer allow users to manipulate the item information in GUI
+ * @version build 1
+ */
 
 class WarGameItemView extends JFrame implements Observer{
 
@@ -26,7 +35,7 @@ class WarGameItemView extends JFrame implements Observer{
 				String itemType = ((WarGameItemModel) o).getItemType();
 				String enchanType = ((WarGameItemModel) o).getEnchanType();
 				String enchanNumber = ((WarGameItemModel) o).getEnchanNumber();
-				JFrame frame = new JFrame(itemType);
+				final JFrame frame = new JFrame(itemType);
 				frame.setBounds(300, 300, 300, 320);
 				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				frame.setVisible(true);
@@ -43,7 +52,7 @@ class WarGameItemView extends JFrame implements Observer{
 				//create save and cancel button
 				int id = 0;
 				try {
-					 id = ((WarGameItemModel) o).getItemID();
+					 id = ((WarGameItemModel) o).getTotalNum();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -60,14 +69,8 @@ class WarGameItemView extends JFrame implements Observer{
 							Boolean result = ((WarGameItemModel) o).saveItem(message);
 							if(result == true)
 							{
-								JFrame frame = new JFrame("Save");
-								frame.setBounds(300, 200, 200, 100);
-								frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-								frame.setVisible(true);
-								frame.setLayout(null);
-								JLabel label_result = new JLabel("Save Item Success!");
-								label_result.setBounds(20, 25, 200, 30);
-								frame.add(label_result);
+								JOptionPane.showMessageDialog(null, "Save Success!");
+								frame.dispose();
 							}
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
@@ -85,19 +88,108 @@ class WarGameItemView extends JFrame implements Observer{
 				itemType = ((WarGameItemModel) o).getItemType();
 				enchanType = ((WarGameItemModel) o).getEnchanType();
 				enchanNumber = ((WarGameItemModel) o).getEnchanNumber();
-				frame = new JFrame(itemType);
-				frame.setBounds(300, 300, 300, 320);
-				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				frame.setVisible(true);
-				frame.setLayout(null);
+				final JFrame frameCase2 = new JFrame(itemType);
+				frameCase2.setBounds(0, 0, 700, 500);
+				frameCase2.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				frameCase2.setVisible(true);
+				frameCase2.setLayout(null);
 				j1 = new JLabel();
 				img = new ImageIcon("src/image/Item/"+itemType+"/"+enchanType+".jpeg");
 				j1.setIcon(img);
-				frame.add(j1);
-				j1.setBounds(127, 80, 66, 66);
+				frameCase2.add(j1);
+				j1.setBounds(100, 50, 66, 66);
 				label_result = new JLabel("Item:"+itemType+" "+enchanType+" +"+enchanNumber);
-				label_result.setBounds(new Rectangle(80, 160, 300, 30));
-				frame.add(label_result);
+				label_result.setBounds(new Rectangle(80, 130, 300, 30));
+				frameCase2.add(label_result);
+				final String itemType_selec = itemType;
+				
+				JButton button_edit = new JButton("Edit");
+				button_edit.setBounds(400, 200, 100, 30);
+				frameCase2.add(button_edit);
+				
+				JLabel label_enchanType = new JLabel("Enchantment Type:");
+				label_enchanType.setBounds(new Rectangle(400, 50, 150, 30));
+				frameCase2.add(label_enchanType);
+				JLabel label_enchanNumber = new JLabel("Enchantment Number:");
+				label_enchanNumber.setBounds(new Rectangle(400, 100, 150, 30));
+				frameCase2.add(label_enchanNumber);
+				final JComboBox cbox_enchanType = new JComboBox();
+				cbox_enchanType.setBounds(550, 50, 150, 30);
+				frameCase2.add(cbox_enchanType);
+				if(itemType_selec.equals("Helmet"))
+				{
+					cbox_enchanType.addItem("Intelligence");
+					cbox_enchanType.addItem("Wisdom");
+					cbox_enchanType.addItem("Armor_class");
+					cbox_enchanType.setEnabled(true);							
+				}
+				if(itemType_selec.equals("Armor"))
+				{
+					cbox_enchanType.addItem("Armor_class");
+					cbox_enchanType.setEnabled(true);
+				}
+				if(itemType_selec.equals("Shield"))
+				{
+					cbox_enchanType.addItem("Armor_class");
+					cbox_enchanType.setEnabled(true);
+				}
+				if(itemType_selec.equals("Ring"))
+				{
+					cbox_enchanType.addItem("Armor_class");
+					cbox_enchanType.addItem("Strength");
+					cbox_enchanType.addItem("Constitution");
+					cbox_enchanType.addItem("Wisdom");
+					cbox_enchanType.addItem("Charisma");
+					cbox_enchanType.setEnabled(true);
+				}
+				if(itemType_selec.equals("Belt"))
+				{
+					cbox_enchanType.addItem("Constitution");
+					cbox_enchanType.addItem("Strength");
+					cbox_enchanType.setEnabled(true);
+				}
+				if(itemType_selec.equals("Boots"))
+				{
+					cbox_enchanType.addItem("Dexterity");
+					cbox_enchanType.addItem("Armor_class");
+					cbox_enchanType.setEnabled(true);
+				}
+				if(itemType_selec.equals("Weapon"))
+				{
+					cbox_enchanType.addItem("Attack_bonus");
+					cbox_enchanType.addItem("Damage_bonus");
+					cbox_enchanType.setEnabled(true);
+				}
+				final JComboBox cbox_enchanNum = new JComboBox();
+				cbox_enchanNum.setBounds(550, 100, 150, 30);
+				frameCase2.add(cbox_enchanNum);
+				cbox_enchanNum.addItem("1");
+				cbox_enchanNum.addItem("2");
+				cbox_enchanNum.addItem("3");
+				cbox_enchanNum.addItem("4");
+				cbox_enchanNum.addItem("5");
+				button_edit.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						String enchanType = cbox_enchanType.getSelectedItem().toString();
+						String enchanNum = cbox_enchanNum.getSelectedItem().toString();
+						String itemID = ((WarGameItemModel) o).getItemID();
+						try {
+							Boolean result = ((WarGameItemModel) o).editItem(itemID,itemType_selec,enchanType,enchanNum);
+							if(result == true)
+							{
+								frameCase2.dispose();
+								((WarGameItemModel) o).loadItem("item"+itemID);
+							}
+							
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
 				
 		}//switch
 	}//update

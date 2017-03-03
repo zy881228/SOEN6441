@@ -1,3 +1,4 @@
+package warGame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -269,8 +270,12 @@ class WarGameMapView extends JFrame implements Observer{
 					positionXinLoadCbox.removeAllItems();
 					positionYinLoadCbox.removeAllItems();
 					elementinLoadCbox.removeAllItems();
+
 					try {
+						System.out.println(fileCbox.getSelectedItem().toString());
+
 						((WarGameMapModel) o).showMapByName(fileCbox.getSelectedItem().toString());
+
 						String tempMap[][] = ((WarGameMapModel) o).getMap();
 						for (int i = 1; i < tempMap.length+1; i++) {
 							positionXinLoadCbox.addItem(i);

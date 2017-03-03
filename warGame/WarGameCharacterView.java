@@ -30,24 +30,38 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
 import warGame.WarGameCharacterModel;
 
+/**
+ * This viewer allow users to manipulate the character information in GUI
+ * @version build 1
+ */
+
+
 class WarGameCharacterView extends JFrame implements Observer{
 
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
 	//backpack = Arrays.copyOf(((WarGameCharacterModel) o).getBackpack(),10);
+    
+    /**
+     * Update the character's information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
+    
 	public void update(final Observable o, Object arg) {
 		// TODO Auto-generated method stub
 		int viewType = ((WarGameCharacterModel) o).getViewType();
 		switch(viewType){
 		
 		case 1:
-			JFrame frame = new JFrame("character");
+			final JFrame frame = new JFrame("character");
 			frame.setBounds(0, 0, 700, 500);
 			frame.setSize(700,500);
 			this.setLocation(0,0);
@@ -113,14 +127,8 @@ class WarGameCharacterView extends JFrame implements Observer{
 						Boolean result = ((WarGameCharacterModel) o).saveChar(message);
 						if(result == true)
 						{
-							JFrame frame = new JFrame("Save");
-							frame.setBounds(300, 200, 200, 100);
-							frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-							frame.setVisible(true);
-							frame.setLayout(null);
-							JLabel label_result = new JLabel("Save Character Success!");
-							label_result.setBounds(20, 25, 200, 30);
-							frame.add(label_result);
+							JOptionPane.showMessageDialog(null, "Save Success!");
+							frame.dispose();
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -424,7 +432,7 @@ class WarGameCharacterView extends JFrame implements Observer{
 			}
 			break;
 		case 4:
-			JFrame frameCase4 = new JFrame("Edit Character");
+			final JFrame frameCase4 = new JFrame("Edit Character");
 			frameCase4.setBounds(400, 400, 200, 250);
 			frameCase4.setSize(200,250);
 			frameCase4.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -467,14 +475,9 @@ class WarGameCharacterView extends JFrame implements Observer{
 						Boolean result = ((WarGameCharacterModel) o).replaceCharacter(edit_message);
 						if(result == true)
 						{
-							JFrame frame = new JFrame("Save");
-							frame.setBounds(300, 200, 200, 100);
-							frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-							frame.setVisible(true);
-							frame.setLayout(null);
-							JLabel label_result = new JLabel("Edit Character Success!");
-							label_result.setBounds(20, 25, 200, 30);
-							frame.add(label_result);
+							JOptionPane.showMessageDialog(null, "Save Success!");
+							frameCase4.dispose();
+							((WarGameCharacterModel) o).loadChar("Character"+characterID);
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block

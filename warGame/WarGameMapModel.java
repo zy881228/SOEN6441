@@ -1,3 +1,4 @@
+package warGame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -142,7 +143,7 @@ public class WarGameMapModel extends Observable{
 	 * @throws IOException
 	 */
 	public void showMapByName(String mapFile) throws IOException{
-		BufferedReader read = new BufferedReader(new FileReader("src/file/"+mapFile));
+		BufferedReader read = new BufferedReader(new FileReader("src/file/map/"+mapFile));
 		this.mapName = mapFile;
 		String line;
 		int row = 0;
@@ -165,7 +166,7 @@ public class WarGameMapModel extends Observable{
 	 * @throws
 	 */
 	public void  outputMap() throws IOException{
-		BufferedReader read = new BufferedReader(new FileReader("src/file/"+this.mapName));
+		BufferedReader read = new BufferedReader(new FileReader("src/file/map/"+this.mapName));
 		String line;
 		int row = 0;
 		while((line = read.readLine()) != null){
@@ -286,27 +287,38 @@ public class WarGameMapModel extends Observable{
 					posX = i;
 					posY = j;
 					if(posX==0){
-						if (tempMap[i][j-1].equals("x")&&tempMap[i][j+1].equals("x")&&tempMap[i+1][j].equals("x")) {
+						if ((tempMap[i][j-1].equals("x")||tempMap[i][j-1].equals("I")||tempMap[i][j-1].equals("O"))
+								&&(tempMap[i][j+1].equals("x")||tempMap[i][j+1].equals("I")||tempMap[i][j+1].equals("O"))
+								&&(tempMap[i+1][j].equals("x")||tempMap[i+1][j].equals("I")||tempMap[i+1][j].equals("O"))) {
 							return false;
 						}
 					}
 					if(posX==tempMap.length-1){
-						if (tempMap[i][j-1].equals("x")&&tempMap[i][j+1].equals("x")&&tempMap[i-1][j].equals("x")) {
+						if ((tempMap[i][j-1].equals("x")||tempMap[i][j-1].equals("I")||tempMap[i][j-1].equals("O"))
+								&&(tempMap[i][j+1].equals("x")||tempMap[i][j+1].equals("O")||tempMap[i][j+1].equals("I"))
+								&&(tempMap[i-1][j].equals("x")||tempMap[i-1][j].equals("I")||tempMap[i-1][j].equals("O"))) {
 							return false;
 						}
 					}			
 					if (posY==0) {
-						if (tempMap[i-1][j].equals("x")&&tempMap[i][j+1].equals("x")&&tempMap[i+1][j].equals("x")) {
+						if ((tempMap[i-1][j].equals("x")||tempMap[i-1][j].equals("I")||tempMap[i-1][j].equals("O"))
+								&&(tempMap[i][j+1].equals("x")||tempMap[i][j+1].equals("I")||tempMap[i][j+1].equals("O"))
+								&&(tempMap[i+1][j].equals("x")||tempMap[i+1][j].equals("I")||tempMap[i+1][j].equals("O"))) {
 							return false;
 						}
 					}			
 					if(posY==tempMap[0].length-1){
-						if (tempMap[i-1][j].equals("x")&&tempMap[i+1][j].equals("x")&&tempMap[i][j-1].equals("x")) {
+						if ((tempMap[i-1][j].equals("x")||tempMap[i-1][j].equals("I")||tempMap[i-1][j].equals("O"))
+								&&(tempMap[i+1][j].equals("x")||tempMap[i+1][j].equals("I")||tempMap[i+1][j].equals("O"))
+								&&(tempMap[i][j-1].equals("x")||tempMap[i][j-1].equals("I")||tempMap[i][j-1].equals("O"))) {
 							return false;
 						}
 					}
 					if (posX!=0&&posY!=0&&posX!=tempMap.length-1&&posY!=tempMap[0].length-1) {
-						if (tempMap[i-1][j].equals("x")&&tempMap[i+1][j].equals("x")&&tempMap[i][j-1].equals("x")&&tempMap[i][j+1].equals("x")) {
+						if ((tempMap[i-1][j].equals("x")||tempMap[i-1][j].equals("I")||tempMap[i-1][j].equals("O"))
+								&&(tempMap[i+1][j].equals("x")||tempMap[i+1][j].equals("I")||tempMap[i+1][j].equals("O"))
+								&&(tempMap[i][j-1].equals("x")||tempMap[i][j-1].equals("I")||tempMap[i][j-1].equals("O"))
+								&&(tempMap[i][j+1].equals("x")||tempMap[i][j+1].equals("I")||tempMap[i][j+1].equals("O"))) {
 							return false;
 						}
 					}
@@ -437,7 +449,7 @@ public class WarGameMapModel extends Observable{
 	 */
 	public void saving() throws IOException{
 		if (this.validateMap() == true){
-			File mapFile = new File("src/file/"+this.mapName);
+			File mapFile = new File("src/file/map/"+this.mapName);
 			FileWriter fw = new FileWriter(mapFile);
 //			String s[][] = this.map;
 			for(int i=0;i<this.map.length;i++){
@@ -519,7 +531,7 @@ public class WarGameMapModel extends Observable{
 	 */
 	 public void listing(){
 		this.mapFileName = new ArrayList<String>();
-		String path = "src/file/";
+		String path = "src/file/map/";
 		File file = new File(path);
 		File[] fileArray = file.listFiles();
 		for(int i=0;i<fileArray.length;i++){ 

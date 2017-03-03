@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.ImageIcon;
@@ -19,7 +20,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+
+/**
+ * This class is a controller class contains methods that allows user to :
+ * <p>Create and edit character<br/>
+ * <p>Create and edit map<br/>
+ * <p>Create and edit item<br/>
+ * <p>Create and edit campaign<br/>
+ * @version build 1
+ */
 
 public class WarGameController extends JFrame{
     WarGameCharacterModel characterModel;
@@ -28,11 +40,15 @@ public class WarGameController extends JFrame{
     WarGameItemView itemView;
     WarGameCampaignModel campaignModel;
     WarGameCampaignView campaignView;
+    WarGameMapModel mapModel;
+    WarGameMapView mapView;
     
     JTextField text_itemType = new JTextField(15);
     JTextField text_enchanType = new JTextField(15);
     JTextField text_enchanNumber = new JTextField(15);
     JTextField text_campaign = new JTextField(15);
+    
+
     
 	public WarGameController(){
 		characterModel = new WarGameCharacterModel();
@@ -42,14 +58,14 @@ public class WarGameController extends JFrame{
 		itemModel = new WarGameItemModel();
 		itemView = new WarGameItemView();
 		itemModel.addObserver(itemView);
-
-		mapModel = new WarGameMapModel();
-		mapView = new WarGameMapView();
-		mapModel.addObserver(mapView);
 		
 		campaignModel = new WarGameCampaignModel();
 		campaignView = new WarGameCampaignView();
 		campaignModel.addObserver(campaignView);
+		
+		mapModel = new WarGameMapModel();
+		mapView = new WarGameMapView();
+		mapModel.addObserver(mapView);
 		
 		this.setTitle("WarGame");
 		this.setBounds(300, 200, 800, 600);
@@ -84,18 +100,6 @@ public class WarGameController extends JFrame{
 			}
 		});
 		
-		JButton button3 = new JButton("Load Map");
-		this.add(button3);
-		button3.setBounds(525,210,150,50);
-		button3.setBackground(Color.red);
-
-		
-		button3.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				mapModel.loading();
-			}		
-		});	
 		
 		//create item
 		JButton button4 = new JButton("Create Item");
@@ -112,33 +116,102 @@ public class WarGameController extends JFrame{
 				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 				frame.setVisible(true);
 				frame.setLayout(null);
-				text_itemType = new JTextField();
-				text_enchanType = new JTextField();
-				text_enchanNumber = new JTextField();
+				
 				
 				//item type view
 				JLabel label_itemType = new JLabel("Item Type:");
 				label_itemType.setBounds(new Rectangle(0, 0, 150, 30));
 				frame.add(label_itemType);
-				//JTextField text_itemType = new JTextField(15);
-				text_itemType.setBounds(new Rectangle(160, 0, 150, 30));
-				frame.add(text_itemType);
+				
 				
 				//item enchantment type view
 				JLabel label_enchanType = new JLabel("Enchantment Type:");
 				label_enchanType.setBounds(new Rectangle(0, 50, 150, 30));
 				frame.add(label_enchanType);
-				//JTextField text_enchanType = new JTextField(15);
-				text_enchanType.setBounds(new Rectangle(160, 50, 150, 30));
-				frame.add(text_enchanType);
+				
 				
 				//enchantment number view
 				JLabel label_enchanNumber = new JLabel("Enchantment Number:");
 				label_enchanNumber.setBounds(new Rectangle(0, 100, 150, 30));
 				frame.add(label_enchanNumber);
-				//JTextField text_enchanNumber = new JTextField(15);
-				text_enchanNumber.setBounds(new Rectangle(160, 100, 150, 30));
-				frame.add(text_enchanNumber);
+				
+				
+				final JComboBox cbox_itemType = new JComboBox();
+				cbox_itemType.setBounds(160, 0, 150, 30);
+				frame.add(cbox_itemType);
+				cbox_itemType.addItem("Helmet");
+				cbox_itemType.addItem("Armor");
+				cbox_itemType.addItem("Shield");
+				cbox_itemType.addItem("Ring");
+				cbox_itemType.addItem("Belt");
+				cbox_itemType.addItem("Boots");
+				cbox_itemType.addItem("Weapon");
+				final JComboBox cbox_enchanType = new JComboBox();
+				cbox_enchanType.setBounds(160, 50, 150, 30);
+				frame.add(cbox_enchanType);
+				cbox_enchanType.setEnabled(false);
+				cbox_itemType.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO Auto-generated method stub
+						cbox_enchanType.removeAllItems();
+						if(cbox_itemType.getSelectedItem().toString().equals("Helmet"))
+						{
+							cbox_enchanType.addItem("Intelligence");
+							cbox_enchanType.addItem("Wisdom");
+							cbox_enchanType.addItem("Armor_class");
+							cbox_enchanType.setEnabled(true);							
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Armor"))
+						{
+							cbox_enchanType.addItem("Armor_class");
+							cbox_enchanType.setEnabled(true);
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Shield"))
+						{
+							cbox_enchanType.addItem("Armor_class");
+							cbox_enchanType.setEnabled(true);
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Ring"))
+						{
+							cbox_enchanType.addItem("Armor_class");
+							cbox_enchanType.addItem("Strength");
+							cbox_enchanType.addItem("Constitution");
+							cbox_enchanType.addItem("Wisdom");
+							cbox_enchanType.addItem("Charisma");
+							cbox_enchanType.setEnabled(true);
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Belt"))
+						{
+							cbox_enchanType.addItem("Constitution");
+							cbox_enchanType.addItem("Strength");
+							cbox_enchanType.setEnabled(true);
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Boots"))
+						{
+							cbox_enchanType.addItem("Dexterity");
+							cbox_enchanType.addItem("Armor_class");
+							cbox_enchanType.setEnabled(true);
+						}
+						if(cbox_itemType.getSelectedItem().toString().equals("Weapon"))
+						{
+							cbox_enchanType.addItem("Attack_bonus");
+							cbox_enchanType.addItem("Damage_bonus");
+							cbox_enchanType.setEnabled(true);
+						}
+					}
+				});
+				
+				final JComboBox cbox_enchanNum = new JComboBox();
+				cbox_enchanNum.setBounds(160, 100, 150, 30);
+				frame.add(cbox_enchanNum);
+				cbox_enchanNum.addItem("1");
+				cbox_enchanNum.addItem("2");
+				cbox_enchanNum.addItem("3");
+				cbox_enchanNum.addItem("4");
+				cbox_enchanNum.addItem("5");
+				
 				
 				//create item button
 				JButton button_createItem = new JButton("Create");
@@ -148,9 +221,9 @@ public class WarGameController extends JFrame{
 
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						String itemType = text_itemType.getText().trim();
-						String enchanType = text_enchanType.getText().trim();
-						String enchanNumber = text_enchanNumber.getText().trim();
+						String itemType = cbox_itemType.getSelectedItem().toString();
+						String enchanType = cbox_enchanType.getSelectedItem().toString();
+						String enchanNumber = cbox_enchanNum.getSelectedItem().toString();
 						itemModel.createItem(itemType,enchanType,enchanNumber);
 					}
 				});
@@ -167,35 +240,8 @@ public class WarGameController extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame frame = new JFrame("Campaign");
-				frame.setBounds(0, 0, 700, 500);
-				frame.setSize(700,500);
-				frame.setLocation(0,0);
-				frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				frame.setVisible(true);
-				frame.setLayout(null);
-				text_campaign = new JTextField();
 				
-				//campaign sequence
-				JLabel label_campaign = new JLabel("Campaign Sequence:");
-				label_campaign.setBounds(new Rectangle(0, 0, 150, 30));
-				frame.add(label_campaign);
-				text_campaign.setBounds(new Rectangle(160, 0, 300, 30));
-				frame.add(text_campaign);
-				
-				//create campaign button
-				JButton button_createCampaign = new JButton("Create");
-				frame.add(button_createCampaign);
-				button_createCampaign.setBounds(160,150,150,50);
-				button_createCampaign.addActionListener(new ActionListener(){
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						String campaignSe = text_campaign.getText().trim();
-						campaignModel.createCampaign(campaignSe);
-					}
-				});
-				
+				campaignModel.createCampaign();
 			}
 		});
 		
@@ -270,6 +316,7 @@ public class WarGameController extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				mapModel.loading();
 			}
 						
 		});
@@ -334,6 +381,7 @@ public class WarGameController extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
+				campaignModel.loadCampaignList();
 			}
 						
 		});
@@ -347,6 +395,10 @@ public class WarGameController extends JFrame{
 		((JPanel) contain).setOpaque(false);
 		
 	}
+    
+    /**
+     *<p> main function<br/>
+     */
 	public static void main(String[] av){
 		new WarGameController();
 		
