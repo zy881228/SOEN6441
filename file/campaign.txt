@@ -1,0 +1,12 @@
+1 map2 map2 map2 map10 Map5 Map5 Map5 Map5 
+2 map2 map2 map2 map2 map2 map2 map2 map3 map3 map3 map3 map3 map3 
+3 map10 map3 map2 map10 
+4 3 map10 map3 map2 map10 
+map10 map4 map4 
+5 map1 map2 
+6 map3 map1 
+7 map1 map10 map2 
+8 map10 map2 map3 
+9 map1 map2 map3 
+10 map1 map4 map10 
+11 map10 map3 map4 
