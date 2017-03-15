@@ -28,15 +28,6 @@ import java.util.Random;
 
 class WarGameCharacterModel extends Observable {
 
-    /*public void WarGameCharacterModel(){
-    	level = this.level;
-		ability_scores = this.ability_scores;
-		hit_points = this.hit_points;
-		armor_class = this.armor_class;
-		attack_bonus = this.attack_bonus;
-		damage_bonus = this.damage_bonus;
-    }*/
-
     
     /**
      * Create a new character by setting the character's level, ability scores(4d6), ability modifiers, hit points, armor class, attack bonus, damage bonus, multiple attacks, owned items.
@@ -57,12 +48,30 @@ class WarGameCharacterModel extends Observable {
 		a = rand.nextInt(7)+1;
 		picNumber = a;
 		
-		strength = get4d6Number();
+		Explorer explorer;
+		Character bully, nimble, tank;
+		
+		CharacterBuilder bullyBuilder = new BullyCharacterBuilder();
+		CharacterBuilder nimbleBuilder = new NimbleCharacterBuilder();
+		CharacterBuilder tankBuilder = new TankCharacterBuilder();
+		
+		explorer = new Explorer();
+		explorer.setBuilder(bullyBuilder);
+		explorer.constructCharacter();
+		bully = explorer.getCharacter();
+		
+		strength = bully.getStrength();
+		dexterity = bully.getDexterity();
+		constitution = bully.getConstitution();
+		intelligence = bully.getIntelligence();
+		wisdom = bully.getWisdom();
+		charisma = bully.getCharisma();
+		/*strength = get4d6Number();
 		dexterity = get4d6Number();
 		constitution = get4d6Number();
 		intelligence = get4d6Number();
 		wisdom = get4d6Number();
-		charisma = get4d6Number();
+		charisma = get4d6Number();*/
 		strength_modifier = getModifierNum(strength);
 		dexterity_modifier = getModifierNum(dexterity);
 		constitution_modifier = getModifierNum(constitution);
@@ -70,19 +79,23 @@ class WarGameCharacterModel extends Observable {
 		wisdom_modifier = getModifierNum(wisdom);
 		charisma_modifier = getModifierNum(charisma);
 		
-		hit_points = calHit_points(constitution_modifier,level);
-		armor_class = calArmor_class(dexterity_modifier,0);
-		attack_bonus = calAttack(level);
-		damage_bonus = calDamage(strength_modifier);
-		multiple_attacks = getMultiple(attack_bonus);
 		for(int i=0;i<7;i++)
 		{
 			equipID[i] = null;
+			equip[i] = "null";
 		}
 		for(int i=0;i<10;i++)
 		{
 			backpackID[i] = null;
+			backpack[i] = "null";
 		}
+		
+		hit_points = calHit_points(constitution_modifier,level);
+		armor_class = calArmor_class(dexterity_modifier,0);
+		attack_bonus = calAttack(strength_modifier,level);
+		damage_bonus = calDamage(strength_modifier,"null");
+		multiple_attacks = getMultiple(attack_bonus);
+
 		
 		viewType = 1;
 		setChanged();
@@ -123,8 +136,8 @@ class WarGameCharacterModel extends Observable {
      * @return
      */
     
-	public int calAttack(int level){
-		int result = level;
+	public int calAttack(int strength_modifier,int level){
+		int result = strength_modifier+level;
 		return result;
 	}
     
@@ -134,8 +147,24 @@ class WarGameCharacterModel extends Observable {
      * @return
      */
     
-	public int calDamage(int stren_modifier){
-		int result = stren_modifier;
+	public int calDamage(int stren_modifier,String weapon){
+		int result = 0;
+		if(weapon.equals("null"))
+		{
+			result = 0;
+		}
+		else
+		{
+			String str[] = weapon.trim().split(" ");
+			if(str[1].equals("Damage_bonus"))
+			{
+				result = stren_modifier+Integer.parseInt(str[2]);
+			}
+			else
+			{
+				result = stren_modifier;
+			}
+		}
 		return result;
 	}
     
@@ -178,7 +207,7 @@ class WarGameCharacterModel extends Observable {
 		randNum[1] = rand.nextInt(6)+1;
 		randNum[2] = rand.nextInt(6)+1;
 		randNum[3] = rand.nextInt(6)+1;
-		for(int i=0;i<4;i++)
+		/*for(int i=0;i<4;i++)
 		{
 			for(int j=1;j<3;j++)
 			{
@@ -189,8 +218,8 @@ class WarGameCharacterModel extends Observable {
 					randNum[j] = buffer;
 				}
 			}
-		}
-		int result = randNum[0]+randNum[1]+randNum[2];
+		}*/
+		int result = randNum[0]+randNum[1]+randNum[2]+randNum[3];
 		
 		return result;
 	}
@@ -248,6 +277,14 @@ class WarGameCharacterModel extends Observable {
 		{
 			result = 5;
 		}
+		if((score>=22)&&(score<=23))
+		{
+			result = 6;
+		}
+		if((score>=24)&&(score<=25))
+		{
+			result = 7;
+		}
 		
 		return result;
 	}
@@ -260,17 +297,29 @@ class WarGameCharacterModel extends Observable {
     
 	public String modifierChange(String newMessage[]){
 		String result = new String();
-		strength_modifier = getModifierNum(strength);
-		dexterity_modifier = getModifierNum(dexterity);
-		constitution_modifier = getModifierNum(constitution);
-		intelligence_modifier = getModifierNum(intelligence);
-		wisdom_modifier = getModifierNum(wisdom);
-		charisma_modifier = getModifierNum(charisma);
+		strength_modifier = getModifierNum(Integer.parseInt(newMessage[2]));
+		dexterity_modifier = getModifierNum(Integer.parseInt(newMessage[3]));
+		constitution_modifier = getModifierNum(Integer.parseInt(newMessage[4]));
+		intelligence_modifier = getModifierNum(Integer.parseInt(newMessage[5]));
+		wisdom_modifier = getModifierNum(Integer.parseInt(newMessage[6]));
+		charisma_modifier = getModifierNum(Integer.parseInt(newMessage[7]));
 		
 		hit_points = calHit_points(constitution_modifier, Integer.parseInt(newMessage[1]));
+		armor_class = 0;
+		for(int i=0;i<7;i++)
+		{
+			if(!equip[i].equals("null"))
+			{
+				String str[] = equip[i].trim().split(" ");
+				if(str[1].equals("Armor_class"))
+				{
+					armor_class = armor_class+ Integer.parseInt(str[2]);
+				}
+			}
+		}
 		armor_class = calArmor_class(dexterity_modifier, armor_class);
-		attack_bonus = calAttack(Integer.parseInt(newMessage[1]));
-		damage_bonus = calDamage(strength_modifier);
+		attack_bonus = calAttack(strength_modifier,Integer.parseInt(newMessage[1]));
+		damage_bonus = calDamage(strength_modifier,equip[6]);
 		multiple_attacks = getMultiple(attack_bonus);
 		result = hit_points+" "+armor_class+" "+attack_bonus+" "+damage_bonus+" "+multiple_attacks+
 				 " "+strength_modifier+" "+dexterity_modifier+" "+constitution_modifier+" "+intelligence_modifier
@@ -298,7 +347,8 @@ class WarGameCharacterModel extends Observable {
 			String str[] = buffer.trim().split(" ");
 			if(str[0].equals(newMessage[0]))
 			{
-				System.out.println("run1");
+				//System.out.println("run1");
+				message = new String();
 				for(int i=0;i<newMessage.length;i++)
 				{
 					message = message + newMessage[i]+" ";	
@@ -318,7 +368,7 @@ class WarGameCharacterModel extends Observable {
 			else
 			{
 				message = new String();
-				System.out.println("run2");
+				//System.out.println("run2");
 				for(int i=0;i<37;i++)
 				{
 					message = message + str[i] +" ";
@@ -333,23 +383,26 @@ class WarGameCharacterModel extends Observable {
 		os = new FileOutputStream(file,true);
 		for(int i=0;i<characterList.size();i++)
 		{
-			System.out.println("run3");
+			//System.out.println("run3");
+			//System.out.println(characterList.get(i));
 			os.write(characterList.get(i).getBytes());
 		}
 		os.close();
 		characterID = newMessage[0];
 		level = Integer.parseInt(newMessage[1]);
-		ability_scores = Integer.parseInt(newMessage[2]);
-		hit_points = Integer.parseInt(newMessage[3]);
-		armor_class = Integer.parseInt(newMessage[4]);
-		attack_bonus = Integer.parseInt(newMessage[5]);
-		damage_bonus = Integer.parseInt(newMessage[6]);
+		strength = Integer.parseInt(newMessage[2]);
+		dexterity = Integer.parseInt(newMessage[3]);
+		constitution = Integer.parseInt(newMessage[4]);
+		intelligence = Integer.parseInt(newMessage[5]);
+		wisdom = Integer.parseInt(newMessage[6]);
+		charisma = Integer.parseInt(newMessage[7]);
 		level_ori = level;
-	    ability_scores_ori = ability_scores;
-	    hit_points_ori = hit_points;
-	    armor_class_ori = armor_class;
-	    attack_bonus_ori = attack_bonus;
-	    damage_bonus_ori = damage_bonus;
+		strength_ori = strength;
+		dexterity_ori = dexterity;
+		constitution_ori = constitution;
+		intelligence_ori = intelligence;
+		wisdom_ori = wisdom;
+		charisma_ori = charisma;
 	    return true;
 	}
 	
@@ -519,13 +572,26 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			}
 			if(strAfter[1].equals("Armor_class"))
 			{
-				armor_class = calArmor_class(dexterity_modifier,armor_class + Integer.parseInt(strAfter[2]));
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							//System.out.println(armor_class);
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strAfter[1].equals("Strength"))
 			{
 				strength = strength + Integer.parseInt(strAfter[2]);
 				strength_modifier = strength_modifier + Integer.parseInt(strAfter[2]);
-				damage_bonus = calDamage(strength_modifier);
+				damage_bonus = calDamage(strength_modifier,equip[6]);
 			}
 			if(strAfter[1].equals("Constitution"))
 			{
@@ -547,10 +613,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			if(strAfter[1].equals("Attack_bonus"))
 			{
 				attack_bonus = attack_bonus + Integer.parseInt(strAfter[2]);
+				damage_bonus = strength_modifier;
 			}
 			if(strAfter[1].equals("Damage_bonus"))
 			{
-				damage_bonus = damage_bonus + Integer.parseInt(strAfter[2]);
+				damage_bonus = strength_modifier + Integer.parseInt(strAfter[2]);
 			}
 		}
 		else if(changeAfter == null)//unequip item
@@ -578,13 +645,25 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			}
 			if(strBefore[1].equals("Armor_class"))
 			{
-				armor_class = calArmor_class(dexterity_modifier,armor_class-Integer.parseInt(strBefore[2]));
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strBefore[1].equals("Strength"))
 			{
 				strength = strength - Integer.parseInt(strBefore[2]);
 				strength_modifier = strength_modifier - Integer.parseInt(strBefore[2]);
-				damage_bonus = calDamage(strength_modifier);
+				damage_bonus = calDamage(strength_modifier,equip[6]);
 			}
 			if(strBefore[1].equals("Constitution"))
 			{
@@ -606,10 +685,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			if(strBefore[1].equals("Attack_bonus"))
 			{
 				attack_bonus = attack_bonus - Integer.parseInt(strBefore[2]);
+				damage_bonus = 0;
 			}
 			if(strBefore[1].equals("Damage_bonus"))
 			{
-				damage_bonus = damage_bonus - Integer.parseInt(strBefore[2]);
+				damage_bonus = 0;
 			}
 			//ability_scores = maxNumber(ability_scores,0);
 			//armor_class = maxNumber(armor_class,0);
@@ -643,13 +723,25 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			}
 			if(strBefore[1].equals("Armor_class"))
 			{
-				armor_class = calArmor_class(dexterity_modifier,armor_class-Integer.parseInt(strBefore[2]));
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strBefore[1].equals("Strength"))
 			{
 				strength = strength - Integer.parseInt(strBefore[2]);
 				strength_modifier = strength_modifier - Integer.parseInt(strBefore[2]);
-				damage_bonus = calDamage(strength_modifier);
+				damage_bonus = calDamage(strength_modifier,equip[6]);
 			}
 			if(strBefore[1].equals("Constitution"))
 			{
@@ -671,10 +763,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			if(strBefore[1].equals("Attack_bonus"))
 			{
 				attack_bonus = attack_bonus - Integer.parseInt(strBefore[2]);
+				damage_bonus = 0;
 			}
 			if(strBefore[1].equals("Damage_bonus"))
 			{
-				damage_bonus = damage_bonus - Integer.parseInt(strBefore[2]);
+				damage_bonus = 0;
 			}
 			//equip
 			if(strAfter[1].equals("Intelligence"))
@@ -689,13 +782,25 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			}
 			if(strAfter[1].equals("Armor_class"))
 			{
-				armor_class = calArmor_class(dexterity_modifier,armor_class + Integer.parseInt(strAfter[2]));
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strAfter[1].equals("Strength"))
 			{
 				strength = strength + Integer.parseInt(strAfter[2]);
 				strength_modifier = strength_modifier + Integer.parseInt(strAfter[2]);
-				damage_bonus = calDamage(strength_modifier);
+				damage_bonus = calDamage(strength_modifier,equip[6]);
 			}
 			if(strAfter[1].equals("Constitution"))
 			{
@@ -717,10 +822,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			if(strAfter[1].equals("Attack_bonus"))
 			{
 				attack_bonus = attack_bonus + Integer.parseInt(strAfter[2]);
+				damage_bonus = strength_modifier;
 			}
 			if(strAfter[1].equals("Damage_bonus"))
 			{
-				damage_bonus = damage_bonus + Integer.parseInt(strAfter[2]);
+				damage_bonus = strength_modifier + Integer.parseInt(strAfter[2]);
 			}
 			
 		}
@@ -1289,5 +1395,22 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     public String[] getBackpackID(){
     	return backpackID;
     }
+    
+    /**
+     * <p>set the value of the item in the equip<br/>
+     */
+    
+    public void setEquip(String newEquip,int index){
+    	equip[index] = newEquip;  	
+    }
+    
+    /**
+     * <p>set the value of the item in the backpack<br/>
+     */
+    
+    public void setBackpack(String newBack,int index){
+    	backpack[index] = newBack;  	
+    }
+    
    
 }
