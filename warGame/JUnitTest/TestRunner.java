@@ -1,4 +1,4 @@
-package warGame;
+package warGame.JUnitTest;
 import junit.framework.*;
 
 public class TestRunner{
