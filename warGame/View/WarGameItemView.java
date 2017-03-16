@@ -1,4 +1,4 @@
-package warGame;
+package warGame.View;
 
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -17,13 +17,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import warGame.Model.WarGameItemModel;
+
 
 /**
  * This viewer allow users to manipulate the item information in GUI
  * @version build 1
  */
 
-class WarGameItemView extends JFrame implements Observer{
+public class WarGameItemView extends JFrame implements Observer{
 
 	@Override
 	public void update(final Observable o, Object arg) {
