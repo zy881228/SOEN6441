@@ -47,6 +47,10 @@ class WarGameCharacterView extends JFrame implements Observer{
 
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
+	String message_buffer = new String();
+	int picNumber_buffer;
+	JLabel label_showScore[] = new JLabel[12];
+	JLabel charpic = new JLabel();
 	//backpack = Arrays.copyOf(((WarGameCharacterModel) o).getBackpack(),10);
     
     /**
@@ -68,7 +72,7 @@ class WarGameCharacterView extends JFrame implements Observer{
 			frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 			frame.setVisible(true);
 			frame.setLayout(null);
-			JLabel label_showScore[] = new JLabel[12];
+			/*JLabel label_showScore[] = new JLabel[12];
 			for(int i =0;i<12;i++)
 			{
 				String text[] = ((WarGameCharacterModel) o).getScore(i);
@@ -103,7 +107,71 @@ class WarGameCharacterView extends JFrame implements Observer{
 				message_buffer = message_buffer+" "+text[1];
 			}
 			final String message_buffer2 = id+message_buffer;
-			final int picNumber_buffer = picNumber;
+			final int picNumber_buffer = picNumber;*/
+			charpic= new JLabel();
+			frame.getLayeredPane().add(charpic, new Integer(Integer.MIN_VALUE));
+			charpic.setBounds(200, 0, 400, 400);
+			Container contain = frame.getContentPane();
+			((JPanel) contain).setOpaque(false);
+			for(int i =0;i<12;i++)
+			{
+				label_showScore[i] = new JLabel();
+				label_showScore[i].setBounds(new Rectangle(0, i*30, 150, 30));
+				frame.getLayeredPane().add(label_showScore[i], new Integer(Integer.MIN_VALUE));
+			}
+			JButton button_charType[] = new JButton[3];
+			for(int i=0;i<3;i++)
+			{
+				final int charType_i = i;
+				if(i ==0)
+				{
+					button_charType[i] = new JButton("Create Bully");
+				}
+				if(i ==1)
+				{
+					button_charType[i] = new JButton("Create Nimble");
+				}
+				if(i ==2)
+				{
+					button_charType[i] = new JButton("Create Tank");
+				}
+				button_charType[i].setBounds(550, 150+i*40, 120, 30);
+				frame.add(button_charType[i]);
+				button_charType[i].addActionListener(new ActionListener(){
+	
+					@Override
+					public void actionPerformed(ActionEvent e) {
+							((WarGameCharacterModel) o).createCharacter(charType_i);
+							message_buffer = new String();
+							for(int i =0;i<12;i++)
+							{
+								String text[] = ((WarGameCharacterModel) o).getScore(i);
+								label_showScore[i].setText(text[0]+":"+text[1]);
+							}
+							//add the character pic
+							int picNumber = ((WarGameCharacterModel) o).getPicNumber();
+							ImageIcon img = new ImageIcon("src/image/Character/"+picNumber+".png");
+							charpic.setIcon(img);
+							int id = 0;
+							try {
+								id = ((WarGameCharacterModel) o).getTotalChar();
+							} catch (IOException e2) {
+								// TODO Auto-generated catch block
+								e2.printStackTrace();
+							}
+							id = id+1;
+							for(int i =0;i<18;i++)
+							{
+								String text[] = ((WarGameCharacterModel) o).getScore(i);
+								message_buffer = message_buffer+" "+text[1];
+							}
+							message_buffer = id+message_buffer;
+							picNumber_buffer = picNumber;
+					}
+				});
+			}
+			
+			
 			JButton button_save = new JButton("Save");
 			button_save.setBounds(new Rectangle(200,400,100,30));
 			frame.add(button_save);
@@ -112,7 +180,7 @@ class WarGameCharacterView extends JFrame implements Observer{
 				public void actionPerformed(ActionEvent e) {
 	               try {
 	            	    String message = new String();
-	            	    message = message_buffer2;
+	            	    message = message_buffer;
 	                	String equipID[] = ((WarGameCharacterModel) o).getEquipID();
 	          			for(int i =0;i<7;i++)
 	          			{
@@ -254,13 +322,17 @@ class WarGameCharacterView extends JFrame implements Observer{
 									{
 										label_backpack[i].setIcon(label_equip[event_i].getIcon());
 										backpack[i] = equip[event_i];
+										((WarGameCharacterModel) o).setBackpack(backpack[i], i);
 										break;
 									}
 								}
-								((WarGameCharacterModel) o).setEquipChanged(equip[event_i],null);
+								String buffer = new String();
 								label_equip[event_i].setIcon(null);
+								buffer = equip[event_i];
 								equip[event_i] = "null";
 								label_equip[event_i].setBackground(Color.GRAY);
+								((WarGameCharacterModel) o).setEquip(equip[event_i], event_i);
+								((WarGameCharacterModel) o).setEquipChanged(buffer,null);
 							}
 							
 						}
@@ -332,24 +404,32 @@ class WarGameCharacterView extends JFrame implements Observer{
 								}
 								if(equip[index].equals("null"))
 								{
-									((WarGameCharacterModel) o).setEquipChanged(null,backpack[event_i]);
+									String buffer = new String();
+									buffer = backpack[event_i];
 									label_equip[index].setIcon(label_backpack[event_i].getIcon());
 									equip[index] = backpack[event_i];
 									label_backpack[event_i].setIcon(null);
 									label_backpack[event_i].setBackground(Color.black);
-									backpack[event_i] = "null";									
+									backpack[event_i] = "null";
+									((WarGameCharacterModel) o).setEquip(buffer, index);
+									((WarGameCharacterModel) o).setBackpack(backpack[event_i], event_i);
+									((WarGameCharacterModel) o).setEquipChanged(null,buffer);
 								}
 								else
 								{
-									((WarGameCharacterModel) o).setEquipChanged(equip[index],backpack[event_i]);
 									String buffer = new String();
+									String buffer2 = new String();
 									Icon img_buffer = new ImageIcon();
 									buffer = equip[index];
+									buffer2 = backpack[event_i];
 									img_buffer = label_equip[index].getIcon();
 									label_equip[index].setIcon(label_backpack[event_i].getIcon());
 									equip[index] = backpack[event_i];
 									label_backpack[event_i].setIcon(img_buffer);
 									backpack[event_i] = buffer;
+									((WarGameCharacterModel) o).setEquip(equip[index], index);
+									((WarGameCharacterModel) o).setBackpack(backpack[event_i], event_i);
+									((WarGameCharacterModel) o).setEquipChanged(buffer,buffer2);
 								}
 							}
 							
@@ -475,9 +555,9 @@ class WarGameCharacterView extends JFrame implements Observer{
 						Boolean result = ((WarGameCharacterModel) o).replaceCharacter(edit_message);
 						if(result == true)
 						{
-							JOptionPane.showMessageDialog(null, "Save Success!");
 							frameCase4.dispose();
-							((WarGameCharacterModel) o).loadChar("Character"+characterID);
+							JOptionPane.showMessageDialog(null, "Save Success!");
+							//((WarGameCharacterModel) o).loadChar("Character"+characterID);
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
