@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Builder;
 
 public class NimbleCharacterBuilder extends CharacterBuilder{
 

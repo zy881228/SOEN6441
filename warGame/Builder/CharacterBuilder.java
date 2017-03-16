@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Builder;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Builder;
 
 public class BullyCharacterBuilder extends CharacterBuilder{
 
