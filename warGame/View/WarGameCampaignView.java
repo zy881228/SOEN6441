@@ -1,4 +1,4 @@
-package warGame;
+package warGame.View;
 
 import java.awt.Color;
 
@@ -22,13 +22,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import warGame.Model.WarGameCampaignModel;
+
 
 /**
  * This viewer allow users to manipulate the campaign information in GUI
  * @version build 1
  */
 
-class WarGameCampaignView extends JFrame implements Observer{
+public class WarGameCampaignView extends JFrame implements Observer{
 
 	String mapSequence = new String();
 	ArrayList<String>mapSequenceList = new ArrayList<String>();
@@ -231,15 +233,14 @@ class WarGameCampaignView extends JFrame implements Observer{
 										mapSeList_buffer.add(mapName);
 										mapSeList_buffer.add(str);
 									}
-									else if((count+1) == position)
-									{
-										mapSeList_buffer.add(str);
-										mapSeList_buffer.add(mapName);
-									}
 									else{
 										mapSeList_buffer.add(str);
 									}
 									count++;
+								}
+								if(count == position)
+								{
+									mapSeList_buffer.add(mapName);
 								}
 								mapSequenceList.clear();
 								for (String str : mapSeList_buffer) {
