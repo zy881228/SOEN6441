@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +19,7 @@ import java.util.Observable;
  * @version build 1
  */
 
-class WarGameItemModel extends Observable{
+public class WarGameItemModel extends Observable{
     
     /**
      * Create a new item
@@ -122,16 +122,17 @@ class WarGameItemModel extends Observable{
 			String str[] = buffer.trim().split(" ");
 			if(str[0].equals(newItemID))
 			{
+				message = new String();
 				message = newItemID+" "+newItemType+" "+newEnchanType+" "+newEnchanNumber+"\r\n";
 				itemList.add(message);
-				System.out.println(message);
+				//System.out.println(message);
 			}
 			else
 			{
 				message = new String();
 				message = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+"\r\n";
 				itemList.add(message);
-				System.out.println(message);
+				//System.out.println(message);
 			}
 		}
 		file.delete();
