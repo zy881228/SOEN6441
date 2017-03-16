@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +18,7 @@ import java.util.Observable;
  * @version build 1
  */
 
-class WarGameCampaignModel extends Observable{
+public class WarGameCampaignModel extends Observable{
 
 	private ArrayList<String> mapFileName = new ArrayList<String>();
 	private String errorMsg = new String();
@@ -117,6 +117,7 @@ class WarGameCampaignModel extends Observable{
 			String str[] = buffer.trim().split(" ");
 			if(str[0].equals(newID))
 			{
+				message = new String();
 				for (String str_buffer : newCampaignList) {
 					message = message + str_buffer+" ";
 				}
