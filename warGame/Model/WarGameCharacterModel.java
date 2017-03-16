@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,11 @@ import java.util.Arrays;
 import java.util.Observable;
 import java.util.Random;
 
+import warGame.Builder.BullyCharacterBuilder;
+import warGame.Builder.Explorer;
+import warGame.Builder.*;
+import warGame.Builder.Character;
+
 
 /**
  * This class is a character model contains methods that allows user to :
@@ -26,7 +31,7 @@ import java.util.Random;
  * @version build 1
  */
 
-class WarGameCharacterModel extends Observable {
+public class WarGameCharacterModel extends Observable {
 
     
     /**
