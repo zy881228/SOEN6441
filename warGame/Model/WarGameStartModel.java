@@ -1,5 +1,13 @@
-package warGame;
+package warGame.Model;
 
-public class WarGameStartModel {
+import java.util.Observable;
 
+public class WarGameStartModel extends Observable{
+	/**
+	 * temp show map view
+	 */
+	public void DisplayMapView(){
+		setChanged();
+		notifyObservers(this);
+	}
 }
