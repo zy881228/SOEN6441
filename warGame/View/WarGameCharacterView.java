@@ -1,6 +1,6 @@
-package warGame;
+package warGame.View;
 
-
+import warGame.Model.WarGameCharacterModel;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 
-import warGame.WarGameCharacterModel;
+
 
 /**
  * This viewer allow users to manipulate the character information in GUI
@@ -43,7 +43,7 @@ import warGame.WarGameCharacterModel;
  */
 
 
-class WarGameCharacterView extends JFrame implements Observer{
+public class WarGameCharacterView extends JFrame implements Observer{
 
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
