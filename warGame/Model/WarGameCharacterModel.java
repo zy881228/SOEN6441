@@ -36,7 +36,7 @@ class WarGameCharacterModel extends Observable {
     
     
     
-	public void createCharacter() {
+	public void createCharacter(int charType) {
 		// TODO Auto-generated method character = new Character();
 		Random rand = new Random();
 		int a = rand.nextInt(20)+1;
@@ -56,16 +56,43 @@ class WarGameCharacterModel extends Observable {
 		CharacterBuilder tankBuilder = new TankCharacterBuilder();
 		
 		explorer = new Explorer();
-		explorer.setBuilder(bullyBuilder);
-		explorer.constructCharacter();
-		bully = explorer.getCharacter();
+		if(charType == 0)
+		{
+			explorer.setBuilder(bullyBuilder);
+			explorer.constructCharacter();
+			bully = explorer.getCharacter();
+			strength = bully.getStrength();
+			dexterity = bully.getDexterity();
+			constitution = bully.getConstitution();
+			intelligence = bully.getIntelligence();
+			wisdom = bully.getWisdom();
+			charisma = bully.getCharisma();
+		}
+		if(charType == 1)
+		{
+			explorer.setBuilder(nimbleBuilder);
+			explorer.constructCharacter();
+			nimble = explorer.getCharacter();
+			strength = nimble.getStrength();
+			dexterity = nimble.getDexterity();
+			constitution = nimble.getConstitution();
+			intelligence = nimble.getIntelligence();
+			wisdom = nimble.getWisdom();
+			charisma = nimble.getCharisma();
+		}
+		if(charType == 2)
+		{
+			explorer.setBuilder(tankBuilder);
+			explorer.constructCharacter();
+			tank = explorer.getCharacter();
+			strength = tank.getStrength();
+			dexterity = tank.getDexterity();
+			constitution = tank.getConstitution();
+			intelligence = tank.getIntelligence();
+			wisdom = tank.getWisdom();
+			charisma = tank.getCharisma();
+		}
 		
-		strength = bully.getStrength();
-		dexterity = bully.getDexterity();
-		constitution = bully.getConstitution();
-		intelligence = bully.getIntelligence();
-		wisdom = bully.getWisdom();
-		charisma = bully.getCharisma();
 		/*strength = get4d6Number();
 		dexterity = get4d6Number();
 		constitution = get4d6Number();
@@ -97,6 +124,16 @@ class WarGameCharacterModel extends Observable {
 		multiple_attacks = getMultiple(attack_bonus);
 
 		
+		//viewType = 1;
+		//setChanged();
+		//notifyObservers(this);
+	}
+	
+	/**
+	 * Show the create character frame
+	 */
+	
+	public void createCharacterFrame(){
 		viewType = 1;
 		setChanged();
 		notifyObservers(this);
