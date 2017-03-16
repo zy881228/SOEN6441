@@ -1,7 +1,8 @@
-package warGame;
+package warGame.JUnitTest;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import warGame.Model.WarGameCampaignModel;
 import junit.framework.TestCase;
 
 public class CampaignModelTest1 extends TestCase{

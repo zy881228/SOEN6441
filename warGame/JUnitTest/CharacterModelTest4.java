@@ -1,7 +1,8 @@
-package warGame;
+package warGame.JUnitTest;
 
 import java.io.IOException;
 
+import warGame.Model.WarGameCharacterModel;
 import junit.framework.TestCase;
 
 public class CharacterModelTest4 extends TestCase{
@@ -42,7 +43,7 @@ public class CharacterModelTest4 extends TestCase{
 			scoreAfter[i+1] = scoreBefore[i];
 		}
 		scoreAfter[0] = characterID;
-		for(int i=1;i<7;i++)
+		for(int i=1;i<8;i++)
 		{
 			scoreAfter[i] = "1";
 		}
@@ -60,6 +61,8 @@ public class CharacterModelTest4 extends TestCase{
 		}
 		for(int i=0;i<6;i++)
 		{
+			//System.out.println("exp:"+scoreModifier[i]+" "+i);
+			//System.out.println("act:"+scoreBefore[i+12]+" "+i);
 			assertEquals(scoreModifier[i]+"", scoreBefore[i+12]);
 		}
 		

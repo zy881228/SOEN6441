@@ -1,7 +1,8 @@
-package warGame;
+package warGame.JUnitTest;
 
 import java.io.IOException;
 
+import warGame.Model.WarGameItemModel;
 import junit.framework.TestCase;
 
 public class ItemModelTest1 extends TestCase{

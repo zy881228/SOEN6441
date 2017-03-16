@@ -1,11 +1,12 @@
-package warGame;
+package warGame.JUnitTest;
+import warGame.Model.WarGameMapModel;
 import junit.framework.TestCase;
 
 
 public class MapModelTest3 extends TestCase {
 
 	public WarGameMapModel mapModel = new WarGameMapModel();
-	
+	/*
 	public void setUp() throws Exception {
 		System.out.println("Test3 begins");
 		mapModel.createMap("Test Map", 8, 8);
@@ -30,6 +31,6 @@ public class MapModelTest3 extends TestCase {
 		assertTrue(mapModel.doorPos());
 
 		
-	}
+	}*/
 	
 }

@@ -1,5 +1,7 @@
-package warGame;
+package warGame.JUnitTest;
 
+import warGame.Model.WarGameCharacterModel;
+import warGame.Model.WarGameItemModel;
 import junit.framework.TestCase;
 
 public class CharacterModelTest1 extends TestCase{
@@ -10,7 +12,7 @@ public class CharacterModelTest1 extends TestCase{
 	
 	public void setUp() throws Exception {
 		System.out.println("Character Test1 begins");
-		characterModel.createCharacter();
+		characterModel.createCharacter(0);
 		itemModel.createItem("Ring","Strength","3");
 	}
 	
@@ -37,7 +39,7 @@ public class CharacterModelTest1 extends TestCase{
 		//equip
 		scoreBefore[1] = Integer.parseInt(scoreBefore[1])+3+"";
 		scoreBefore[12] = Integer.parseInt(scoreBefore[12])+3+"";
-		int damage = characterModel.calDamage(Integer.parseInt(scoreBefore[12]));
+		int damage = 0;
 		scoreBefore[10] = damage+"";
 		changeAfter = itemType+" "+enchanType+" "+enchanNum;
 		characterModel.setEquipChanged(null,changeAfter);
@@ -50,7 +52,7 @@ public class CharacterModelTest1 extends TestCase{
 		//unequip
 		scoreBefore[1] = Integer.parseInt(scoreBefore[1])-3+"";
 		scoreBefore[12] = Integer.parseInt(scoreBefore[12])-3+"";
-		damage = characterModel.calDamage(Integer.parseInt(scoreBefore[12]));
+		damage = 0;
 		scoreBefore[10] = damage+"";
 		characterModel.setEquipChanged(changeAfter,null);
 		for(int i=0;i<18;i++)

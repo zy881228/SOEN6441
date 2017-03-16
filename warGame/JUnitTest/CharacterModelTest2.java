@@ -1,5 +1,7 @@
-package warGame;
+package warGame.JUnitTest;
 
+import warGame.Model.WarGameCharacterModel;
+import warGame.Model.WarGameItemModel;
 import junit.framework.TestCase;
 
 public class CharacterModelTest2 extends TestCase{
@@ -11,7 +13,7 @@ public class CharacterModelTest2 extends TestCase{
 	
 	public void setUp() throws Exception {
 		System.out.println("Character Test2 begins");
-		characterModel.createCharacter();
+		characterModel.createCharacter(0);
 		itemModel.createItem("Ring","Strength","3");
 		itemModel2.createItem("Ring","Wisdom","3");
 	}
@@ -36,6 +38,7 @@ public class CharacterModelTest2 extends TestCase{
 		String enchanNum2 = itemModel2.getEnchanNumber();
 		//equip item 1
 		changeAfter = itemType+" "+enchanType+" "+enchanNum;
+		//System.out.println("run1");
 		characterModel.setEquipChanged(null,changeAfter);
 		for(int i=0;i<18;i++)
 			{
@@ -44,8 +47,10 @@ public class CharacterModelTest2 extends TestCase{
 			}
 		
 		//equip item 2
+		//System.out.println("run2");
 		changeBefore = itemType2+" "+enchanType2+" "+enchanNum2;
 		characterModel.setEquipChanged(changeAfter,changeBefore);
+		//System.out.println("run3");
 		for(int i=0;i<18;i++)
 		{
 			score = characterModel.getScore(i);
@@ -53,13 +58,15 @@ public class CharacterModelTest2 extends TestCase{
 		}
 		scoreWithItem1[1] = Integer.parseInt(scoreWithItem1[1])-3+"";
 		scoreWithItem1[12] = Integer.parseInt(scoreWithItem1[12])-3+"";
-		int damage = characterModel.calDamage(Integer.parseInt(scoreWithItem1[12]));
+		int damage = 0;
 		scoreWithItem1[10] = damage+"";
 		scoreWithItem1[5] = Integer.parseInt(scoreWithItem1[5])+3+"";
 		scoreWithItem1[16] = Integer.parseInt(scoreWithItem1[16])+3+"";
 
 		for(int i=0;i<18;i++)
 		{
+			//System.out.println("exp:"+scoreWithItem1[i]+" "+i);
+			//System.out.println("act:"+scoreWithItem2[i]+" "+i);
 			assertEquals(scoreWithItem1[i], scoreWithItem2[i]);
 		}
 	}
