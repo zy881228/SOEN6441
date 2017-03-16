@@ -1,4 +1,4 @@
-package warGame;
+package warGame.Controller;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -22,8 +22,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-
+import warGame.Model.*;
+import warGame.View.*;
 /**
  * This class is a controller class contains methods that allows user to :
  * <p>Create and edit character<br/>
@@ -42,6 +42,8 @@ public class WarGameController extends JFrame{
     WarGameCampaignView campaignView;
     WarGameMapModel mapModel;
     WarGameMapView mapView;
+    WarGameStartModel startModel;
+    WarGameStartView startView;
     
     JTextField text_itemType = new JTextField(15);
     JTextField text_enchanType = new JTextField(15);
@@ -67,6 +69,10 @@ public class WarGameController extends JFrame{
 		mapView = new WarGameMapView();
 		mapModel.addObserver(mapView);
 		
+		startModel = new WarGameStartModel();
+		startView = new WarGameStartView();
+		startModel.addObserver(startView);
+		
 		this.setTitle("WarGame");
 		this.setBounds(300, 200, 800, 600);
 		this.setSize(800,600);
@@ -84,7 +90,7 @@ public class WarGameController extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				characterModel.createCharacter();
+				characterModel.createCharacterFrame();
 			}
 						
 		});
@@ -96,7 +102,7 @@ public class WarGameController extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				mapModel.setMap();
+				mapModel.setMapCreationView();
 			}
 		});
 		
@@ -253,9 +259,16 @@ public class WarGameController extends JFrame{
 		this.add(button7);
 		button7.setBounds(325,510,150,50);
 		
-		JButton button8 = new JButton("Start Game");
-		this.add(button8);
-		button8.setBounds(325,150,150,50);
+		JButton button_start = new JButton("Start Game");
+		this.add(button_start);
+		button_start.setBounds(325,150,150,50);
+		button_start.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startModel.DisplayMapView();
+			}
+		});
 		
 		JButton button_loadChar = new JButton("Load Character");
 		this.add(button_loadChar);
@@ -316,7 +329,7 @@ public class WarGameController extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				mapModel.loading();
+				mapModel.setMapCreationView();;
 			}
 						
 		});
