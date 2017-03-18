@@ -1,6 +1,7 @@
 package warGame.View;
 
 import warGame.Model.WarGameCharacterModel;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -17,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Observer;
@@ -144,31 +146,43 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	
 					@Override
 					public void actionPerformed(ActionEvent e) {
-							((WarGameCharacterModel) o).createCharacter(charType_i);
+							try {
+								((WarGameCharacterModel) o).createCharacter(charType_i);
+							} catch (UnsupportedEncodingException
+									| FileNotFoundException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							//characterModel = new WarGameCharacterModel();
+							//characterModel.createCharacter(charType_i);
 							message_buffer = new String();
 							for(int i =0;i<12;i++)
 							{
 								String text[] = ((WarGameCharacterModel) o).getScore(i);
+								//String text[] = characterModel.getScore(i);
 								label_showScore[i].setText(text[0]+":"+text[1]);
 							}
 							//add the character pic
 							int picNumber = ((WarGameCharacterModel) o).getPicNumber();
+							//int picNumber = characterModel.getPicNumber();
 							ImageIcon img = new ImageIcon("src/image/Character/"+picNumber+".png");
 							charpic.setIcon(img);
-							int id = 0;
+							/*int id = 0;
 							try {
 								id = ((WarGameCharacterModel) o).getTotalChar();
+								//id = characterModel.getTotalChar();
 							} catch (IOException e2) {
 								// TODO Auto-generated catch block
 								e2.printStackTrace();
 							}
-							id = id+1;
+							id = id+1;*/
 							for(int i =0;i<18;i++)
 							{
 								String text[] = ((WarGameCharacterModel) o).getScore(i);
+								//String text[] = characterModel.getScore(i);
 								message_buffer = message_buffer+" "+text[1];
 							}
-							message_buffer = id+message_buffer;
+							//message_buffer = id+message_buffer;
 							picNumber_buffer = picNumber;
 					}
 				});
@@ -196,6 +210,8 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	          			}
 	          			message = message+" "+picNumber_buffer+"\r\n";
 						//Boolean result = ((WarGameCharacterModel) o).saveChar(message);
+	          			characterModel = new WarGameCharacterModel(picNumber_buffer,(WarGameCharacterModel) o);
+	          			//characterModel = ((WarGameCharacterModel) o);
 	          			Boolean result = ((WarGameCharacterModel) o).saveCharJson(characterModel);
 						if(result == true)
 						{
