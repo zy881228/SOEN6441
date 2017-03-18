@@ -1,11 +1,15 @@
 package warGame.View;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -27,8 +31,12 @@ public class WarGameStartView extends JFrame implements Observer{
 	private ArrayList<JLabel> mapElementsLbls;
 	private String heroPos;
 	String map[][];
+	JLabel label_pic = new JLabel();
+	JLabel label_equip[] = new JLabel[7];
+	JLabel label_backpack[] = new JLabel[10];
+	JLabel label_showScore[] = new JLabel[12];
 	@Override
-	public void update(Observable o, Object arg) {
+	public void update(final Observable o, Object arg) {
 		ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
 		ImageIcon door = new ImageIcon("src/image/Map/door.jpg");
 		ImageIcon chest = new ImageIcon("src/image/Map/chest.jpg");
@@ -38,12 +46,14 @@ public class WarGameStartView extends JFrame implements Observer{
 		
 		final JFrame frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
-		frame.setTitle("Tower of Fighters");
-		frame.setSize(1280, 800);
+		frame.setTitle("WarGame");
+		frame.setBounds(0, 0, 1280, 1000);
+		frame.setSize(1280, 1000);
 		frame.getContentPane().setLayout(null);
+		
 		try {
 			mapsByMap = WarGameMapModel.listAllMaps();
 			mapOnPage = mapsByMap.get("2");
@@ -165,13 +175,13 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY-1][posX] = "h";
 					}else if(upPos[2].equals("m")){
-						//��������
+						
 					}else if(upPos[2].equals("I")){
-						//�������
+						
 					}else if(upPos[2].equals("O")){
-						//��������
+						
 					}else if(upPos[2].equals("c")){
-						//��������
+					
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
@@ -200,13 +210,13 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY+1][posX] = "h";		
 					}else if(downPos[2].equals("m")){
-						//��������
+						
 					}else if(downPos[2].equals("I")){
-						//�������
+						
 					}else if(downPos[2].equals("O")){
-						//��������
+						
 					}else if(downPos[2].equals("c")){
-						//��������
+						
 					}
 				}
 			}
@@ -215,7 +225,8 @@ public class WarGameStartView extends JFrame implements Observer{
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {
 				JLabel mapElement = new JLabel();
-				
+				final int i_buffer = i;
+				final int j_buffer = j;
 				switch (map[i][j]) {
 				case "x":
 					mapElement = new JLabel(i+" "+j+" "+"x");
@@ -232,11 +243,32 @@ public class WarGameStartView extends JFrame implements Observer{
 					mapElement.setIcon(hero);
 					mapElementsLbls.add(mapElement);
 					heroPos = i+" "+j+" "+(mapElementsLbls.size()-1);
+					mapElement.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mousePressed(MouseEvent e){
+							if(e.getButton() == MouseEvent.BUTTON1)
+							{
+								
+							}
+						}
+					});
 					break;
 				case "m":
 					mapElement = new JLabel(i+" "+j+" "+"m");
 					mapElement.setIcon(monster);
 					mapElementsLbls.add(mapElement);
+					mapElement.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mousePressed(MouseEvent e){
+							if(e.getButton() == MouseEvent.BUTTON1)
+							{
+								ImageIcon img = new ImageIcon("src/image/Character/2.png");
+								label_pic.setIcon(img);
+								String str[] = map[i_buffer][j_buffer].trim().split(" ");
+								//charactermapOnPage.getContainCharacters().get(Integer.parseInt(str[2]));
+							}
+						}
+					});
 					break;
 				case "I":
 					mapElement = new JLabel(i+" "+j+" "+"I");
@@ -272,6 +304,11 @@ public class WarGameStartView extends JFrame implements Observer{
 		characterViewPanel.setBounds(750, 0, 520, 540);
 		frame.getContentPane().add(characterViewPanel);
 		characterViewPanel.setLayout(null);
+		ImageIcon img = new ImageIcon("src/image/Character/1.png");
+		label_pic.setIcon(img);
+		label_pic.setBounds(210, 150, 150, 250);
+		characterViewPanel.add(label_pic);
+		characterViewPanel.setBackground(Color.red);
 		
 		JPanel inventoryViewPanel = new JPanel();
 		inventoryViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
@@ -279,6 +316,4 @@ public class WarGameStartView extends JFrame implements Observer{
 		frame.getContentPane().add(inventoryViewPanel);
 		inventoryViewPanel.setLayout(null);
 	}
-
-	public void show(){}
 }
