@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -26,31 +25,24 @@ public class WarGameMapModel extends Observable{
 	 * map name
 	 */
 	private String mapName;
-//	/**
-//	 * map's height
-//	 */
-//	public int mapHeight;
-//	/**
-//	 * map's width
-//	 */
-//	public int mapWidth;
 	/**
 	 * 2-dimension map
 	 */
 	private String map[][];
 	/**
-	 * characters on the map
+	 * enemies on the map
 	 */
-	private ArrayList<WarGameCharacterModel> containCharacters;
+	private ArrayList<WarGameCharacterModel> containEnemies;
+	/**
+	 * friends on the map
+	 */
+	private ArrayList<WarGameCharacterModel> containFriends;
 	/**
 	 * items on the map
 	 */
 	private ArrayList<WarGameItemModel> containItems;
 
 //--------------------------------------------------Methods--------------------------------------------------	
-	public WarGameMapModel(){
-		
-	}
 	/**
 	 * custom construct
 	 * @param mapName
@@ -84,13 +76,13 @@ public class WarGameMapModel extends Observable{
 		notifyObservers(this);
 	}
 	
-//	/**
-//	 * temp show map view
-//	 */
-//	public void tempDisplayMapView(){
-//		setChanged();
-//		notifyObservers(this);
-//	}
+	/**
+	 * used in controller to call the viewer
+	 */
+	public void setMapLoadView(){
+		setChanged();
+		notifyObservers(this);
+	}
 	
 	/**
 	 * @return the last key of the map in the json file
@@ -175,14 +167,6 @@ public class WarGameMapModel extends Observable{
 		this.map = map;
 	}
 
-	public ArrayList<WarGameCharacterModel> getContainCharacters() {
-		return containCharacters;
-	}
-
-	public void setContainCharacters(ArrayList<WarGameCharacterModel> containCharacters) {
-		this.containCharacters = containCharacters;
-	}
-
 	public ArrayList<WarGameItemModel> getContainItems() {
 		return containItems;
 	}
@@ -191,23 +175,25 @@ public class WarGameMapModel extends Observable{
 		this.containItems = containItems;
 	}
 
-//	public int getMapHeight() {
-//		return mapHeight;
-//	}
-//
-//	public void setMapHeight(int mapHeight) {
-//		this.mapHeight = mapHeight;
-//	}
-//
-//	public int getMapWidth() {
-//		return mapWidth;
-//	}
-//
-//	public void setMapWidth(int mapWidth) {
-//		this.mapWidth = mapWidth;
-//	}
+	public ArrayList<WarGameCharacterModel> getContainEnemies() {
+		return containEnemies;
+	}
+
+	public void setContainEnemies(ArrayList<WarGameCharacterModel> containEnemies) {
+		this.containEnemies = containEnemies;
+	}
+
+	public ArrayList<WarGameCharacterModel> getContainFriends() {
+		return containFriends;
+	}
+
+	public void setContainFriends(ArrayList<WarGameCharacterModel> containFriends) {
+		this.containFriends = containFriends;
+	}
 	
-	
-	
+	@Override
+	public String toString() {
+		return this.mapName;
+	}
 	
 }
