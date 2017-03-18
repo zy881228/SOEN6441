@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
 import warGame.Model.*;
 import warGame.View.*;
 /**
@@ -67,7 +69,7 @@ public class WarGameController extends JFrame{
 		panel_background.setBounds(0, 20, 1280, 750);
 		layeredPanel.add(panel_background, JLayeredPane.DEFAULT_LAYER);
 		
-		JLabel background = new JLabel(new ImageIcon("images/main/main.jpg"));
+		JLabel background = new JLabel(new ImageIcon("src/image/main.jpg"));
 		background.setBounds(new Rectangle(0, 0, 1000, 800));
 		panel_background.add(background);	
 		getContentPane().add(layeredPanel, BorderLayout.CENTER);
@@ -75,7 +77,7 @@ public class WarGameController extends JFrame{
 		JButton btnNewGame = new JButton("New Game");
 		btnNewGame.setBounds(255, 240, 200, 50);
 		layeredPanel.add(btnNewGame, JLayeredPane.MODAL_LAYER);
-		btnNewGame.setForeground(Color.WHITE);
+		//btnNewGame.setForeground(Color.WHITE);
 		btnNewGame.setBackground(Color.BLACK);
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -90,7 +92,7 @@ public class WarGameController extends JFrame{
 		JButton btnLoad = new JButton("Load");
 		btnLoad.setBounds(255, 300, 200, 50);
 		layeredPanel.add(btnLoad, JLayeredPane.MODAL_LAYER);
-		btnLoad.setForeground(Color.WHITE);
+		//btnLoad.setForeground(Color.WHITE);
 		btnLoad.setBackground(Color.BLACK);
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -101,7 +103,7 @@ public class WarGameController extends JFrame{
 		JButton btnExit = new JButton("Exit");
 		btnExit.setBounds(255, 360, 200, 50);
 		layeredPanel.add(btnExit, JLayeredPane.MODAL_LAYER);
-		btnExit.setForeground(Color.WHITE);
+		//btnExit.setForeground(Color.WHITE);
 		btnExit.setBackground(Color.BLACK);
 		btnExit.addActionListener(new ActionListener() {
 			@Override
@@ -160,13 +162,11 @@ public class WarGameController extends JFrame{
 					cbox_loadChar.setBounds(30, 30, 200, 30);
 					frame.add(cbox_loadChar);
 					cbox_loadChar.setEditable(false);
-					String buffer = new String();
-					File file = new File("src/file/character.txt");
-					BufferedReader BF = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
-					while((buffer = BF.readLine()) != null)
-					{
-						String str[] = buffer.trim().split(" ");
-						cbox_loadChar.addItem("Character"+str[0]);
+					Map<String, WarGameCharacterModel> mapList = characterModel.listAllCharacters();
+					for (Map.Entry<String, WarGameCharacterModel> entry : mapList.entrySet()) {
+						WarGameCharacterModel characterModel_buffer = entry.getValue();
+						String id = characterModel_buffer.getCharacterID();
+						cbox_loadChar.addItem("Character"+id);
 					}
 					JButton button_loadChar = new JButton("Load");
 					button_loadChar.setBounds(100, 80, 100, 30);
@@ -177,8 +177,9 @@ public class WarGameController extends JFrame{
 						public void actionPerformed(ActionEvent e) {
 							String charID = cbox_loadChar.getSelectedItem().toString();
 						    frame.dispose();
+						    String str[] = charID.trim().split("r");
 								try {
-									characterModel.loadChar(charID);
+									characterModel.loadCharacterJson(str[2]);
 								} catch (IOException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
