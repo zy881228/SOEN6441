@@ -45,12 +45,12 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		final ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
-		final ImageIcon door = new ImageIcon("src/image/Map/door.jpg");
-		final ImageIcon chest = new ImageIcon("src/image/Map/chest.jpg");
-		final ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-		final ImageIcon monster = new ImageIcon("src/image/Map/monster.jpg");
-		final ImageIcon hero = new ImageIcon("src/image/Map/hero.jpg");
+		final ImageIcon wall = new ImageIcon("image/Map/wall.jpg");
+		final ImageIcon door = new ImageIcon("image/Map/door.jpg");
+		final ImageIcon chest = new ImageIcon("image/Map/chest.jpg");
+		final ImageIcon floor = new ImageIcon("image/Map/floor.jpg");
+		final ImageIcon monster = new ImageIcon("image/Map/monster.jpg");
+		final ImageIcon hero = new ImageIcon("image/Map/hero.jpg");
 		
 		mapElementsLbls = new ArrayList<JLabel>();
 		element = "x";
@@ -68,7 +68,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		}
 		
 		final JFrame frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("image/Map/hero.jpg"));
 		frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
@@ -133,7 +133,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		btnCreate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<WarGameMapModel> allKeysInMap = new ArrayList<MapModel>();
+				ArrayList<WarGameMapModel> allKeysInMap = new ArrayList<WarGameMapModel>();
 				Iterator<Entry<String, WarGameMapModel>> it = mapsByMap.entrySet().iterator();
 				while (it.hasNext()) {
 					Map.Entry<String, WarGameMapModel> entry = (Map.Entry<String, WarGameMapModel>)it.next();
@@ -171,7 +171,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 							}
 						}
 					}
-					for (JLabel lbl : mapElementsLbls) {
+					for (final JLabel lbl : mapElementsLbls) {
 						final int posX;
 						final int posY;
 						String[] lblArray = lbl.getText().split(" ");
@@ -461,7 +461,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		lblFriend.setBounds(170, 330, 80, 30);
 		manipulatePanel.add(lblFriend);
 		
-		final JComboBox<CharacterModel> friendCbox = new JComboBox<CharacterModel>();
+		final JComboBox<WarGameCharacterModel> friendCbox = new JComboBox<WarGameCharacterModel>();
 		friendCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
 		friendCbox.setBounds(260, 335, 100, 21);
 		manipulatePanel.add(friendCbox);
@@ -486,7 +486,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		lblItem.setBounds(170, 290, 80, 30);
 		manipulatePanel.add(lblItem);
 		
-		final JComboBox<ItemModel> itemCbox = new JComboBox<ItemModel>();
+		final JComboBox<WarGameItemModel> itemCbox = new JComboBox<WarGameItemModel>();
 		itemCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
 		itemCbox.setBounds(260, 296, 100, 21);
 		manipulatePanel.add(itemCbox);
@@ -571,7 +571,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		lblEnemy.setBounds(170, 370, 80, 30);
 		manipulatePanel.add(lblEnemy);
 		
-		final JComboBox<CharacterModel> enemyCbox = new JComboBox<CharacterModel>();
+		final JComboBox<WarGameCharacterModel> enemyCbox = new JComboBox<WarGameCharacterModel>();
 		enemyCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
 		enemyCbox.setBounds(260, 375, 100, 21);
 		manipulatePanel.add(enemyCbox);
