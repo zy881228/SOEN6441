@@ -1,5 +1,7 @@
 package warGame.Model;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,9 +13,13 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Random;
+import java.util.Map.Entry;
+
+import javax.swing.JButton;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,23 +43,67 @@ import warGame.Builder.Character;
 
 public class WarGameCharacterModel extends Observable {
 
+	public WarGameCharacterModel(){
+		
+	}
+	public  WarGameCharacterModel(int picID,WarGameCharacterModel o){
+		this.characterID = o.getCharacterID();
+    	this.level = o.getLevel();
+    	String result[] = o.getScore(0);
+    	this.strength = Integer.parseInt(result[1]);
+    	result = o.getScore(1);
+    	this.dexterity = Integer.parseInt(result[1]);
+    	result = o.getScore(2);
+    	this.constitution = Integer.parseInt(result[1]);
+    	result = o.getScore(3);
+    	this.intelligence = Integer.parseInt(result[1]);
+    	result = o.getScore(4);
+    	this.wisdom = Integer.parseInt(result[1]);
+    	result = o.getScore(5);
+    	this.charisma = Integer.parseInt(result[1]);
+    	result = o.getScore(6);
+        this.hit_points = Integer.parseInt(result[1]);
+        result = o.getScore(7);
+        this.armor_class = Integer.parseInt(result[1]);
+        result = o.getScore(8);
+        this.attack_bonus = Integer.parseInt(result[1]);
+        result = o.getScore(10);
+        this.damage_bonus = Integer.parseInt(result[1]);
+        result = o.getScore(11);
+        this.multiple_attacks = Integer.parseInt(result[1]);
+        result = o.getScore(12);
+    	this.strength_modifier = Integer.parseInt(result[1]);
+    	result = o.getScore(13);
+    	this.dexterity_modifier = Integer.parseInt(result[1]);
+    	result = o.getScore(14);
+    	this.constitution_modifier = Integer.parseInt(result[1]);
+    	result = o.getScore(15);
+    	this.intelligence_modifier = Integer.parseInt(result[1]);
+    	result = o.getScore(16);
+    	this.wisdom_modifier = Integer.parseInt(result[1]);
+    	result = o.getScore(17);
+    	this.charisma_modifier = Integer.parseInt(result[1]);
+    	this.equip = o.getEquip();
+    	this.backpack = o.getBackpack();
+    	this.picNumber = o.getPicNumber();
+	}
+
+   
     
     /**
      * Create a new character by setting the character's level, ability scores(4d6), ability modifiers, hit points, armor class, attack bonus, damage bonus, multiple attacks, owned items.
      * <p> The ability score of the character consists of Strength, Dexterity, Constitution, Intelligence, Wisdom or Charisma that are generated randomly using the 4d6 generation method.<br/>
+     * @throws FileNotFoundException 
+     * @throws UnsupportedEncodingException 
      */
     
     
     
-	public void createCharacter(int charType) {
+	public void createCharacter(int charType) throws UnsupportedEncodingException, FileNotFoundException {
 		// TODO Auto-generated method character = new Character();
 		Random rand = new Random();
 		int a = rand.nextInt(20)+1;
 		level = a;
-		a = rand.nextInt(20)+1;
-		ability_scores = a;
-		a = rand.nextInt(20)+1;
-		ability_modifiers = a;
 		a = rand.nextInt(7)+1;
 		picNumber = a;
 		
@@ -131,11 +181,8 @@ public class WarGameCharacterModel extends Observable {
 		attack_bonus = calAttack(strength_modifier,level);
 		damage_bonus = calDamage(strength_modifier,"null");
 		multiple_attacks = getMultiple(attack_bonus);
-
+		characterID = Integer.parseInt(lastMapID())+1+"";
 		
-		//viewType = 1;
-		//setChanged();
-		//notifyObservers(this);
 	}
 	
 	/**
@@ -540,7 +587,6 @@ public class WarGameCharacterModel extends Observable {
 		}
 		
 	    level_ori = level;
-	    ability_scores_ori = ability_scores;
 	    hit_points_ori = hit_points;
 	    armor_class_ori = armor_class;
 	    attack_bonus_ori = attack_bonus;
@@ -919,7 +965,24 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		}
 	}
 	
-	public static Map<String, WarGameCharacterModel> listAllMaps() throws UnsupportedEncodingException, FileNotFoundException{
+	/**
+	 * @return the last key of the map in the json file
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public String lastMapID() throws UnsupportedEncodingException, FileNotFoundException{
+		ArrayList<String> allKeysInMap = new ArrayList<String>();
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		Iterator<Entry<String, WarGameCharacterModel>> it = mapsByMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, WarGameCharacterModel> entry = (Map.Entry<String, WarGameCharacterModel>)it.next();
+			allKeysInMap.add(entry.getKey());
+		}
+		String lastMapID = allKeysInMap.get(allKeysInMap.size()-1);
+		return lastMapID;
+	}
+	
+	public static Map<String, WarGameCharacterModel> listAllCharacters() throws UnsupportedEncodingException, FileNotFoundException{
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/characters.json"), "UTF-8");
 		Map<String, WarGameCharacterModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameCharacterModel>>(){}.getType());
@@ -927,16 +990,72 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 	}
 	
 	public Boolean saveCharJson(WarGameCharacterModel characterModel) throws IOException{
-		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllMaps();
-		mapsByMap.put("2", characterModel);
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		//Map<String, WarGameCharacterModel> mapsByMap = null;
+		mapsByMap.put(characterModel.getCharacterID(), characterModel);
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		FileWriter fw = new FileWriter("src/file/characters.json");
 		fw.write(gson.toJson(mapsByMap));
 		fw.close();
 		return true;
 	}
+	
+	/**
+	 * load the specific map by mapID
+	 * @param mapID
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public void loadCharacterJson(String characterID) throws UnsupportedEncodingException, FileNotFoundException{
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		WarGameCharacterModel characterModel = mapsByMap.get(characterID);
+		this.characterID = characterModel.getCharacterID();
+    	this.level = characterModel.getLevel();
+    	String result[] = characterModel.getScore(0);
+    	this.strength = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(1);
+    	this.dexterity = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(2);
+    	this.constitution = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(3);
+    	this.intelligence = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(4);
+    	this.wisdom = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(5);
+    	this.charisma = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(6);
+        this.hit_points = Integer.parseInt(result[1]);
+        result = characterModel.getScore(7);
+        this.armor_class = Integer.parseInt(result[1]);
+        result = characterModel.getScore(8);
+        this.attack_bonus = Integer.parseInt(result[1]);
+        result = characterModel.getScore(10);
+        this.damage_bonus = Integer.parseInt(result[1]);
+        result = characterModel.getScore(11);
+        this.multiple_attacks = Integer.parseInt(result[1]);
+        result = characterModel.getScore(12);
+    	this.strength_modifier = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(13);
+    	this.dexterity_modifier = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(14);
+    	this.constitution_modifier = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(15);
+    	this.intelligence_modifier = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(16);
+    	this.wisdom_modifier = Integer.parseInt(result[1]);
+    	result = characterModel.getScore(17);
+    	this.charisma_modifier = Integer.parseInt(result[1]);
+    	this.equip = characterModel.getEquip();
+    	this.backpack = characterModel.getBackpack();
+    	this.picNumber = characterModel.getPicNumber();
+    	viewType = 2;
+    	setChanged();
+    	notifyObservers(this);
+	}
+	
 
-/**************************added**************/
+/**************************************added*******************************************************/
 	
 	private
     
@@ -944,17 +1063,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
      *<p> level is the level of the character.<br/>
      */
 	int level;
-    
-    /**
-     *<p> ability_scores is the ability score of the character.<br/>
-     */
-    int ability_scores;
-    
-    /**
-     *<p> ability_modifiers is the ability modifier of the character.<br/>
-     */
-    int ability_modifiers;
-    
+	
     /**
      *<p> hit_points is the hit points of the character.<br/>
      */
@@ -1071,16 +1180,6 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     int charisma_modifier;
     
     /**
-     *<p> ability_scores_ori is the original ability scores value of the character.<br/>
-     */
-    int ability_scores_ori;
-    
-    /**
-     *<p> ability_modifiers_ori is the original ability modifiers value of the character.<br/>
-     */
-    int ability_modifiers_ori;
-    
-    /**
      *<p> hit_points_ori is the original hit points value of the character.<br/>
      */
     int hit_points_ori;
@@ -1148,54 +1247,6 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	return level;
     }
     
-    /**
-     * <p>get the ability score of the character<br/>
-     */
-    public int getAbility_scores(){
-    	return ability_scores;
-    }
-    
-    /**
-     * <p>get the ability modifiers of the character<br/>
-     */
-    public int getAbility_modifiers(){
-    	return ability_modifiers;
-    }
-    
-    /**
-     * <p>get the hit points of the character<br/>
-     */
-    public int getHit_points(){
-    	return hit_points;
-    }
-    
-    /**
-     * <p>get the armor class of the character<br/>
-     */
-    public int getArmor_class(){
-    	return armor_class;
-    }
-    
-    /**
-     * <p>get the attack bonus of the character<br/>
-     */
-    public int getAttack_bonus(){
-    	return attack_bonus;
-    }
-    
-    /**
-     * <p>get the damage bonus of the character<br/>
-     */
-    public int getDamage_bonus(){
-    	return damage_bonus;
-    }
-    
-    /**
-     * <p>get the multiple attacks of the character<br/>
-     */
-    public int getMultiple_attacks(){
-    	return multiple_attacks;
-    }
     
     /**
      * <p>get the original level of the character<br/>
@@ -1204,19 +1255,6 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	return level_ori;
     }
     
-    /**
-     * <p>get the original ability score of the character<br/>
-     */
-    public int getAbility_scoresOri(){
-    	return ability_scores_ori;
-    }
-    
-    /**
-     * <p>get the original ability modifiers of the character<br/>
-     */
-    public int getAbility_modifiersOri(){
-    	return ability_modifiers_ori;
-    }
     
     /**
      * <p>get the original hit points of the character<br/>
@@ -1477,3 +1515,4 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     
    
 }
+
