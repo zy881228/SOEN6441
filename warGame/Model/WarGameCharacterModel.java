@@ -5,16 +5,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Random;
 
-import warGame.Builder.BullyCharacterBuilder;
-import warGame.Builder.Explorer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import warGame.Builder.*;
 import warGame.Builder.Character;
 
@@ -913,6 +917,23 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			}
 			count++;
 		}
+	}
+	
+	public static Map<String, WarGameCharacterModel> listAllMaps() throws UnsupportedEncodingException, FileNotFoundException{
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/characters.json"), "UTF-8");
+		Map<String, WarGameCharacterModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameCharacterModel>>(){}.getType());
+		return mapsByMap;
+	}
+	
+	public Boolean saveCharJson(WarGameCharacterModel characterModel) throws IOException{
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllMaps();
+		mapsByMap.put("2", characterModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/characters.json");
+		fw.write(gson.toJson(mapsByMap));
+		fw.close();
+		return true;
 	}
 
 /**************************added**************/
