@@ -37,6 +37,8 @@ import javax.swing.JTextField;
 
 
 
+
+
 /**
  * This viewer allow users to manipulate the character information in GUI
  * @version build 1
@@ -51,6 +53,7 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	int picNumber_buffer;
 	JLabel label_showScore[] = new JLabel[12];
 	JLabel charpic = new JLabel();
+	WarGameCharacterModel characterModel;
 	//backpack = Arrays.copyOf(((WarGameCharacterModel) o).getBackpack(),10);
     
     /**
@@ -192,7 +195,8 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	          				message = message+" "+backpackID[i];
 	          			}
 	          			message = message+" "+picNumber_buffer+"\r\n";
-						Boolean result = ((WarGameCharacterModel) o).saveChar(message);
+						//Boolean result = ((WarGameCharacterModel) o).saveChar(message);
+	          			Boolean result = ((WarGameCharacterModel) o).saveCharJson(characterModel);
 						if(result == true)
 						{
 							JOptionPane.showMessageDialog(null, "Save Success!");
