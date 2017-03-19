@@ -213,7 +213,7 @@ public class WarGameCharacterModel extends Observable {
     
     /**
      * Calculate the armor class.
-     * @param dex_modifier the midifier value of the dexterity
+     * @param dex_modifier the modifier value of the dexterity
      * @param armor_item the sum of the items with armor class
      * @return
      */
@@ -236,7 +236,7 @@ public class WarGameCharacterModel extends Observable {
     
     /**
      * Calculate the damage bonus.
-     * @param stren_modifier the midifier value of the strength
+     * @param stren_modifier the modifier value of the strength
      * @return
      */
     
@@ -289,7 +289,7 @@ public class WarGameCharacterModel extends Observable {
 	}
     
     /**
-     * Roll foue six-sided dice and sum the biggest three number.
+     * Roll six-sided dice fore times and sum the four number.
      * @return
      */
     
@@ -1205,12 +1205,12 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     int multiple_attacks; //
     
     /**
-     *<p> viewType is the type of the view of diifferent operations.<br/>
+     *<p> viewType is the type of the view of different operations.<br/>
      */
     int viewType = 0;//view type
     
     /**
-     *<p> picNumber is the ID numeber of the picture.<br/>
+     *<p> picNumber is the ID number of the picture.<br/>
      */
     int picNumber;
     
