@@ -40,13 +40,12 @@ public class WarGameCampaignCreationView extends JFrame implements Observer{
 			e.printStackTrace();
 		}
 		
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
 		frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
-		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		frame.setTitle("Campaigns");
 		frame.setSize(500, 600);
 		mapsLbls = new ArrayList<JLabel>();
@@ -174,7 +173,8 @@ public class WarGameCampaignCreationView extends JFrame implements Observer{
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
+				JOptionPane.showMessageDialog(null, "Save successfully");
+				frame.dispose();
 			}
 		});
 	
