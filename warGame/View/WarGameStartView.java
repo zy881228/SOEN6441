@@ -20,6 +20,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -41,6 +42,7 @@ public class WarGameStartView extends JFrame implements Observer{
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
 	WarGameCharacterModel characterModel = new WarGameCharacterModel();
+	WarGameItemModel itemModel = new WarGameItemModel();
 	@Override
 	public void update(final Observable o, Object arg) {
 		ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
@@ -109,10 +111,39 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY][posX-1] = "h";
 					}else if(leftPos[2].equals("m")){
-						
-					}else if(leftPos[2].equals("I")){
-						
-					}else if(leftPos[2].equals("O")){
+						String str[] = map[posY][posX-1].trim().split(" ");
+						WarGameCharacterModel characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+						if(leftPos[3].equals("alive"))
+						{
+							JOptionPane.showMessageDialog(null, "Monster Dead!");
+							mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
+						}
+						if(leftPos[3].equals("dead"))
+						{
+							getAllItem(characterModel);
+						}
+					}else if(leftPos[2].equals("i")){
+						String str[] = map[posY][posX-1].trim().split(" ");
+						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+						String itemType = itemModel.getItemType();
+						String enchanType = itemModel.getEnchanType();
+						String enchanNum = itemModel.getEnchanNumber();
+						for(int i =0;i<10;i++)
+						{
+							if((backpack[i] == null)||(backpack[i].equals("null")))
+							{
+								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+								label_backpack[i].setIcon(img_item);
+								map[posY][posX-1] = "f";
+								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"f");
+								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+								mapElementsLbls.get(index-1).setIcon(floor);
+								break;
+							}
+						}
+												
+					}else if(leftPos[2].equals("o")){
 					
 					}else if(leftPos[2].equals("c")){
 						
@@ -149,7 +180,26 @@ public class WarGameStartView extends JFrame implements Observer{
 	//					}	
 					}else if(rightPos[2].equals("m")){
 						
-					}else if(rightPos[2].equals("I")){
+					}else if(rightPos[2].equals("i")){
+						String str[] = map[posY][posX+1].trim().split(" ");
+						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+						String itemType = itemModel.getItemType();
+						String enchanType = itemModel.getEnchanType();
+						String enchanNum = itemModel.getEnchanNumber();
+						for(int i =0;i<10;i++)
+						{
+							if((backpack[i] == null)||(backpack[i].equals("null")))
+							{
+								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+								label_backpack[i].setIcon(img_item);
+								map[posY][posX+1] = "f";
+								mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"f");
+								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+								mapElementsLbls.get(index+1).setIcon(floor);
+								break;
+							}
+						}
 						
 					}else if(rightPos[2].equals("O")){
 						
@@ -184,7 +234,26 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY-1][posX] = "h";
 					}else if(upPos[2].equals("m")){
 						
-					}else if(upPos[2].equals("I")){
+					}else if(upPos[2].equals("i")){
+						String str[] = map[posY-1][posX].trim().split(" ");
+						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+						String itemType = itemModel.getItemType();
+						String enchanType = itemModel.getEnchanType();
+						String enchanNum = itemModel.getEnchanNumber();
+						for(int i =0;i<10;i++)
+						{
+							if((backpack[i] == null)||(backpack[i].equals("null")))
+							{
+								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+								label_backpack[i].setIcon(img_item);
+								map[posY-1][posX] = "f";
+								mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"f");
+								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+								mapElementsLbls.get(index-(map[0].length)).setIcon(floor);
+								break;
+							}
+						}
 						
 					}else if(upPos[2].equals("O")){
 						
@@ -219,9 +288,28 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY+1][posX] = "h";		
 					}else if(downPos[2].equals("m")){
 						
-					}else if(downPos[2].equals("I")){
+					}else if(downPos[2].equals("i")){
+						String str[] = map[posY+1][posX].trim().split(" ");
+						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+						String itemType = itemModel.getItemType();
+						String enchanType = itemModel.getEnchanType();
+						String enchanNum = itemModel.getEnchanNumber();
+						for(int i =0;i<10;i++)
+						{
+							if((backpack[i] == null)||(backpack[i].equals("null")))
+							{
+								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+								label_backpack[i].setIcon(img_item);
+								map[posY+1][posX] = "f";
+								mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"f");
+								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+								mapElementsLbls.get(index+(map[0].length)).setIcon(floor);
+								break;
+							}
+						}
 						
-					}else if(downPos[2].equals("O")){
+					}else if(downPos[2].equals("o")){
 						
 					}else if(downPos[2].equals("c")){
 						
@@ -263,7 +351,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					});
 					break;
 				case "m":
-					mapElement = new JLabel(i+" "+j+" "+"m");
+					mapElement = new JLabel(i+" "+j+" "+"m alive");
 					mapElement.setIcon(monster);
 					mapElementsLbls.add(mapElement);
 					mapElement.addMouseListener(new MouseAdapter() {
@@ -272,7 +360,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							if(e.getButton() == MouseEvent.BUTTON1)
 							{
 								String str[] = map[i_buffer][j_buffer].trim().split(" ");
-								characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+								WarGameCharacterModel characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
 								createCharacterView(characterModel);
 							}
 						}
@@ -303,7 +391,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							if(e.getButton() == MouseEvent.BUTTON1)
 							{
 								String str[] = map[i_buffer][j_buffer].trim().split(" ");
-								characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+								WarGameCharacterModel characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
 								createCharacterView(characterModel);
 							}
 						}
@@ -628,4 +716,50 @@ public class WarGameStartView extends JFrame implements Observer{
 			}
 		}
 	}
+	public void getAllItem(WarGameCharacterModel characterModel)
+	{
+		String equip[] = characterModel.getEquip();
+		String backpack[] = characterModel.getBackpack();
+		int count = 0;
+		
+		JFrame frame = new JFrame("Loot");
+		frame.setBounds(300, 0, 220, 400);
+		frame.setVisible(true);
+		frame.setLayout(null);
+		
+		for(int i=0;i<7;i++)
+		{
+			if(!equip[i].equals("null"))
+			{
+				String str[] = equip[i].trim().split(" ");
+				JLabel label_pic = new JLabel();
+				JLabel label_text = new JLabel(str[0]+" "+str[1]+" "+str[2]);
+				ImageIcon img_item = new ImageIcon("src/image/item/"+str[0]+"/"+str[1]+".jpeg");
+				label_pic.setIcon(img_item);
+				label_pic.setBounds(0, count*66, 66, 66);
+				label_text.setBounds(70,count*66,150,66);
+				frame.add(label_pic);
+				frame.add(label_text);
+				count++;
+			}
+		}
+		for(int i=0;i<10;i++)
+		{
+			if(!backpack[i].equals("null"))
+			{
+				String str[] = backpack[i].trim().split(" ");
+				JLabel label_pic = new JLabel();
+				JLabel label_text = new JLabel(str[0]+" "+str[1]+" "+str[2]);
+				ImageIcon img_item = new ImageIcon("src/image/item/"+str[0]+"/"+str[1]+".jpeg");
+				label_pic.setIcon(img_item);
+				label_pic.setBounds(0, count*66, 66, 66);
+				label_text.setBounds(70,count*66,150,66);
+				frame.add(label_pic);
+				frame.add(label_text);
+				count++;
+			}
+		}
+	}
+	
+	
 }
