@@ -1,252 +1,149 @@
 package warGame.Model;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Observable;
+import java.util.Map.Entry;
 
-
-/**
- * This class is a campaign model contains methods that allows user to :
- * <p>Create a new campaign<br/>
- * <p>Set the order of the campaign<br/>
- * <p>Edit the order of the campaign<br/>
- * @version build 1
- */
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 public class WarGameCampaignModel extends Observable{
+//--------------------------------------------------Attributes--------------------------------------------------	
+	/**
+	 * unique campaignID
+	 */
+	private String campaignID;
+	/**
+	 * campaign name
+	 */
+	private String campaignName;
+	/**
+	 * contains map
+	 */
+	private ArrayList<String> mapLists;
 
-	private ArrayList<String> mapFileName = new ArrayList<String>();
-	private String errorMsg = new String();
 	
-    
-    /**
-     * Create a new campaign.
-     * <p> The sequence of the campaign.<br/>
-     */
-	public void createCampaign(){
-		campaignList.clear();
-		viewType = 1;
+//--------------------------------------------------Methods--------------------------------------------------	
+	
+	/**
+	 * default construct
+	 */
+	public WarGameCampaignModel(){}
+	/**
+	 * custom construct
+	 * @param campaignName
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 * @throws NumberFormatException 
+	 */
+	public WarGameCampaignModel(String campaignName) throws NumberFormatException, UnsupportedEncodingException, FileNotFoundException{
+		this.campaignID = Integer.parseInt(this.lastCampaignID())+1+"";
+		this.campaignName = campaignName;
+	}
+	
+	/**
+	 * used in controller to call the viewer
+	 */
+	public void setCampaignCreationView(){
 		setChanged();
 		notifyObservers(this);
 	}
-    
-    /**
-     * <p>save the campaign<br/>
-     * @param newCampaignID the ID number of the new campaign
-     * @param newCampaignSeq the sequence of the new campaign
-     * @throws IOException
-     * @return
-     */
-    
-	public Boolean saveCampaign(int newCampaignID,ArrayList<String> newCampaignSeq) throws IOException{
-		String message = new String();
-		for (String str : newCampaignSeq) {
-			message = message+" "+str;
-		}
-		message = newCampaignID+message+"\r\n";
-		File logFile = new File("src/file/campaign.txt");
-		FileOutputStream os;
-	    os = new FileOutputStream(logFile,true);
-        os.write(message.getBytes());
-	    os.close();
-		return true;
-	}
-    
-    /**
-     * <p>load the campaign<br/>
-     * @param newCampaignID the ID number of the new campaign
-     * @throws IOException
-     * @return
-     */
-    
-	public void loadCampaign(String newCampaignID) throws IOException{
-		campaignList.clear();
-		String buffer = new String();
-		String campaignID_buffer[] = newCampaignID.trim().split("n");
-		File file = new File("src/file/campaign.txt");
-		BufferedReader BF = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
-		while((buffer = BF.readLine()) != null)
-		{
-			String str[] = buffer.trim().split(" ");
-			if(str[0].equals(campaignID_buffer[1]))
-			{
-				campaignID = str[0];
-				for(int i=1;i<str.length;i++)
-				{
-					campaignList.add(str[i]);
-				}
-			}
-			
-		}
-		viewType = 2;
+	
+	/**
+	 * used in controller to call the viewer
+	 */
+	public void setCampaignLoadView(){
 		setChanged();
 		notifyObservers(this);
 	}
-    
-    /**
-     * <p>load the campaign list<br/>
-     */
-
-	public void loadCampaignList(){
-		viewType = 3;
-		setChanged();
-		notifyObservers(this);
-	}
-    
-    /**
-     * <p>edit the campaign<br/>
-     * @param newID the ID number of the new campaign
-     * @param newCampaignList the list of the new campaign
-     * @throws IOException
-     * @return
-     */
-    
-	public Boolean editCampaign(String newID,ArrayList<String> newCampaignList) throws IOException{
-		String message = new String();
-		String buffer = new String();
-		ArrayList <String> messageList = new ArrayList();
-		File file = new File("src/file/campaign.txt");
-		BufferedReader BF = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
-		while((buffer = BF.readLine()) != null)
-		{
-			String str[] = buffer.trim().split(" ");
-			if(str[0].equals(newID))
-			{
-				message = new String();
-				for (String str_buffer : newCampaignList) {
-					message = message + str_buffer+" ";
-				}
-				message = newID + " "+message+"\r\n";
-				messageList.add(message);
-			}
-			else
-			{
-				message = new String();
-				for(int i=0;i<str.length;i++)
-				{
-					message = message + str[i]+" ";
-				}
-				message = message + "\r\n";
-				messageList.add(message);
-			}
+	
+	/**
+	 * @return the last key of the campaign in the json file
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public String lastCampaignID() throws UnsupportedEncodingException, FileNotFoundException{
+		ArrayList<String> allKeysInMap = new ArrayList<String>();
+		Map<String, WarGameCampaignModel> campaignsByMap = WarGameCampaignModel.listAllCampaigns();
+		Iterator<Entry<String, WarGameCampaignModel>> it = campaignsByMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, WarGameCampaignModel> entry = (Map.Entry<String, WarGameCampaignModel>)it.next();
+			allKeysInMap.add(entry.getKey());
 		}
-		file.delete();
-		file = new File("src/file/campaign.txt");
-		FileOutputStream os;
-		os = new FileOutputStream(file,true);
-		for(int i=0;i<messageList.size();i++)
-		{
-			os.write(messageList.get(i).getBytes());
-		}
-		os.close();
-		return true;
-	}
-    
-    
-    /**
-     * <p>get all the campaign<br/>
-     * @throws IOException
-     * @return
-     */
-    
-	public int getTotalNum() throws IOException{
-		String buffer = new String();
-		int count = 0;
-		File file = new File("src/file/campaign.txt");
-		BufferedReader BF = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
-		while((buffer = BF.readLine()) != null)
-		{
-			count++;
-		}
-		return count;
-	}
-    
-    
-    /**
-     * <p>list all the campaign<br/>
-     */
-    
-	public void listing(){
-		this.mapFileName = new ArrayList<String>();
-		String path = "src/file/map/";
-		File file = new File(path);
-		File[] fileArray = file.listFiles();
-		for(int i=0;i<fileArray.length;i++){ 
-			if(fileArray[i].isFile()){
-				this.mapFileName.add(fileArray[i].getName());
-			}else{
-				this.errorMsg = "No map files.";
-			}
-		}
-//		for (String tempMapFileName : this.mapFileName) {
-//			System.out.println(tempMapFileName);
-//		}		
-//		viewModel = 4;
-//		setChanged();
-//		notifyObservers(this);
+		String lastCampaignID = allKeysInMap.get(allKeysInMap.size()-1);
+		return lastCampaignID;
 	}
 	
-	public ArrayList<String> getMapFileName (){
-		return this.mapFileName;
+	/**
+	 * list all the campaigns from the map file
+	 * @return a campaign
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public static Map<String, WarGameCampaignModel> listAllCampaigns() throws UnsupportedEncodingException, FileNotFoundException{
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/campaigns.json"), "UTF-8");
+		Map<String, WarGameCampaignModel> campaignsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameCampaignModel>>(){}.getType());
+		return campaignsByMap;
 	}
-/*************************************added************************************/
-	private
-    
-    /**
-     *<p> campaignSe is the sequence of the campaign.<br/>
-     */
-    
-	String campaignSe[];
-    
-    /**
-     *<p> campaignID is the ID number of the campaign.<br/>
-     */
-	String campaignID;
-    
-    /**
-     *<p> viewType is the type of the view of diifferent operations.<br/>
-     */
-	int viewType = 0;
-    
-    /**
-     *<p> create a new arraylist to store the campaign list.<br/>
-     */
-	ArrayList<String> campaignList = new ArrayList();
 	
-    /**
-     *<p> get the campaign sequence<br/>
-     */
-    
-	public String[] getCampaignSe(){
-		return campaignSe;
+	/**
+	 * save the campaign into the campaign file
+	 * @param campaignModel
+	 * @throws IOException 
+	 */
+	public void saveCampaign(WarGameCampaignModel campaignModel) throws IOException{
+		Map<String, WarGameCampaignModel> campaignsByMap = WarGameCampaignModel.listAllCampaigns();
+		campaignsByMap.put(campaignModel.getCampaignID(), campaignModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/campaigns.json");
+		fw.write(gson.toJson(campaignsByMap));
+		fw.close();
 	}
-    
-    /**
-     *<p> get the campaign ID number<br/>
-     */
-    
-	public String getCampaignID(){
+	
+	/**
+	 * load the specific campaign by campaignID
+	 * @param campaignID
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public WarGameCampaignModel loadCampaign(String campaignID) throws UnsupportedEncodingException, FileNotFoundException{
+		Map<String, WarGameCampaignModel> campaignsByMap = WarGameCampaignModel.listAllCampaigns();
+		WarGameCampaignModel campaignModel = campaignsByMap.get(campaignID);
+		return campaignModel;
+	}
+	
+//--------------------------------------------------Getters/Setters--------------------------------------------------	
+	public String getCampaignID() {
 		return campaignID;
 	}
-    
-    /**
-     *<p> get the view of the operation<br/>
-     */
-    
-    public int getViewType(){
-		return viewType;
+	public void setCampaignID(String campaignID) {
+		this.campaignID = campaignID;
 	}
-    
-    /**
-     *<p> get the campaign list<br/>
-     */
-    
-	public ArrayList<String> getCampaignList(){
-		return campaignList;
+	public String getCampaignName() {
+		return campaignName;
+	}
+	public void setCampaignName(String campaignName) {
+		this.campaignName = campaignName;
+	}
+	public ArrayList<String> getMapLists() {
+		return mapLists;
+	}
+	public void setMapLists(ArrayList<String> mapLists) {
+		this.mapLists = mapLists;
+	}
+	@Override
+	public String toString() {
+		return this.campaignName;
 	}
 }
