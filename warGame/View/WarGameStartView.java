@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -41,6 +42,8 @@ public class WarGameStartView extends JFrame implements Observer{
 	JLabel label_showScore[] = new JLabel[12];
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
+	String backpack_npc[] = new String[10];
+	String equip_npc[] = new String[7];
 	WarGameCharacterModel characterModel = new WarGameCharacterModel();
 	WarGameCharacterModel nonePlayerModel = new WarGameCharacterModel();
 	WarGameItemModel itemModel = new WarGameItemModel();
@@ -147,8 +150,11 @@ public class WarGameStartView extends JFrame implements Observer{
 												
 					}else if(leftPos[2].equals("o")){
 					
-					}else if(leftPos[2].equals("c")){
-						
+					}else if(leftPos[2].equals("n")){
+						String str[] = map[posY][posX-1].trim().split(" ");
+						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+						switchItem();
+						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 					
 				}
@@ -216,8 +222,11 @@ public class WarGameStartView extends JFrame implements Observer{
 						
 					}else if(rightPos[2].equals("O")){
 						
-					}else if(rightPos[2].equals("c")){
-						
+					}else if(rightPos[2].equals("n")){
+						String str[] = map[posY][posX+1].trim().split(" ");
+						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+						switchItem();
+						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_UP){
@@ -281,8 +290,11 @@ public class WarGameStartView extends JFrame implements Observer{
 						
 					}else if(upPos[2].equals("O")){
 						
-					}else if(upPos[2].equals("c")){
-					
+					}else if(upPos[2].equals("n")){
+						String str[] = map[posY-1][posX].trim().split(" ");
+						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+						switchItem();
+						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
@@ -346,8 +358,11 @@ public class WarGameStartView extends JFrame implements Observer{
 						
 					}else if(downPos[2].equals("o")){
 						
-					}else if(downPos[2].equals("c")){
-						
+					}else if(downPos[2].equals("n")){
+						String str[] = map[posY+1][posX].trim().split(" ");
+						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+						switchItem();
+						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
 			}
@@ -852,6 +867,292 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 				});
 				count++;
+			}
+		}
+	}
+	
+	public void switchItem(){
+		JFrame frame = new JFrame("Switch Item");
+		frame.setBounds(300, 0, 800, 700);
+		frame.setVisible(true);
+		frame.setLayout(null);
+		final JLabel label_equip[] = new JLabel[7];
+		final JLabel label_backpack[] = new JLabel[10];
+		//String backpackLocal[] = new String[10];
+		//String equipLocal[] = new String[7];
+		final JLabel label_equip_npc[] = new JLabel[7];
+		final JLabel label_backpack_npc[] = new JLabel[10];
+		//String backpackLocal_npc[] = new String[10];
+		//String equipLocal_npc[] = new String[7];
+		
+		equip = characterModel.getEquip();
+		backpack = characterModel.getBackpack();
+		equip_npc = nonePlayerModel.getEquip();
+		backpack_npc = nonePlayerModel.getBackpack();
+		for(int i=0;i<7;i++)
+		{
+			final int event_i = i;
+			label_equip[i] = new JLabel();
+			frame.add(label_equip[i]);
+			label_equip[i].setBounds(100, i*70+100, 66, 66);
+			label_equip[i].setOpaque(true);
+			if(equip[i].equals("null"))
+			{
+				label_equip[i].setBackground(Color.GRAY);
+			}
+			else
+			{
+				String prefix[] = equip[i].trim().split(" ");
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_equip[i].setIcon(img_item);
+			}
+			label_equip[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					
+					if(e.getButton() == MouseEvent.BUTTON1)
+					{
+						if(!equip[event_i].equals("null"))
+						{
+							ArrayList<String> allItem = new ArrayList();
+							for(int i=0;i<7;i++)
+							{
+								if(!equip_npc[i].equals("null"))
+								{
+									allItem.add("equip"+" "+i);
+								}
+							}
+							for(int i=0;i<10;i++)
+							{
+								if(!backpack_npc[i].equals("null"))
+								{
+									allItem.add("backpack"+" "+i);
+								}
+							}
+							Random rand = new Random();
+							int a = rand.nextInt(allItem.size()-1)+0;
+							String switchItem[] = allItem.get(a).trim().split(" ");
+							if(switchItem[0].equals("equip"))
+							{
+								String player = equip_npc[Integer.parseInt(switchItem[1])];
+								String npc = equip[event_i];
+								Icon buffer = new ImageIcon();
+								buffer = label_equip[event_i].getIcon();
+								equip_npc[Integer.parseInt(switchItem[1])] = "null";
+								equip[event_i] = "null";
+								for(int i=0;i<10;i++)
+								{
+									if(backpack[i].equals("null"))
+									{
+										backpack[i] = player;
+										label_backpack[i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
+										break;
+									}
+								}
+								for(int i=0;i<10;i++)
+								{
+									if(backpack_npc[i].equals("null"))
+									{
+										backpack_npc[i] = npc;
+										label_backpack_npc[i].setIcon(buffer);
+										break;
+									}
+								}
+								label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
+								label_equip[event_i].setIcon(null);
+								label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
+								label_equip[event_i].setBackground(Color.gray);
+							}
+							if(switchItem[0].equals("backpack"))
+							{
+								String player = backpack_npc[Integer.parseInt(switchItem[1])];
+								String npc = equip[event_i];
+								Icon buffer = new ImageIcon();
+								buffer = label_equip[event_i].getIcon();
+								backpack_npc[Integer.parseInt(switchItem[1])] = "null";
+								equip[event_i] = "null";
+								for(int i=0;i<10;i++)
+								{
+									if(backpack[i].equals("null"))
+									{
+										backpack[i] = player;
+										label_backpack[i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
+										break;
+									}
+								}
+								backpack_npc[Integer.parseInt(switchItem[1])] = npc;
+								label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
+								label_equip[event_i].setIcon(null);
+								label_equip[event_i].setBackground(Color.gray);
+							}
+							refreshInventory();
+						}
+					}
+				}
+			});
+			//npc view
+			label_equip_npc[i] = new JLabel();
+			frame.add(label_equip_npc[i]);
+			label_equip_npc[i].setBounds(630, i*70+100, 66, 66);
+			label_equip_npc[i].setOpaque(true);
+			if(equip_npc[i].equals("null"))
+			{
+				label_equip_npc[i].setBackground(Color.GRAY);
+			}
+			else
+			{
+				String prefix[] = equip[i].trim().split(" ");
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_equip_npc[i].setIcon(img_item);
+			}
+		}
+		for(int i=0;i<10;i++)
+		{
+			final int event_i = i;
+			label_backpack[i] = new JLabel();
+			label_backpack[i].setOpaque(true);
+			frame.add(label_backpack[i]);
+			if(i<5)
+			{
+				label_backpack[i].setBounds(170, i*70+185, 66, 66);
+			}
+			if(i>4)
+			{
+				label_backpack[i].setBounds(240, i*70-165, 66, 66);
+			}
+			if(backpack[i].equals("null"))
+			{
+				label_backpack[i].setBackground(Color.BLACK);
+			}
+			else
+			{
+				String prefix[] = backpack[i].trim().split(" ");
+				String itemName = prefix[0]+prefix[1];
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_backpack[i].setIcon(img_item);
+			}
+			label_backpack[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					
+					if(e.getButton() == MouseEvent.BUTTON1)
+					{
+						if(!backpack[event_i].equals("null"))
+						{
+							ArrayList<String> allItem = new ArrayList();
+							for(int i=0;i<7;i++)
+							{
+								if(!equip_npc[i].equals("null"))
+								{
+									allItem.add("equip"+" "+i);
+								}
+							}
+							for(int i=0;i<10;i++)
+							{
+								if(!backpack_npc[i].equals("null"))
+								{
+									allItem.add("backpack"+" "+i);
+								}
+							}
+							Random rand = new Random();
+							int a = rand.nextInt(allItem.size())+0;
+							String switchItem[] = allItem.get(a).trim().split(" ");
+							if(switchItem[0].equals("equip"))
+							{
+								String player = equip_npc[Integer.parseInt(switchItem[1])];
+								String npc = backpack[event_i];
+								Icon buffer = new ImageIcon();
+								buffer = label_backpack[event_i].getIcon();
+								equip_npc[Integer.parseInt(switchItem[1])] = "null";
+								backpack[event_i] = "null";
+								backpack[event_i] = player;
+								label_backpack[event_i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
+								for(int i=0;i<10;i++)
+								{
+									if(backpack_npc[i].equals("null"))
+									{
+										backpack_npc[i] = npc;
+										label_backpack_npc[i].setIcon(buffer);
+										break;
+									}
+								}
+								label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
+								label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
+							}
+							if(switchItem[0].equals("backpack"))
+							{
+								String player = backpack_npc[Integer.parseInt(switchItem[1])];
+								String npc = backpack[event_i];
+								Icon buffer = new ImageIcon();
+								backpack_npc[Integer.parseInt(switchItem[1])] = "null";
+								backpack[event_i] = "null";
+								buffer = label_backpack[event_i].getIcon();
+								backpack[event_i] = player;
+								label_backpack[event_i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
+								backpack_npc[Integer.parseInt(switchItem[1])] = npc;
+								label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
+							}
+							refreshInventory();
+						}
+					}
+				}
+			});
+			
+			//npc view
+			label_backpack_npc[i] = new JLabel();
+			label_backpack_npc[i].setOpaque(true);
+			frame.add(label_backpack_npc[i]);
+			if(i<5)
+			{
+				label_backpack_npc[i].setBounds(560, i*70+185, 66, 66);
+			}
+			if(i>4)
+			{
+				label_backpack_npc[i].setBounds(490, i*70-165, 66, 66);
+			}
+			if(backpack_npc[i].equals("null"))
+			{
+				label_backpack_npc[i].setBackground(Color.BLACK);
+			}
+			else
+			{
+				String prefix[] = backpack_npc[i].trim().split(" ");
+				String itemName = prefix[0]+prefix[1];
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_backpack_npc[i].setIcon(img_item);
+			}
+		}
+	}
+	
+	public void refreshInventory(){
+		for(int i=0;i<7;i++)
+		{
+			if(equip[i].equals("null"))
+			{
+				label_equip[i].setIcon(null);
+				label_equip[i].setBackground(Color.gray);
+			}
+			else
+			{
+				String prefix[] = equip[i].trim().split(" ");
+				//String itemName = prefix[0]+prefix[1];
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_equip[i].setIcon(img_item);
+			}
+		}
+		for(int i=0;i<10;i++)
+		{
+			if(backpack[i].equals("null"))
+			{
+				label_backpack[i].setIcon(null);
+				label_backpack[i].setBackground(Color.black);
+			}
+			else
+			{
+				String prefix[] = backpack[i].trim().split(" ");
+				//String itemName = prefix[0]+prefix[1];
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_backpack[i].setIcon(img_item);
 			}
 		}
 	}
