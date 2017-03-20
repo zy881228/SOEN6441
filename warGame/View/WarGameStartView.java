@@ -68,8 +68,16 @@ public class WarGameStartView extends JFrame implements Observer{
 		
 		try {
 			mapsByMap = WarGameMapModel.listAllMaps();
+			if(!((WarGameStartModel) o).getMapID().equals("null"))
+			{
+				mapOnPage = mapsByMap.get(((WarGameStartModel) o).getMapID());
+				characterModel = ((WarGameStartModel) o).getCharacterModel();
+			}
+			else{
 			mapOnPage = mapsByMap.get("8");
 			characterModel = characterModel.listAllCharacters().get("7");
+			}
+			
 		} catch (UnsupportedEncodingException | FileNotFoundException e2) {
 			e2.printStackTrace();
 		}
@@ -289,6 +297,9 @@ public class WarGameStartView extends JFrame implements Observer{
 						}
 						
 					}else if(upPos[2].equals("O")){
+						((WarGameStartModel) o).setMapID("6");
+						((WarGameStartModel) o).setCharacterModel(characterModel);
+						((WarGameStartModel) o).DisplayMapView();
 						
 					}else if(upPos[2].equals("n")){
 						String str[] = map[posY-1][posX].trim().split(" ");
@@ -356,8 +367,11 @@ public class WarGameStartView extends JFrame implements Observer{
 							}
 						}
 						
-					}else if(downPos[2].equals("o")){
-						
+					}else if(downPos[2].equals("O")){
+						((WarGameStartModel) o).setMapID("6");
+						((WarGameStartModel) o).setCharacterModel(characterModel);
+						((WarGameStartModel) o).DisplayMapView();
+						frame.dispose();
 					}else if(downPos[2].equals("n")){
 						String str[] = map[posY+1][posX].trim().split(" ");
 						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
@@ -929,63 +943,66 @@ public class WarGameStartView extends JFrame implements Observer{
 									allItem.add("backpack"+" "+i);
 								}
 							}
-							Random rand = new Random();
-							int a = rand.nextInt(allItem.size()-1)+0;
-							String switchItem[] = allItem.get(a).trim().split(" ");
-							if(switchItem[0].equals("equip"))
+							if(allItem.size() != 0)
 							{
-								String player = equip_npc[Integer.parseInt(switchItem[1])];
-								String npc = equip[event_i];
-								Icon buffer = new ImageIcon();
-								buffer = label_equip[event_i].getIcon();
-								equip_npc[Integer.parseInt(switchItem[1])] = "null";
-								equip[event_i] = "null";
-								for(int i=0;i<10;i++)
+								Random rand = new Random();
+								int a = rand.nextInt(allItem.size())+0;
+								String switchItem[] = allItem.get(a).trim().split(" ");
+								if(switchItem[0].equals("equip"))
 								{
-									if(backpack[i].equals("null"))
+									String player = equip_npc[Integer.parseInt(switchItem[1])];
+									String npc = equip[event_i];
+									Icon buffer = new ImageIcon();
+									buffer = label_equip[event_i].getIcon();
+									equip_npc[Integer.parseInt(switchItem[1])] = "null";
+									equip[event_i] = "null";
+									for(int i=0;i<10;i++)
 									{
-										backpack[i] = player;
-										label_backpack[i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
-										break;
+										if(backpack[i].equals("null"))
+										{
+											backpack[i] = player;
+											label_backpack[i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
+											break;
+										}
 									}
+									for(int i=0;i<10;i++)
+									{
+										if(backpack_npc[i].equals("null"))
+										{
+											backpack_npc[i] = npc;
+											label_backpack_npc[i].setIcon(buffer);
+											break;
+										}
+									}
+									label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
+									label_equip[event_i].setIcon(null);
+									label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
+									label_equip[event_i].setBackground(Color.gray);
 								}
-								for(int i=0;i<10;i++)
+								if(switchItem[0].equals("backpack"))
 								{
-									if(backpack_npc[i].equals("null"))
+									String player = backpack_npc[Integer.parseInt(switchItem[1])];
+									String npc = equip[event_i];
+									Icon buffer = new ImageIcon();
+									buffer = label_equip[event_i].getIcon();
+									backpack_npc[Integer.parseInt(switchItem[1])] = "null";
+									equip[event_i] = "null";
+									for(int i=0;i<10;i++)
 									{
-										backpack_npc[i] = npc;
-										label_backpack_npc[i].setIcon(buffer);
-										break;
+										if(backpack[i].equals("null"))
+										{
+											backpack[i] = player;
+											label_backpack[i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
+											break;
+										}
 									}
+									backpack_npc[Integer.parseInt(switchItem[1])] = npc;
+									label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
+									label_equip[event_i].setIcon(null);
+									label_equip[event_i].setBackground(Color.gray);
 								}
-								label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
-								label_equip[event_i].setIcon(null);
-								label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
-								label_equip[event_i].setBackground(Color.gray);
+								refreshInventory();				
 							}
-							if(switchItem[0].equals("backpack"))
-							{
-								String player = backpack_npc[Integer.parseInt(switchItem[1])];
-								String npc = equip[event_i];
-								Icon buffer = new ImageIcon();
-								buffer = label_equip[event_i].getIcon();
-								backpack_npc[Integer.parseInt(switchItem[1])] = "null";
-								equip[event_i] = "null";
-								for(int i=0;i<10;i++)
-								{
-									if(backpack[i].equals("null"))
-									{
-										backpack[i] = player;
-										label_backpack[i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
-										break;
-									}
-								}
-								backpack_npc[Integer.parseInt(switchItem[1])] = npc;
-								label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
-								label_equip[event_i].setIcon(null);
-								label_equip[event_i].setBackground(Color.gray);
-							}
-							refreshInventory();
 						}
 					}
 				}
@@ -1054,45 +1071,48 @@ public class WarGameStartView extends JFrame implements Observer{
 									allItem.add("backpack"+" "+i);
 								}
 							}
-							Random rand = new Random();
-							int a = rand.nextInt(allItem.size())+0;
-							String switchItem[] = allItem.get(a).trim().split(" ");
-							if(switchItem[0].equals("equip"))
+							if(allItem.size() !=0)
 							{
-								String player = equip_npc[Integer.parseInt(switchItem[1])];
-								String npc = backpack[event_i];
-								Icon buffer = new ImageIcon();
-								buffer = label_backpack[event_i].getIcon();
-								equip_npc[Integer.parseInt(switchItem[1])] = "null";
-								backpack[event_i] = "null";
-								backpack[event_i] = player;
-								label_backpack[event_i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
-								for(int i=0;i<10;i++)
+								Random rand = new Random();
+								int a = rand.nextInt(allItem.size())+0;
+								String switchItem[] = allItem.get(a).trim().split(" ");
+								if(switchItem[0].equals("equip"))
 								{
-									if(backpack_npc[i].equals("null"))
+									String player = equip_npc[Integer.parseInt(switchItem[1])];
+									String npc = backpack[event_i];
+									Icon buffer = new ImageIcon();
+									buffer = label_backpack[event_i].getIcon();
+									equip_npc[Integer.parseInt(switchItem[1])] = "null";
+									backpack[event_i] = "null";
+									backpack[event_i] = player;
+									label_backpack[event_i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
+									for(int i=0;i<10;i++)
 									{
-										backpack_npc[i] = npc;
-										label_backpack_npc[i].setIcon(buffer);
-										break;
+										if(backpack_npc[i].equals("null"))
+										{
+											backpack_npc[i] = npc;
+											label_backpack_npc[i].setIcon(buffer);
+											break;
+										}
 									}
+									label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
+									label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
 								}
-								label_equip_npc[Integer.parseInt(switchItem[1])].setIcon(null);
-								label_equip_npc[Integer.parseInt(switchItem[1])].setBackground(Color.gray);
+								if(switchItem[0].equals("backpack"))
+								{
+									String player = backpack_npc[Integer.parseInt(switchItem[1])];
+									String npc = backpack[event_i];
+									Icon buffer = new ImageIcon();
+									backpack_npc[Integer.parseInt(switchItem[1])] = "null";
+									backpack[event_i] = "null";
+									buffer = label_backpack[event_i].getIcon();
+									backpack[event_i] = player;
+									label_backpack[event_i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
+									backpack_npc[Integer.parseInt(switchItem[1])] = npc;
+									label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
+								}
+								refreshInventory();
 							}
-							if(switchItem[0].equals("backpack"))
-							{
-								String player = backpack_npc[Integer.parseInt(switchItem[1])];
-								String npc = backpack[event_i];
-								Icon buffer = new ImageIcon();
-								backpack_npc[Integer.parseInt(switchItem[1])] = "null";
-								backpack[event_i] = "null";
-								buffer = label_backpack[event_i].getIcon();
-								backpack[event_i] = player;
-								label_backpack[event_i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
-								backpack_npc[Integer.parseInt(switchItem[1])] = npc;
-								label_backpack_npc[Integer.parseInt(switchItem[1])].setIcon(buffer);
-							}
-							refreshInventory();
 						}
 					}
 				}
