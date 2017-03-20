@@ -213,7 +213,7 @@ public class WarGameCharacterModel extends Observable {
     
     /**
      * Calculate the armor class.
-     * @param dex_modifier the modifier value of the dexterity
+     * @param dex_modifier the midifier value of the dexterity
      * @param armor_item the sum of the items with armor class
      * @return
      */
@@ -236,7 +236,7 @@ public class WarGameCharacterModel extends Observable {
     
     /**
      * Calculate the damage bonus.
-     * @param stren_modifier the modifier value of the strength
+     * @param stren_modifier the midifier value of the strength
      * @return
      */
     
@@ -289,7 +289,7 @@ public class WarGameCharacterModel extends Observable {
 	}
     
     /**
-     * Roll six-sided dice fore times and sum the four number.
+     * Roll foue six-sided dice and sum the biggest three number.
      * @return
      */
     
@@ -954,11 +954,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		int count = 0;
 		for(int i =0;i<10;i++)
 		{
-			if((backpackID[i] == null)||(backpackID[i].equals("null")))
+			if((backpack[i] == null)||(backpack[i].equals("null")))
 			{
-				String strID[] = str[0].trim().split("m");
-				System.out.println(strID[1]);
-				backpackID[i] = strID[1];
+				//String strID[] = str[0].trim().split("m");
+				//System.out.println(strID[1]);
+				backpack[i] = str[1]+" "+str[2]+" "+str[3];
 				break;
 			}
 			count++;
@@ -1052,6 +1052,53 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	viewType = 2;
     	setChanged();
     	notifyObservers(this);
+	}
+	
+	public Boolean editCharacterJson(String newMessage[]) throws IOException{
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		WarGameCharacterModel characterModel = mapsByMap.get(newMessage[0]);
+		characterModel.level =  Integer.parseInt(newMessage[1]);
+		characterModel.strength = Integer.parseInt(newMessage[2]);
+		characterModel.dexterity = Integer.parseInt(newMessage[3]);
+		characterModel.constitution = Integer.parseInt(newMessage[4]);
+		characterModel.intelligence = Integer.parseInt(newMessage[5]);
+		characterModel.wisdom = Integer.parseInt(newMessage[6]);
+		characterModel.charisma = Integer.parseInt(newMessage[7]);
+		String message = modifierChange(newMessage);
+		String str[] = message.trim().split(" ");
+		characterModel.hit_points = Integer.parseInt(str[0]);
+		characterModel.armor_class = Integer.parseInt(str[1]);
+		characterModel.attack_bonus = Integer.parseInt(str[2]);
+		characterModel.damage_bonus = Integer.parseInt(str[3]);
+		characterModel.strength_modifier = Integer.parseInt(str[4]);
+		characterModel.dexterity_modifier = Integer.parseInt(str[5]);
+		characterModel.constitution_modifier = Integer.parseInt(str[6]);
+		characterModel.intelligence_modifier = Integer.parseInt(str[7]);
+		characterModel.wisdom_modifier = Integer.parseInt(str[8]);
+		characterModel.charisma_modifier = Integer.parseInt(str[9]);
+		
+		characterID = newMessage[0];
+		level = Integer.parseInt(newMessage[1]);
+		strength = Integer.parseInt(newMessage[2]);
+		dexterity = Integer.parseInt(newMessage[3]);
+		constitution = Integer.parseInt(newMessage[4]);
+		intelligence = Integer.parseInt(newMessage[5]);
+		wisdom = Integer.parseInt(newMessage[6]);
+		charisma = Integer.parseInt(newMessage[7]);
+		level_ori = level;
+		strength_ori = strength;
+		dexterity_ori = dexterity;
+		constitution_ori = constitution;
+		intelligence_ori = intelligence;
+		wisdom_ori = wisdom;
+		charisma_ori = charisma;
+		
+		mapsByMap.put(newMessage[0], characterModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/characters.json");
+		fw.write(gson.toJson(mapsByMap));
+		fw.close();
+		return true;
 	}
 	
 
@@ -1205,12 +1252,12 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     int multiple_attacks; //
     
     /**
-     *<p> viewType is the type of the view of different operations.<br/>
+     *<p> viewType is the type of the view of diifferent operations.<br/>
      */
     int viewType = 0;//view type
     
     /**
-     *<p> picNumber is the ID number of the picture.<br/>
+     *<p> picNumber is the ID numeber of the picture.<br/>
      */
     int picNumber;
     
