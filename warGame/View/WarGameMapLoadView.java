@@ -1,5 +1,6 @@
 package warGame.View;
 import warGame.Model.*;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,12 +41,12 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		final ImageIcon wall = new ImageIcon("image/Map/wall.jpg");
-		final ImageIcon door = new ImageIcon("image/Map/door.jpg");
-		final ImageIcon chest = new ImageIcon("image/Map/chest.jpg");
-		final ImageIcon floor = new ImageIcon("image/Map/floor.jpg");
-		final ImageIcon monster = new ImageIcon("image/Map/monster.jpg");
-		final ImageIcon hero = new ImageIcon("image/Map/hero.jpg");
+		final ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
+		final ImageIcon door = new ImageIcon("src/image/Map/door.jpg");
+		final ImageIcon chest = new ImageIcon("src/image/Map/chest.jpg");
+		final ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+		final ImageIcon monster = new ImageIcon("src/image/Map/monster.jpg");
+		final ImageIcon hero = new ImageIcon("src/image/Map/hero.jpg");
 		
 		mapElementsLbls = new ArrayList<JLabel>();
 		element = "x";
@@ -58,12 +59,13 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 			itemsOnPage = new ArrayList<WarGameItemModel>();
 			friendsOnPage = new ArrayList<WarGameCharacterModel>();
 			enemiesOnPage = new ArrayList<WarGameCharacterModel>();
+			mapOnPage = null;
 		} catch (UnsupportedEncodingException | FileNotFoundException e2) {
 			e2.printStackTrace();
 		}
 		
 		final JFrame frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("image/Map/hero.jpg"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
 		frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
@@ -92,10 +94,17 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 		mapToChooseCbox.setBounds(150, 70, 120, 30);
 		manipulatePanel.add(mapToChooseCbox);
 		for (String mapID : mapsByMap.keySet()) {
-			mapOnPage = mapsByMap.get(mapID);
-			mapToChooseCbox.addItem(mapOnPage);
+			WarGameMapModel mapModelToChoose = new WarGameMapModel();
+			mapModelToChoose = mapsByMap.get(mapID);
+			mapToChooseCbox.addItem(mapModelToChoose);
 		}
-
+		mapToChooseCbox.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mapOnPage = (WarGameMapModel) mapToChooseCbox.getSelectedItem();
+			}
+		});
+		
 		final JButton btnLoad = new JButton("Load");
 		btnLoad.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
 		btnLoad.setBounds(310, 70, 120, 30);
@@ -139,21 +148,18 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 							}
 							if (map[i][j].startsWith("i")) {
 								String itemArr[] = map[i][j].split(" ");
-								System.out.println(map[i][j]);
 								mapElement = new JLabel(i+" "+j+" "+"i"+" "+itemArr[1]);
 								mapElement.setIcon(chest);
 								mapElementsLbls.add(mapElement);
 							}
 							if (map[i][j].startsWith("m")) {
 								String enemyArr[] = map[i][j].split(" ");
-								System.out.println(map[i][j]);
 								mapElement = new JLabel(i+" "+j+" "+"i"+" "+enemyArr[1]);
 								mapElement.setIcon(monster);
 								mapElementsLbls.add(mapElement);
 							}
 							if (map[i][j].startsWith("n")) {
 								String friendArr[] = map[i][j].split(" ");
-								System.out.println(map[i][j]);
 								mapElement = new JLabel(i+" "+j+" "+"i"+" "+friendArr[1]);
 								mapElement.setIcon(hero);
 								mapElementsLbls.add(mapElement);
@@ -469,25 +475,25 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 		lblItem.setBounds(170, 290, 80, 30);
 		manipulatePanel.add(lblItem);
 		
-		final JComboBox<WarGameItemModel> itemCbox = new JComboBox<WarGameItemModel>();
-		itemCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
-		itemCbox.setBounds(260, 296, 100, 21);
-		manipulatePanel.add(itemCbox);
-		for (String itemID : itemsByMap.keySet()) {
-			itemOnPage = new WarGameItemModel();
-			itemOnPage = itemsByMap.get(itemID);
-			itemCbox.addItem(itemOnPage);
-			itemOnPage = null;
-		}
-		itemCbox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				itemOnPage = new WarGameItemModel();
-				itemOnPage = (WarGameItemModel) itemCbox.getSelectedItem();
-				element = new String();
-				element = "i";
-			}
-		});
+//		final JComboBox<WarGameItemModel> itemCbox = new JComboBox<WarGameItemModel>();
+//		itemCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
+//		itemCbox.setBounds(260, 296, 100, 21);
+//		manipulatePanel.add(itemCbox);
+//		for (String itemID : itemsByMap.keySet()) {
+//			itemOnPage = new WarGameItemModel();
+//			itemOnPage = itemsByMap.get(itemID);
+//			itemCbox.addItem(itemOnPage);
+//			itemOnPage = null;
+//		}
+//		itemCbox.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				itemOnPage = new WarGameItemModel();
+//				itemOnPage = (WarGameItemModel) itemCbox.getSelectedItem();
+//				element = new String();
+//				element = "i";
+//			}
+//		});
 		
 
 		btnSave.addActionListener(new ActionListener() {
@@ -543,6 +549,7 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 					mapToChooseCbox.setEnabled(true);
 					btnSave.setEnabled(false);
 					btnLoad.setEnabled(true);
+					mapOnPage = new WarGameMapModel();
 				}else{
 					JOptionPane.showMessageDialog(null, "Not validate");
 				}
