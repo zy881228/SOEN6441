@@ -102,9 +102,9 @@ public class WarGameCharacterModel extends Observable {
 	public void createCharacter(int charType) throws UnsupportedEncodingException, FileNotFoundException {
 		// TODO Auto-generated method character = new Character();
 		Random rand = new Random();
-		int a = rand.nextInt(20)+1;
+		int a = rand.nextInt(21)+1;
 		level = a;
-		a = rand.nextInt(7)+1;
+		a = rand.nextInt(8)+1;
 		picNumber = a;
 		
 		Explorer explorer;
