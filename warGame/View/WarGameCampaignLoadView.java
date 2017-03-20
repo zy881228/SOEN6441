@@ -26,8 +26,9 @@ public class WarGameCampaignLoadView extends JFrame implements Observer{
 	private Map<String, WarGameMapModel> mapsByMap;
 	private ArrayList<JLabel> mapsLbls;
 	private ArrayList<String> mapsOnCampaign;
-	
-	public WarGameCampaignLoadView() {
+
+	@Override
+	public void update(Observable o, Object arg) {
 		try {
 			campaignsByMap = WarGameCampaignModel.listAllCampaigns();
 			mapsByMap = WarGameMapModel.listAllMaps();
@@ -37,20 +38,22 @@ public class WarGameCampaignLoadView extends JFrame implements Observer{
 			e.printStackTrace();
 		}
 		
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
-		setResizable(false);
-		setLocationByPlatform(true);
-		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("Campaigns");
-		setSize(500, 600);
+		JFrame frame = new JFrame();
+		
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
+		frame.setResizable(false);
+		frame.setLocationByPlatform(true);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		frame.setTitle("Campaigns");
+		frame.setSize(500, 600);
 		mapsLbls = new ArrayList<JLabel>();
 		campaignOnPage = new WarGameCampaignModel();
 		
 		final JPanel manipulatePanel = new JPanel();
 		manipulatePanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
 		manipulatePanel.setBounds(0, 40, 500, 600);
-		getContentPane().add(manipulatePanel);
+		frame.getContentPane().add(manipulatePanel);
 		manipulatePanel.setLayout(null);
 		
 		JLabel lblCampaignName = new JLabel("Campaign name:");
@@ -209,20 +212,9 @@ public class WarGameCampaignLoadView extends JFrame implements Observer{
 			}
 		});
 		
-		
 		JLabel lblMapName = new JLabel("Map name:");
 		lblMapName.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
 		lblMapName.setBounds(30, 120, 120, 30);
 		manipulatePanel.add(lblMapName);
-		
-
-		
-
-		
-
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
 	}
 }
