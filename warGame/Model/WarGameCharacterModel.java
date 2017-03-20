@@ -641,6 +641,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		if(changeBefore == null)//equip item and equip position is null
 		{
 			String strAfter[] = changeAfter.trim().split(" ");
+			level_ori = level;
 			strength_ori = strength;
 			dexterity_ori = dexterity;
 			constitution_ori = constitution;
@@ -651,6 +652,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			armor_class_ori = armor_class;
 			attack_bonus_ori =attack_bonus;
 			damage_bonus_ori = damage_bonus;
+			multiple_attacks_ori = multiple_attacks;
 			
 			if(strAfter[1].equals("Intelligence"))
 			{
@@ -700,7 +702,19 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			{
 				dexterity = dexterity + Integer.parseInt(strAfter[2]);
 				dexterity_modifier = dexterity_modifier + Integer.parseInt(strAfter[2]);
-				armor_class = calArmor_class(dexterity_modifier,0);
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strAfter[1].equals("Attack_bonus"))
 			{
@@ -715,6 +729,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		else if(changeAfter == null)//unequip item
 		{
 			String strBefore[] = changeBefore.trim().split(" ");
+			level_ori = level;
 			strength_ori = strength;
 			dexterity_ori = dexterity;
 			constitution_ori = constitution;
@@ -725,6 +740,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			armor_class_ori = armor_class;
 			attack_bonus_ori =attack_bonus;
 			damage_bonus_ori = damage_bonus;
+			multiple_attacks_ori = multiple_attacks;
 			if(strBefore[1].equals("Intelligence"))
 			{
 				intelligence = intelligence - Integer.parseInt(strBefore[2]);
@@ -772,7 +788,19 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			{
 				dexterity = dexterity - Integer.parseInt(strBefore[2]);
 				dexterity_modifier = dexterity_modifier - Integer.parseInt(strBefore[2]);
-				armor_class = calArmor_class(dexterity_modifier,0);
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strBefore[1].equals("Attack_bonus"))
 			{
@@ -793,6 +821,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		{
 			String strBefore[] = changeBefore.trim().split(" ");
 			String strAfter[] = changeAfter.trim().split(" ");
+			level_ori = level;
 			strength_ori = strength;
 			dexterity_ori = dexterity;
 			constitution_ori = constitution;
@@ -803,6 +832,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			armor_class_ori = armor_class;
 			attack_bonus_ori =attack_bonus;
 			damage_bonus_ori = damage_bonus;
+			multiple_attacks_ori = multiple_attacks;
 			if(strBefore[1].equals("Intelligence"))
 			{
 				intelligence = intelligence - Integer.parseInt(strBefore[2]);
@@ -850,7 +880,19 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			{
 				dexterity = dexterity - Integer.parseInt(strBefore[2]);
 				dexterity_modifier = dexterity_modifier - Integer.parseInt(strBefore[2]);
-				armor_class = calArmor_class(dexterity_modifier,0);
+				armor_class = 0;
+				for(int i=0;i<7;i++)
+				{
+					if(!equip[i].equals("null"))
+					{
+						String str[] = equip[i].trim().split(" ");
+						if(str[1].equals("Armor_class"))
+						{
+							armor_class = armor_class+ Integer.parseInt(str[2]);
+						}
+					}
+				}
+				armor_class = calArmor_class(dexterity_modifier,armor_class);
 			}
 			if(strBefore[1].equals("Attack_bonus"))
 			{
@@ -1250,6 +1292,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
      *<p> multiple_attacks is the value of multiple attacks of the character.<br/>
      */
     int multiple_attacks; //
+    
+    /**
+     *<p> multiple_attacks_ori is the original value of multiple attacks of the character.<br/>
+     */
+    int multiple_attacks_ori; //
     
     /**
      *<p> viewType is the type of the view of diifferent operations.<br/>
