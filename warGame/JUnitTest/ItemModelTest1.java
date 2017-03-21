@@ -12,7 +12,7 @@ public class ItemModelTest1 extends TestCase{
 	
 	public void setUp() throws Exception {
 		System.out.println("Item Test1 begins");
-		itemModel.loadItem("Item1");
+		itemModel.loadItemJson("1");
 	}
 	
 	public void tearDown() throws Exception {
@@ -28,8 +28,8 @@ public class ItemModelTest1 extends TestCase{
 		String newItemType = "Boots";
 		String newEnchanType = "Armor_class";
 		String newEnchanNum = "1";
-		itemModel.editItem(itemID,newItemType,newEnchanType,newEnchanNum);
-		itemModel.loadItem("Item"+itemID);
+		itemModel.editItemJson(itemID,newItemType,newEnchanType,newEnchanNum);
+		itemModel.loadItemJson(itemID);
 		String itemType = itemModel.getItemType();
 		String enchanType = itemModel.getEnchanType();		
 		String enchanNum = itemModel.getEnchanNumber();
