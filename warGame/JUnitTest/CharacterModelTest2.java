@@ -58,6 +58,7 @@ public class CharacterModelTest2 extends TestCase{
 		}
 		scoreWithItem1[1] = Integer.parseInt(scoreWithItem1[1])-3+"";
 		scoreWithItem1[12] = Integer.parseInt(scoreWithItem1[12])-3+"";
+		scoreWithItem1[9] = Integer.parseInt(scoreWithItem1[9])-3+"";
 		int damage = 0;
 		scoreWithItem1[10] = damage+"";
 		scoreWithItem1[5] = Integer.parseInt(scoreWithItem1[5])+3+"";
