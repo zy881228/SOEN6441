@@ -13,7 +13,15 @@ public class TestRunner{
 		ModelSuite.addTestSuite(CharacterModelTest2.class);
 		ModelSuite.addTestSuite(CharacterModelTest3.class);
 		ModelSuite.addTestSuite(CharacterModelTest4.class);
+		ModelSuite.addTestSuite(CharacterModelTest5.class);
+		ModelSuite.addTestSuite(CharacterModelTest6.class);
+		ModelSuite.addTestSuite(CharacterModelTest7.class);
+		ModelSuite.addTestSuite(CharacterModelTest8.class);
 		ModelSuite.addTestSuite(ItemModelTest1.class);
+		ModelSuite.addTestSuite(ItemModelTest2.class);
+		ModelSuite.addTestSuite(ItemModelTest3.class);
+		ModelSuite.addTestSuite(StartModelTest1.class);
+		ModelSuite.addTestSuite(StartModelTest2.class);
 		ModelSuite.addTestSuite(CampaignModelTest1.class);
 		return ModelSuite;
 	}
