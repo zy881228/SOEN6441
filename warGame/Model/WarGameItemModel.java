@@ -3,12 +3,21 @@ package warGame.Model;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Map.Entry;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * This class is a item model contains methods that allows user to :
@@ -22,18 +31,31 @@ import java.util.Observable;
 
 public class WarGameItemModel extends Observable{
     
+	public WarGameItemModel(){
+		
+	}
+	public WarGameItemModel(WarGameItemModel o){
+		this.itemID = o.getItemID();
+		this.itemType = o.getItemType();
+		this.enchanType = o.getEnchanType();
+		this.enchanNumber = o.getEnchanNumber();
+	}
     /**
      * Create a new item
      * @param newItemType item tyoe
      * @param newEnchanType enchantment bonus type
      * @param newEnchanNumber enchantment bonus value
+     * @throws FileNotFoundException 
+     * @throws UnsupportedEncodingException 
+     * @throws NumberFormatException 
      */
 
 
-	public void createItem(String newItemType, String newEnchanType, String newEnchanNumber){
+	public void createItem(String newItemType, String newEnchanType, String newEnchanNumber) throws NumberFormatException, UnsupportedEncodingException, FileNotFoundException{
 		itemType = newItemType;
 		enchanType = newEnchanType;
 		enchanNumber = newEnchanNumber;
+		itemID = Integer.parseInt(lastMapID())+1+"";
 		viewType = 1;
 		setChanged();
 		notifyObservers(this);
@@ -147,6 +169,95 @@ public class WarGameItemModel extends Observable{
 		os.close();
 		return true;
 	}
+	
+	/**
+	 * @return the last key of the map in the json file
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+
+	public String lastMapID() throws UnsupportedEncodingException, FileNotFoundException{
+		ArrayList<String> allKeysInMap = new ArrayList<String>();
+		String lastMapID;
+		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
+		Iterator<Entry<String, WarGameItemModel>> it = mapsByMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, WarGameItemModel> entry = (Map.Entry<String, WarGameItemModel>)it.next();
+			allKeysInMap.add(entry.getKey());
+		}
+		lastMapID = allKeysInMap.get(allKeysInMap.size()-1);
+		System.out.println(lastMapID);
+		return lastMapID;
+	}
+	
+	public static Map<String, WarGameItemModel> listAllItems() throws UnsupportedEncodingException, FileNotFoundException{
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/items.json"), "UTF-8");
+		Map<String, WarGameItemModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameItemModel>>(){}.getType());
+		return mapsByMap;
+	}
+	
+	public Boolean saveItemJson(WarGameItemModel itemModel) throws IOException{
+		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
+		//Map<String, WarGameCharacterModel> mapsByMap = null;
+		mapsByMap.put(itemModel.getItemID(), itemModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/items.json");
+		fw.write(gson.toJson(mapsByMap));
+		fw.close();
+		return true;
+	}
+	
+	public void loadItemJson(String itemID) throws UnsupportedEncodingException, FileNotFoundException{
+		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
+		WarGameItemModel itemModel = mapsByMap.get(itemID);
+		this.itemID = itemModel.getItemID();
+		this.itemType = itemModel.getItemType();
+		this.enchanType = itemModel.getEnchanType();
+		this.enchanNumber = itemModel.getEnchanNumber();
+		viewType = 2;
+		setChanged();
+    	notifyObservers(this);
+	}
+	
+	public Boolean editItemJson(String newItemID,String newItemType, String newEnchanType, String newEnchanNumber) throws IOException{
+		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
+		WarGameItemModel itemModel = mapsByMap.get(newItemID);
+		itemModel.itemType = newItemType;
+		itemModel.enchanType = newEnchanType;
+		itemModel.enchanNumber = newEnchanNumber;
+		mapsByMap.put(newItemID, itemModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/items.json");
+		fw.write(gson.toJson(mapsByMap));
+		fw.close();
+		return true;
+	}
+	
+	public String itemAdaption(int level){
+		String enchanNumber = new String();
+		if(level<5)
+		{
+			enchanNumber = "1";
+		}
+		if(level>4 && level<9)
+		{
+			enchanNumber = "2";
+		}
+		if(level>8 && level<13)
+		{
+			enchanNumber = "3";
+		}
+		if(level>12 && level<17)
+		{
+			enchanNumber = "4";
+		}
+		if(level>16)
+		{
+			enchanNumber = "5";
+		}
+		return enchanNumber;
+	}
 /****************************added******************************************/
 	private
     
@@ -249,9 +360,22 @@ public class WarGameItemModel extends Observable{
 	public String getItemID(){
 		return itemID;
 	}
-
-	public static Map<String, WarGameItemModel> listAllItems() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public String getItemInfo(){
+		String info = itemType+" "+enchanType+" "+enchanNumber;
+		return info;
 	}
+	
+	public void setEnchanNum(String newNum){
+		this.enchanNumber = newNum;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		String message = "Item"+this.getItemID()+" "+this.itemType+" "+this.enchanType+" "+this.enchanNumber;
+		return message;
+	}
+
+	
 }

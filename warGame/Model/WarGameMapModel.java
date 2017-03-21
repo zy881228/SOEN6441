@@ -115,7 +115,7 @@ public class WarGameMapModel extends Observable{
 	 */
 	public static Map<String, WarGameMapModel> listAllMaps() throws UnsupportedEncodingException, FileNotFoundException{
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-		InputStreamReader isreader = new InputStreamReader(new FileInputStream("file/maps.json"), "UTF-8");
+		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/maps.json"), "UTF-8");
 		Map<String, WarGameMapModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameMapModel>>(){}.getType());
 		return mapsByMap;
 	}
@@ -129,7 +129,7 @@ public class WarGameMapModel extends Observable{
 		Map<String, WarGameMapModel> mapsByMap = WarGameMapModel.listAllMaps();
 		mapsByMap.put(mapModel.getMapID(), mapModel);
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-		FileWriter fw = new FileWriter("file/maps.json");
+		FileWriter fw = new FileWriter("src/file/maps.json");
 		fw.write(gson.toJson(mapsByMap));
 		fw.close();
 	}
