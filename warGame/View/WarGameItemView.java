@@ -27,6 +27,7 @@ import warGame.Model.WarGameItemModel;
 
 public class WarGameItemView extends JFrame implements Observer{
 
+	WarGameItemModel itemModel;
 	@Override
 	public void update(final Observable o, Object arg) {
 		// TODO Auto-generated method stub
@@ -52,15 +53,15 @@ public class WarGameItemView extends JFrame implements Observer{
 				frame.add(label_result);
 				
 				//create save and cancel button
-				int id = 0;
+				/*int id = 0;
 				try {
 					 id = ((WarGameItemModel) o).getTotalNum();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				id = id+1;
-				final String message = id+" "+itemType+" "+enchanType+" "+enchanNumber+"\r\n";
+				}*/
+				//id = id+1;
+				//final String message = id+" "+itemType+" "+enchanType+" "+enchanNumber+"\r\n";
 				JButton button_save = new JButton("Save");
 				button_save.setBounds(new Rectangle(30,260,100,30));
 				frame.add(button_save);
@@ -68,7 +69,9 @@ public class WarGameItemView extends JFrame implements Observer{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 		                  try {
-							Boolean result = ((WarGameItemModel) o).saveItem(message);
+							//Boolean result = ((WarGameItemModel) o).saveItem(message);
+		                	itemModel = new WarGameItemModel((WarGameItemModel) o);
+		                	Boolean result = ((WarGameItemModel) o).saveItemJson(itemModel);
 							if(result == true)
 							{
 								JOptionPane.showMessageDialog(null, "Save Success!");
@@ -179,11 +182,12 @@ public class WarGameItemView extends JFrame implements Observer{
 						String enchanNum = cbox_enchanNum.getSelectedItem().toString();
 						String itemID = ((WarGameItemModel) o).getItemID();
 						try {
-							Boolean result = ((WarGameItemModel) o).editItem(itemID,itemType_selec,enchanType,enchanNum);
+							//Boolean result = ((WarGameItemModel) o).editItem(itemID,itemType_selec,enchanType,enchanNum);
+							Boolean result = ((WarGameItemModel) o).editItemJson(itemID, itemType_selec, enchanType, enchanNum);
 							if(result == true)
 							{
 								frameCase2.dispose();
-								((WarGameItemModel) o).loadItem("item"+itemID);
+								((WarGameItemModel) o).loadItemJson(itemID);
 							}
 							
 						} catch (IOException e1) {

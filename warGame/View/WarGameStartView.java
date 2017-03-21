@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 
 import warGame.Model.*;
 
@@ -47,6 +48,8 @@ public class WarGameStartView extends JFrame implements Observer{
 	WarGameCharacterModel characterModel = new WarGameCharacterModel();
 	WarGameCharacterModel nonePlayerModel = new WarGameCharacterModel();
 	WarGameItemModel itemModel = new WarGameItemModel();
+	ArrayList<WarGameMapModel> mapModelList = new ArrayList();
+	JLabel label_player = new JLabel();
 	@Override
 	public void update(final Observable o, Object arg) {
 		ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
@@ -65,26 +68,51 @@ public class WarGameStartView extends JFrame implements Observer{
 		frame.setBounds(0, 0, 1280, 1000);
 		frame.setSize(1280, 1000);
 		frame.getContentPane().setLayout(null);
-		
-		try {
-			mapsByMap = WarGameMapModel.listAllMaps();
-			if(!((WarGameStartModel) o).getMapID().equals("null"))
-			{
-				mapOnPage = mapsByMap.get(((WarGameStartModel) o).getMapID());
-				characterModel = ((WarGameStartModel) o).getCharacterModel();
-			}
-			else{
-			mapOnPage = mapsByMap.get("8");
-			characterModel = characterModel.listAllCharacters().get("7");
-			}
-			
-		} catch (UnsupportedEncodingException | FileNotFoundException e2) {
-			e2.printStackTrace();
+		characterModel=((WarGameStartModel) o).getCharacterToPlay();
+		mapModelList = ((WarGameStartModel) o).getMapsModel();
+		if(mapModelList.isEmpty())
+		{
+			frame.dispose();
+			JOptionPane.showMessageDialog(null, "Complete Campaign!");
 		}
+		else
+		{
+			mapOnPage = mapModelList.get(0);
+			mapModelList.remove(0);
+			((WarGameStartModel) o).setMapsModel(mapModelList);		
+		}
+
+		//adaption
+		int levelChange = characterModel.getLevel();
+		((WarGameStartModel) o).setAdaption(mapOnPage, levelChange);
+		/*int count=0;
+		for(WarGameCharacterModel characterModel_buffer : mapOnPage.getContainFriends())
+		{
+			characterModel_buffer.setLevel(characterModel.getLevel());
+			characterModel_buffer.scoresChange();
+			mapOnPage.getContainFriends().set(count, characterModel_buffer);
+			count++;
+		}
+		count=0;
+		for(WarGameCharacterModel characterModel_buffer : mapOnPage.getContainEnemies())
+		{
+			characterModel_buffer.setLevel(characterModel.getLevel());
+			characterModel_buffer.scoresChange();
+			mapOnPage.getContainEnemies().set(count, characterModel_buffer);
+			count++;
+		}
+		count =0;
+		for(WarGameItemModel itemModel_buffer : mapOnPage.getContainItems())
+		{
+			itemModel_buffer.itemAdaption(characterModel.getLevel());
+			mapOnPage.getContainItems().set(count, itemModel_buffer);
+			count++;
+		}*/
+		//adaption end
 		
 		map = mapOnPage.getMap();
 		mapElementsLbls = new ArrayList<JLabel>();
-		map[2][1] = "h";
+		
 	
 		JPanel mapPanel = new JPanel();
 		mapPanel.setBounds(0, 0, 750, 750);
@@ -141,23 +169,60 @@ public class WarGameStartView extends JFrame implements Observer{
 						String itemType = itemModel.getItemType();
 						String enchanType = itemModel.getEnchanType();
 						String enchanNum = itemModel.getEnchanNumber();
-						for(int i =0;i<10;i++)
+						WarGameStartModel startModel = new WarGameStartModel();
+						Boolean result = startModel.checkBackpack(backpack);
+						if(result == true)
 						{
-							if((backpack[i] == null)||(backpack[i].equals("null")))
+							for(int i =0;i<10;i++)
 							{
-								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-								label_backpack[i].setIcon(img_item);
-								map[posY][posX-1] = "f";
-								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"f");
-								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-								mapElementsLbls.get(index-1).setIcon(floor);
-								break;
+								if((backpack[i] == null)||(backpack[i].equals("null")))
+								{
+									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+									label_backpack[i].setIcon(img_item);
+									map[posY][posX-1] = "f";
+									mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"f");
+									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+									mapElementsLbls.get(index-1).setIcon(floor);
+									break;
+								}
 							}
 						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Backpack is full !");
+						}
 												
-					}else if(leftPos[2].equals("o")){
-					
+					}else if(leftPos[2].equals("O")){
+						int count = 0;
+						for (JLabel label : mapElementsLbls) 
+						{
+							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							
+							if(str[2].equals("i"))
+							{
+								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
+								break;
+							}
+							if(str[2].equals("m"))
+							{
+								if(str[3].equals("alive"))
+								{
+									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									break;
+								}
+							}
+							count++;
+						}
+						
+						if(count == mapElementsLbls.size())
+						{
+							frame.dispose();
+							characterModel.setLevel(characterModel.getLevel()+1);
+							characterModel.scoresChange();
+							((WarGameStartModel) o).setCharacterModel(characterModel);
+							((WarGameStartModel) o).DisplayMapView();
+						}
 					}else if(leftPos[2].equals("n")){
 						String str[] = map[posY][posX-1].trim().split(" ");
 						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
@@ -213,23 +278,60 @@ public class WarGameStartView extends JFrame implements Observer{
 						String itemType = itemModel.getItemType();
 						String enchanType = itemModel.getEnchanType();
 						String enchanNum = itemModel.getEnchanNumber();
-						for(int i =0;i<10;i++)
+						WarGameStartModel startModel = new WarGameStartModel();
+						Boolean result = startModel.checkBackpack(backpack);
+						if(result == true)
 						{
-							if((backpack[i] == null)||(backpack[i].equals("null")))
+							for(int i =0;i<10;i++)
 							{
-								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-								label_backpack[i].setIcon(img_item);
-								map[posY][posX+1] = "f";
-								mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"f");
-								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-								mapElementsLbls.get(index+1).setIcon(floor);
-								break;
+								if((backpack[i] == null)||(backpack[i].equals("null")))
+								{
+									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+									label_backpack[i].setIcon(img_item);
+									map[posY][posX+1] = "f";
+									mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"f");
+									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+									mapElementsLbls.get(index+1).setIcon(floor);
+									break;
+								}
 							}
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Backpack is full !");
 						}
 						
 					}else if(rightPos[2].equals("O")){
+						int count = 0;
+						for (JLabel label : mapElementsLbls) 
+						{
+							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							
+							if(str[2].equals("i"))
+							{
+								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
+								break;
+							}
+							if(str[2].equals("m"))
+							{
+								if(str[3].equals("alive"))
+								{
+									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									break;
+								}
+							}
+							count++;
+						}
 						
+						if(count == mapElementsLbls.size())
+						{
+							frame.dispose();
+							characterModel.setLevel(characterModel.getLevel()+1);
+							characterModel.scoresChange();
+							((WarGameStartModel) o).setCharacterModel(characterModel);
+							((WarGameStartModel) o).DisplayMapView();
+						}
 					}else if(rightPos[2].equals("n")){
 						String str[] = map[posY][posX+1].trim().split(" ");
 						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
@@ -281,25 +383,60 @@ public class WarGameStartView extends JFrame implements Observer{
 						String itemType = itemModel.getItemType();
 						String enchanType = itemModel.getEnchanType();
 						String enchanNum = itemModel.getEnchanNumber();
-						for(int i =0;i<10;i++)
+						WarGameStartModel startModel = new WarGameStartModel();
+						Boolean result = startModel.checkBackpack(backpack);
+						if(result == true)
 						{
-							if((backpack[i] == null)||(backpack[i].equals("null")))
+							for(int i =0;i<10;i++)
 							{
-								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-								label_backpack[i].setIcon(img_item);
-								map[posY-1][posX] = "f";
-								mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"f");
-								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-								mapElementsLbls.get(index-(map[0].length)).setIcon(floor);
-								break;
+								if((backpack[i] == null)||(backpack[i].equals("null")))
+								{
+									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+									label_backpack[i].setIcon(img_item);
+									map[posY-1][posX] = "f";
+									mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"f");
+									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+									mapElementsLbls.get(index-(map[0].length)).setIcon(floor);
+									break;
+								}
 							}
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Backpack is full !");
 						}
 						
 					}else if(upPos[2].equals("O")){
-						((WarGameStartModel) o).setMapID("6");
-						((WarGameStartModel) o).setCharacterModel(characterModel);
-						((WarGameStartModel) o).DisplayMapView();
+						int count = 0;
+						for (JLabel label : mapElementsLbls) 
+						{
+							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							
+							if(str[2].equals("i"))
+							{
+								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
+								break;
+							}
+							if(str[2].equals("m"))
+							{
+								if(str[3].equals("alive"))
+								{
+									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									break;
+								}
+							}
+							count++;
+						}
+						
+						if(count == mapElementsLbls.size())
+						{
+							frame.dispose();
+							characterModel.setLevel(characterModel.getLevel()+1);
+							characterModel.scoresChange();
+							((WarGameStartModel) o).setCharacterModel(characterModel);
+							((WarGameStartModel) o).DisplayMapView();
+						}
 						
 					}else if(upPos[2].equals("n")){
 						String str[] = map[posY-1][posX].trim().split(" ");
@@ -352,26 +489,60 @@ public class WarGameStartView extends JFrame implements Observer{
 						String itemType = itemModel.getItemType();
 						String enchanType = itemModel.getEnchanType();
 						String enchanNum = itemModel.getEnchanNumber();
-						for(int i =0;i<10;i++)
+						WarGameStartModel startModel = new WarGameStartModel();
+						Boolean result = startModel.checkBackpack(backpack);
+						if(result == true)
 						{
-							if((backpack[i] == null)||(backpack[i].equals("null")))
+							for(int i =0;i<10;i++)
 							{
-								backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-								ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-								label_backpack[i].setIcon(img_item);
-								map[posY+1][posX] = "f";
-								mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"f");
-								ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-								mapElementsLbls.get(index+(map[0].length)).setIcon(floor);
-								break;
+								if((backpack[i] == null)||(backpack[i].equals("null")))
+								{
+									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+									label_backpack[i].setIcon(img_item);
+									map[posY+1][posX] = "f";
+									mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"f");
+									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+									mapElementsLbls.get(index+(map[0].length)).setIcon(floor);
+									break;
+								}
 							}
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Backpack is full !");
 						}
 						
 					}else if(downPos[2].equals("O")){
-						((WarGameStartModel) o).setMapID("6");
-						((WarGameStartModel) o).setCharacterModel(characterModel);
-						((WarGameStartModel) o).DisplayMapView();
-						frame.dispose();
+						int count = 0;
+						for (JLabel label : mapElementsLbls) 
+						{
+							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							
+							if(str[2].equals("i"))
+							{
+								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
+								break;
+							}
+							if(str[2].equals("m"))
+							{
+								if(str[3].equals("alive"))
+								{
+									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									break;
+								}
+							}
+							count++;
+						}
+						
+						if(count == mapElementsLbls.size())
+						{
+							frame.dispose();
+							characterModel.setLevel(characterModel.getLevel()+1);
+							characterModel.scoresChange();
+							((WarGameStartModel) o).setCharacterModel(characterModel);
+							((WarGameStartModel) o).DisplayMapView();
+						}
 					}else if(downPos[2].equals("n")){
 						String str[] = map[posY+1][posX].trim().split(" ");
 						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
@@ -469,10 +640,32 @@ public class WarGameStartView extends JFrame implements Observer{
 			int posX;
 			int posY;
 			String[] lblArray = lbl.getText().split(" ");
-			posY = Integer.parseInt(lblArray[0]);
-			posX = Integer.parseInt(lblArray[1]);
-			lbl.setBounds(posX*30, posY*30, 30, 30);
-			mapPanel.add(lbl);
+			if(lblArray[2].equals("h"))
+			{
+				posY = Integer.parseInt(lblArray[0]);
+				posX = Integer.parseInt(lblArray[1]);
+				label_player = new JLabel(posY+" "+posX+" "+"h");
+				label_player.setBounds(posX*30, posY*30, 30, 30);
+				label_player.setIcon(hero);
+				mapPanel.add(label_player);
+				mapElementsLbls.set(mapElementsLbls.indexOf(lbl), label_player);
+				label_player.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e){
+						if(e.getButton() == MouseEvent.BUTTON1)
+						{
+							createCharacterView(characterModel);
+						}
+					}
+				});
+			}
+			else
+			{
+				posY = Integer.parseInt(lblArray[0]);
+				posX = Integer.parseInt(lblArray[1]);
+				lbl.setBounds(posX*30, posY*30, 30, 30);
+				mapPanel.add(lbl);
+			}
 		}	
 		
 		JPanel characterViewPanel = new JPanel();
@@ -704,11 +897,11 @@ public class WarGameStartView extends JFrame implements Observer{
 		frame.setLayout(null);
 		JLabel label_pic = new JLabel();
 		JLabel label_scores[] = new JLabel[12];
-		JLabel label_equip[] = new JLabel[7];
-		JLabel label_backpack[] = new JLabel[10];
+		final JLabel label_equip[] = new JLabel[7];
+		final JLabel label_backpack[] = new JLabel[10];
 		JLabel label_showScore[] = new JLabel[12];
-		String backpack[] = new String[10];
-		String equip[] = new String[7];
+		final String backpack[] = characterModel.getBackpack();
+		final String equip[] = characterModel.getEquip();
 		for(int i=0;i<12;i++)
 		{
 			
@@ -735,10 +928,11 @@ public class WarGameStartView extends JFrame implements Observer{
 		label_pic.setBounds(210, 150, 150, 250);
 		frame.add(label_pic);
 		
-		equip = characterModel.getEquip();
-		backpack = characterModel.getBackpack();
+		//equip = characterModel.getEquip();
+		//backpack = characterModel.getBackpack();
 		for(int i=0;i<7;i++)
 		{
+			final int event_i = i;
 			label_equip[i] = new JLabel();
 			frame.add(label_equip[i]);
 			label_equip[i].setBounds(i*70+18, 400, 66, 66);
@@ -753,9 +947,24 @@ public class WarGameStartView extends JFrame implements Observer{
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
+			label_equip[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						if(!equip[event_i].equals("null"))
+						{
+							JPopupMenu pop_info = new JPopupMenu();
+							pop_info.add(equip[event_i]);
+							pop_info.show(label_equip[event_i], e.getX(), e.getY());
+						}
+					}
+				}
+			});
 		}
 		for(int i=0;i<10;i++)
 		{
+			final int event_i = i;
 			label_backpack[i] = new JLabel();
 			label_backpack[i].setOpaque(true);
 			frame.add(label_backpack[i]);
@@ -778,6 +987,20 @@ public class WarGameStartView extends JFrame implements Observer{
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}
+			label_backpack[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						if(!backpack[event_i].equals("null"))
+						{
+							JPopupMenu pop_info = new JPopupMenu();
+							pop_info.add(backpack[event_i]);
+							pop_info.show(label_backpack[event_i], e.getX(), e.getY());
+						}
+					}
+				}
+			});
 		}
 	}
 	public void getAllItem()
@@ -806,29 +1029,38 @@ public class WarGameStartView extends JFrame implements Observer{
 				frame.add(label_pic);
 				frame.add(label_text);
 				final String equip_info = equip_buffer[i];
-				System.out.println("run1");
+
 				label_pic.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mousePressed(MouseEvent e){
-						System.out.println("run2");
+
 						if(e.getButton() == MouseEvent.BUTTON1)
 						{
-							for(int i =0;i<10;i++)
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
 							{
-								if((backpack[i] == null)||(backpack[i].equals("null")))
+								for(int i =0;i<10;i++)
 								{
-									String str[] = equip_info.trim().split(" ");
-									String itemType = str[0];
-									String enchanType = str[1];
-									String enchanNum = str[2];
-									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-									label_backpack[i].setIcon(img_item);
-									label_pic.setIcon(null);
-									label_text.setText(null);
-									nonePlayerModel.setBackpack("null",event_i);
-									break;
+									if((backpack[i] == null)||(backpack[i].equals("null")))
+									{
+										String str[] = equip_info.trim().split(" ");
+										String itemType = str[0];
+										String enchanType = str[1];
+										String enchanNum = str[2];
+										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+										label_backpack[i].setIcon(img_item);
+										label_pic.setIcon(null);
+										label_text.setText(null);
+										nonePlayerModel.setEquip("null",event_i);
+										break;
+									}
 								}
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
 							}
 						}
 					}
@@ -857,25 +1089,34 @@ public class WarGameStartView extends JFrame implements Observer{
 						
 						if(e.getButton() == MouseEvent.BUTTON1)
 						{
-							for(int i =0;i<10;i++)
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
 							{
-								if(label_pic.getIcon()!=null)
+								for(int i =0;i<10;i++)
 								{
-									if((backpack[i] == null)||(backpack[i].equals("null")))
+									if(label_pic.getIcon()!=null)
 									{
-										String str[] = backpack_info.trim().split(" ");
-										String itemType = str[0];
-										String enchanType = str[1];
-										String enchanNum = str[2];
-										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-										label_backpack[i].setIcon(img_item);
-										label_pic.setIcon(null);
-										label_text.setText(null);
-										nonePlayerModel.setBackpack("null",event_i);
-										break;
+										if((backpack[i] == null)||(backpack[i].equals("null")))
+										{
+											String str[] = backpack_info.trim().split(" ");
+											String itemType = str[0];
+											String enchanType = str[1];
+											String enchanNum = str[2];
+											backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+											ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+											label_backpack[i].setIcon(img_item);
+											label_pic.setIcon(null);
+											label_text.setText(null);
+											nonePlayerModel.setBackpack("null",event_i);
+											break;
+										}
 									}
 								}
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
 							}
 						}
 					}
@@ -953,15 +1194,15 @@ public class WarGameStartView extends JFrame implements Observer{
 									String player = equip_npc[Integer.parseInt(switchItem[1])];
 									String npc = equip[event_i];
 									Icon buffer = new ImageIcon();
-									buffer = label_equip[event_i].getIcon();
-									equip_npc[Integer.parseInt(switchItem[1])] = "null";
-									equip[event_i] = "null";
+									buffer = label_equip[event_i].getIcon();								
 									for(int i=0;i<10;i++)
 									{
 										if(backpack[i].equals("null"))
 										{
 											backpack[i] = player;
 											label_backpack[i].setIcon(label_equip_npc[Integer.parseInt(switchItem[1])].getIcon());
+											characterModel.setEquipChanged(equip[event_i], null);
+											equip[event_i] = "null";
 											break;
 										}
 									}
@@ -971,6 +1212,8 @@ public class WarGameStartView extends JFrame implements Observer{
 										{
 											backpack_npc[i] = npc;
 											label_backpack_npc[i].setIcon(buffer);
+											nonePlayerModel.setEquipChanged(equip_npc[Integer.parseInt(switchItem[1])], null);
+											equip_npc[Integer.parseInt(switchItem[1])] = "null";
 											break;
 										}
 									}
@@ -986,13 +1229,14 @@ public class WarGameStartView extends JFrame implements Observer{
 									Icon buffer = new ImageIcon();
 									buffer = label_equip[event_i].getIcon();
 									backpack_npc[Integer.parseInt(switchItem[1])] = "null";
-									equip[event_i] = "null";
 									for(int i=0;i<10;i++)
 									{
 										if(backpack[i].equals("null"))
 										{
 											backpack[i] = player;
 											label_backpack[i].setIcon(label_backpack_npc[Integer.parseInt(switchItem[1])].getIcon());
+											characterModel.setEquipChanged(equip[event_i], null);
+											equip[event_i] = "null";
 											break;
 										}
 									}
@@ -1018,7 +1262,7 @@ public class WarGameStartView extends JFrame implements Observer{
 			}
 			else
 			{
-				String prefix[] = equip[i].trim().split(" ");
+				String prefix[] = equip_npc[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip_npc[i].setIcon(img_item);
 			}
@@ -1145,6 +1389,11 @@ public class WarGameStartView extends JFrame implements Observer{
 	}
 	
 	public void refreshInventory(){
+		for(int i=0;i<12;i++)
+		{
+			String result[] = characterModel.getScore(i);
+			label_scores[i].setText(result[0]+":"+result[1]);
+		}
 		for(int i=0;i<7;i++)
 		{
 			if(equip[i].equals("null"))
