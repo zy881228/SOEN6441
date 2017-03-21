@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -49,6 +51,10 @@ public class WarGameController extends JFrame{
 	WarGameCharacterView characterView;
 	WarGameStartModel startModel;
 	WarGameStartView startView;
+	WarGameChooseView chooseView;
+	WarGameCampaignModel campaignModel;
+	WarGameCampaignCreationView campaignCreateView;
+	WarGameCampaignLoadView campaignLoadView;
 	
 	public WarGameController(){
 		
@@ -83,8 +89,11 @@ public class WarGameController extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				startModel = new WarGameStartModel();
 				startView = new WarGameStartView();
-				startModel.addObserver(startView);
-				startModel.DisplayMapView();
+//				startModel.addObserver(startView);
+//				startModel.DisplayMapView();
+				chooseView = new WarGameChooseView();
+				startModel.addObserver(chooseView);
+				startModel.chooseView();
 			}
 		});
 		btnNewGame.setFont(new Font("Simplified Arabic", Font.PLAIN, 30));
@@ -92,7 +101,6 @@ public class WarGameController extends JFrame{
 		JButton btnLoad = new JButton("Load");
 		btnLoad.setBounds(255, 300, 200, 50);
 		layeredPanel.add(btnLoad, JLayeredPane.MODAL_LAYER);
-		//btnLoad.setForeground(Color.WHITE);
 		btnLoad.setBackground(Color.BLACK);
 		btnLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -103,7 +111,6 @@ public class WarGameController extends JFrame{
 		JButton btnExit = new JButton("Exit");
 		btnExit.setBounds(255, 360, 200, 50);
 		layeredPanel.add(btnExit, JLayeredPane.MODAL_LAYER);
-		//btnExit.setForeground(Color.WHITE);
 		btnExit.setBackground(Color.BLACK);
 		btnExit.addActionListener(new ActionListener() {
 			@Override
@@ -138,7 +145,6 @@ public class WarGameController extends JFrame{
 				characterModel = new WarGameCharacterModel();
 				characterView = new WarGameCharacterView();
 				characterModel.addObserver(characterView);
-//				characterModel.setCharacterCreationView();
 				characterModel.createCharacterFrame();
 			}
 		});
@@ -322,7 +328,14 @@ public class WarGameController extends JFrame{
 						String itemType = cbox_itemType.getSelectedItem().toString();
 						String enchanType = cbox_enchanType.getSelectedItem().toString();
 						String enchanNumber = cbox_enchanNum.getSelectedItem().toString();
-						itemModel.createItem(itemType,enchanType,enchanNumber);
+						try {
+							itemModel.createItem(itemType,enchanType,enchanNumber);
+						} catch (NumberFormatException
+								| UnsupportedEncodingException
+								| FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				});
 				
@@ -350,12 +363,14 @@ public class WarGameController extends JFrame{
 					frame.add(cbox_loadChar);
 					cbox_loadChar.setEditable(false);
 					String buffer = new String();
-					File file = new File("src/file/item.txt");
-					BufferedReader BF = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
-					while((buffer = BF.readLine()) != null)
-					{
-						String str[] = buffer.trim().split(" ");
-						cbox_loadChar.addItem("Item"+str[0]);
+					Map<String, WarGameItemModel> mapList = itemModel.listAllItems();
+					for (Map.Entry<String, WarGameItemModel> entry : mapList.entrySet()) {
+						WarGameItemModel characterModel_buffer = entry.getValue();
+						String id = characterModel_buffer.getItemID();
+						String itemType = characterModel_buffer.getItemType();
+						String enchanType = characterModel_buffer.getEnchanType();
+						String enchanNum = characterModel_buffer.getEnchanNumber();
+						cbox_loadChar.addItem("Item "+id+" "+itemType+" "+enchanType+" "+enchanNum);
 					}
 					JButton button_loadChar = new JButton("Load");
 					button_loadChar.setBounds(100, 80, 100, 30);
@@ -364,10 +379,10 @@ public class WarGameController extends JFrame{
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							String charID = cbox_loadChar.getSelectedItem().toString();
+							String ID[] = cbox_loadChar.getSelectedItem().toString().trim().split(" ");
 						    frame.dispose();
 								try {
-									itemModel.loadItem(charID);
+									itemModel.loadItemJson(ID[1]);
 								} catch (IOException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
@@ -425,7 +440,30 @@ public class WarGameController extends JFrame{
 		mntmCampaign.setForeground(Color.BLACK);
 		mnCampaign.add(mntmCampaign);
 		mntmCampaign.setFont(new Font("Simplified Arabic", Font.PLAIN, 13));
+		mntmCampaign.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				campaignModel = new WarGameCampaignModel();
+				campaignCreateView = new WarGameCampaignCreationView();
+				campaignModel.addObserver(campaignCreateView);
+				campaignModel.setCampaignCreationView();
+			}
+		});
 				
+		JMenuItem mntmLoadCampaign = new JMenuItem("Load campaign");
+		mntmLoadCampaign.setForeground(Color.BLACK);
+		mnCampaign.add(mntmLoadCampaign);
+		mntmLoadCampaign.setFont(new Font("Simplified Arabic", Font.PLAIN, 13));
+		mntmLoadCampaign.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				campaignModel = new WarGameCampaignModel();
+				campaignLoadView = new WarGameCampaignLoadView();
+				campaignModel.addObserver(campaignLoadView);
+				campaignModel.setCampaignLoadView();
+			}
+		});
+		
 		JMenu mnAbout = new JMenu("About");
 		mnAbout.setFont(new Font("Simplified Arabic", Font.PLAIN, 18));
 		menuBar.add(mnAbout);
