@@ -5,32 +5,55 @@ import junit.framework.TestCase;
 
 public class MapModelTest3 extends TestCase {
 
-	public WarGameMapModel mapModel = new WarGameMapModel();
-	/*
-	public void setUp() throws Exception {
-		System.out.println("Test3 begins");
-		mapModel.createMap("Test Map", 8, 8);
-	}
+	public WarGameMapModel mapModel;
 	
+	public void setUp() throws Exception {
+		System.out.println("Map Test3 begins");
+		mapModel = new WarGameMapModel("test", 15, 20);
+	}
+
 	public void tearDown() throws Exception {
-		System.out.println("Test3 ends");
+		System.out.println("Map Test3 ends");
 		System.out.println();
 	}
+    
+	public void testDoorPosition(){
+		System.out.println("Entry door is not in the conner");
+		String map[][] = mapModel.getMap();
+		
+		map[0][0] = "I";
+		mapModel.setMap(map);
+		assertFalse(mapModel.doorPostion());
+		map[0][0] = "x";
+		map[0][3] = "I";
+		mapModel.setMap(map);
+		assertTrue(mapModel.doorPostion());
+		
+		map[0][map[0].length-1] = "I";
+		mapModel.setMap(map);
+		assertFalse(mapModel.doorPostion());
+		map[0][map[0].length-1] = "x";
+		map[0][3] = "I";
+		mapModel.setMap(map);
+		assertTrue(mapModel.doorPostion());
+
+		map[map.length-1][0] = "I";
+		mapModel.setMap(map);
+		assertFalse(mapModel.doorPostion());
+		map[map.length-1][0] = "x";
+		map[0][3] = "I";
+		mapModel.setMap(map);
+		assertTrue(mapModel.doorPostion());
+		
+		map[map.length-1][map[0].length-1] = "I";
+		mapModel.setMap(map);
+		assertFalse(mapModel.doorPostion());
+		map[map.length-1][map[0].length-1] = "x";
+		map[0][3] = "I";
+		mapModel.setMap(map);
+		assertTrue(mapModel.doorPostion());
+
+	}
 	
-	public void testDoorPos(){
-		System.out.println("Doors cannot be set in the corner of the map");
-		mapModel.setElements(1, 1, "I");
-		assertFalse(mapModel.doorPos());
-		
-		mapModel.setElements(1, 1, "O");
-		assertFalse(mapModel.doorPos());
-
-		mapModel.setElements(1, 1, "x");
-		mapModel.setElements(1, 4, "I");
-		mapModel.setElements(8, 4, "O");
-		assertTrue(mapModel.doorPos());
-
-		
-	}*/
 	
 }
