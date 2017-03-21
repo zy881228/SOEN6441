@@ -39,6 +39,7 @@ public class CharacterModelTest1 extends TestCase{
 		//equip
 		scoreBefore[1] = Integer.parseInt(scoreBefore[1])+3+"";
 		scoreBefore[12] = Integer.parseInt(scoreBefore[12])+3+"";
+		scoreBefore[9] = Integer.parseInt(scoreBefore[9])+3+"";
 		int damage = 0;
 		scoreBefore[10] = damage+"";
 		changeAfter = itemType+" "+enchanType+" "+enchanNum;
@@ -52,6 +53,7 @@ public class CharacterModelTest1 extends TestCase{
 		//unequip
 		scoreBefore[1] = Integer.parseInt(scoreBefore[1])-3+"";
 		scoreBefore[12] = Integer.parseInt(scoreBefore[12])-3+"";
+		scoreBefore[9] = Integer.parseInt(scoreBefore[9])-3+"";
 		damage = 0;
 		scoreBefore[10] = damage+"";
 		characterModel.setEquipChanged(changeAfter,null);
