@@ -12,7 +12,7 @@ public class CharacterModelTest3 extends TestCase{
 	
 	public void setUp() throws Exception {
 		System.out.println("Character Test3 begins");
-		characterModel.loadChar("Character1");
+		characterModel.loadCharacterJson("2");
 	}
 	
 	public void tearDown() throws Exception {
@@ -49,8 +49,8 @@ public class CharacterModelTest3 extends TestCase{
 		}
 		
 		
-		characterModel.replaceCharacter(scoreAfter);
-		characterModel.loadChar("Character"+characterID);
+		characterModel.editCharacterJson(scoreAfter);
+		characterModel.loadCharacterJson(characterID);
 		for(int i=0;i<18;i++)
 		{
 			score = characterModel.getScore(i);

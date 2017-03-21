@@ -12,7 +12,7 @@ public class CharacterModelTest4 extends TestCase{
 	
 	public void setUp() throws Exception {
 		System.out.println("Character Test4 begins");
-		characterModel.loadChar("Character1");
+		characterModel.loadCharacterJson("3");
 	}
 	
 	public void tearDown() throws Exception {
@@ -52,8 +52,8 @@ public class CharacterModelTest4 extends TestCase{
 			scoreModifier[i] = -5;
 		}
 		
-		characterModel.replaceCharacter(scoreAfter);
-		characterModel.loadChar("Character"+characterID);
+		characterModel.modifierChange(scoreAfter);
+		//characterModel.loadCharacterJson(characterID);
 		for(int i=0;i<18;i++)
 		{
 			score = characterModel.getScore(i);
@@ -61,8 +61,8 @@ public class CharacterModelTest4 extends TestCase{
 		}
 		for(int i=0;i<6;i++)
 		{
-			//System.out.println("exp:"+scoreModifier[i]+" "+i);
-			//System.out.println("act:"+scoreBefore[i+12]+" "+i);
+			System.out.println("exp:"+scoreModifier[i]+" "+i);
+			System.out.println("act:"+scoreBefore[i+12]+" "+i);
 			assertEquals(scoreModifier[i]+"", scoreBefore[i+12]);
 		}
 		
