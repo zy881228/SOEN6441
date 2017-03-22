@@ -56,6 +56,9 @@ public class WarGameController extends JFrame{
 	WarGameCampaignCreationView campaignCreateView;
 	WarGameCampaignLoadView campaignLoadView;
 	
+	/**
+	 * custom construct method 
+	 */
 	public WarGameController(){
 		
 		itemModel = new WarGameItemModel();
@@ -83,17 +86,15 @@ public class WarGameController extends JFrame{
 		JButton btnNewGame = new JButton("New Game");
 		btnNewGame.setBounds(255, 240, 200, 50);
 		layeredPanel.add(btnNewGame, JLayeredPane.MODAL_LAYER);
-		//btnNewGame.setForeground(Color.WHITE);
 		btnNewGame.setBackground(Color.BLACK);
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				startModel = new WarGameStartModel();
 				startView = new WarGameStartView();
-//				startModel.addObserver(startView);
-//				startModel.DisplayMapView();
 				chooseView = new WarGameChooseView();
 				startModel.addObserver(chooseView);
 				startModel.chooseView();
+				dispose();
 			}
 		});
 		btnNewGame.setFont(new Font("Simplified Arabic", Font.PLAIN, 30));
@@ -157,7 +158,6 @@ public class WarGameController extends JFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				try{
 					final JFrame frame = new JFrame("Load Char");
 					frame.setBounds(300,400, 300, 200);
@@ -187,13 +187,13 @@ public class WarGameController extends JFrame{
 								try {
 									characterModel.loadCharacterJson(str[2]);
 								} catch (IOException e1) {
-									// TODO Auto-generated catch block
+									
 									e1.printStackTrace();
 								}
 						}
 					});
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
+						
 						e1.printStackTrace();
 					}
 			}
@@ -258,7 +258,7 @@ public class WarGameController extends JFrame{
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						// TODO Auto-generated method stub
+						
 						cbox_enchanType.removeAllItems();
 						if(cbox_itemType.getSelectedItem().toString().equals("Helmet"))
 						{
@@ -483,6 +483,11 @@ public class WarGameController extends JFrame{
 		
 	}
 	
+	/**
+	 * main method
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws IOException {
 		new WarGameController();
 	}
