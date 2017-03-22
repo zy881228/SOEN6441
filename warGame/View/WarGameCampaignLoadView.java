@@ -21,6 +21,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import warGame.Model.*;
 
+/**
+ * This viewer allow users to manipulate the campaign loading in GUI
+ * 
+ */
 @SuppressWarnings("serial")
 public class WarGameCampaignLoadView extends JFrame implements Observer{
 	private Map<String, WarGameCampaignModel> campaignsByMap;
@@ -29,6 +33,11 @@ public class WarGameCampaignLoadView extends JFrame implements Observer{
 	private ArrayList<JLabel> mapsLbls;
 	private ArrayList<String> mapsOnCampaign;
 
+	 /**
+     * Update the campaign's information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
 	@Override
 	public void update(Observable o, Object arg) {
 		try {
@@ -317,7 +326,9 @@ public class WarGameCampaignLoadView extends JFrame implements Observer{
 		btnSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				mapsOnCampaign.clear();
 				try {
+					
 					for (JLabel lbl : mapsLbls) {
 						String arr[] = lbl.getText().split(" ");
 						mapsOnCampaign.add(arr[1]);

@@ -45,7 +45,7 @@ import javax.swing.JTextField;
 
 /**
  * This viewer allow users to manipulate the character information in GUI
- * @version build 1
+ * 
  */
 
 
@@ -58,7 +58,6 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	JLabel label_showScore[] = new JLabel[12];
 	JLabel charpic = new JLabel();
 	WarGameCharacterModel characterModel;
-	//backpack = Arrays.copyOf(((WarGameCharacterModel) o).getBackpack(),10);
     
     /**
      * Update the character's information according to the value that get from Model and show the view frame.
@@ -119,36 +118,24 @@ public class WarGameCharacterView extends JFrame implements Observer{
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							//characterModel = new WarGameCharacterModel();
-							//characterModel.createCharacter(charType_i);
 							message_buffer = new String();
 							for(int i =0;i<12;i++)
 							{
 								String text[] = ((WarGameCharacterModel) o).getScore(i);
-								//String text[] = characterModel.getScore(i);
 								label_showScore[i].setText(text[0]+":"+text[1]);
 							}
 							//add the character pic
 							int picNumber = ((WarGameCharacterModel) o).getPicNumber();
-							//int picNumber = characterModel.getPicNumber();
+							
 							ImageIcon img = new ImageIcon("src/image/Character/"+picNumber+".png");
 							charpic.setIcon(img);
-							/*int id = 0;
-							try {
-								id = ((WarGameCharacterModel) o).getTotalChar();
-								//id = characterModel.getTotalChar();
-							} catch (IOException e2) {
-								// TODO Auto-generated catch block
-								e2.printStackTrace();
-							}
-							id = id+1;*/
+							
 							for(int i =0;i<18;i++)
 							{
 								String text[] = ((WarGameCharacterModel) o).getScore(i);
-								//String text[] = characterModel.getScore(i);
 								message_buffer = message_buffer+" "+text[1];
 							}
-							//message_buffer = id+message_buffer;
+							
 							picNumber_buffer = picNumber;
 					}
 				});
@@ -175,9 +162,9 @@ public class WarGameCharacterView extends JFrame implements Observer{
 	          				message = message+" "+backpackID[i];
 	          			}
 	          			message = message+" "+picNumber_buffer+"\r\n";
-						//Boolean result = ((WarGameCharacterModel) o).saveChar(message);
+						
 	          			characterModel = new WarGameCharacterModel(picNumber_buffer,(WarGameCharacterModel) o);
-	          			//characterModel = ((WarGameCharacterModel) o);
+	          			
 	          			Boolean result = ((WarGameCharacterModel) o).saveCharJson(characterModel);
 						if(result == true)
 						{
@@ -293,7 +280,6 @@ public class WarGameCharacterView extends JFrame implements Observer{
 				final int event_i = i;
 				label_equip[i] = new JLabel();
 				frameCase2.add(label_equip[i]);
-				//label_equip[i].setBounds(i*90, 100, 66, 66);
 			    if(i==0)
 			    {
 						label_equip[i].setBounds(200, 20, 66, 66);
@@ -330,7 +316,6 @@ public class WarGameCharacterView extends JFrame implements Observer{
 				else
 				{
 					String prefix[] = equip[i].trim().split(" ");
-					//String itemName = prefix[0]+prefix[1];
 					ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 					label_equip[i].setIcon(img_item);
 				}
@@ -498,59 +483,9 @@ public class WarGameCharacterView extends JFrame implements Observer{
 				}
 			});
 			
-			/*JTextField char_info = new JTextField();
-			char_info.setBounds(400, 20, 150, 200);
-			frameCase2.add(char_info);
-			level = ((WarGameCharacterModel) o).getLevel();
-			ability_scores = ((WarGameCharacterModel) o).getAbility_scores();
-			armor_class = ((WarGameCharacterModel) o).getArmor_class();
-			hit_points = ((WarGameCharacterModel) o).getHit_points();
-			attack_bonus = ((WarGameCharacterModel) o).getAttack_bonus();
-			damage_bonus = ((WarGameCharacterModel) o).getDamage_bonus();
-			char_info.setText("Level:"+level+"\r\n");
-			char_info.setText("Ability_scores:"+level+"\r\n");
-			char_info.setText("Armor_class:"+level+"\r\n");
-			char_info.setText("Hit_points:"+level+"\r\n");
-			char_info.setText("Attack_bonus:"+level+"\r\n");
-			char_info.setText("Damage_bonus:"+level+"\r\n");*/
-			
 			break;
 			//edit info
 		case 3:
-			/*JFrame frameCase3 = new JFrame("Info Change");
-			frameCase3.setBounds(400, 400, 200, 380);
-			frameCase3.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			frameCase3.setVisible(true);
-			frameCase3.setLayout(null);
-			
-			JLabel label_info[] = new JLabel[12];
-			for(int i =0;i<12;i++)
-			{
-				label_info[i] = new JLabel();
-				frameCase3.add(label_info[i]);
-				label_info[i].setBounds(0, i*30, 200, 30);
-				label_info[i].setOpaque(true);
-				int ori = 0;
-				int change = 0;
-				String str[] = ((WarGameCharacterModel) o).getScore(i);
-				String str_ori[] = ((WarGameCharacterModel) o).getScore_ori(i);
-				ori = Integer.parseInt(str_ori[1]);
-				change = Integer.parseInt(str[1]);
-				if((change - ori) > 0)
-				{
-					label_info[i].setText(str[0]+":"+ori+"--->"+change);
-					label_info[i].setBackground(Color.green);
-				}
-				else if((change - ori) < 0)
-				{
-					label_info[i].setText(str[0]+":"+ori+"--->"+change);
-					label_info[i].setBackground(Color.red);
-				}
-				else
-				{
-					label_info[i].setText(str[0]+":"+ori+"--->"+change);
-				}
-			}*/
 			break;
 		case 4:
 			final JFrame frameCase4 = new JFrame("Edit Character");
@@ -590,10 +525,8 @@ public class WarGameCharacterView extends JFrame implements Observer{
 						String edit_wisdom = text_editInfo[5].getText();
 						String edit_charisma = text_editInfo[6].getText();
 						String characterID = ((WarGameCharacterModel) o).getCharacterID();
-						//String picNum = ((WarGameCharacterModel) o).getPicNumber()+"";
 						String edit_message[] = {characterID,edit_level,edit_strength,edit_dexterity,edit_constitution
 			                      ,edit_intelligence,edit_wisdom,edit_charisma};
-						//Boolean result = ((WarGameCharacterModel) o).replaceCharacter(edit_message);
 						Boolean result = ((WarGameCharacterModel) o).editCharacterJson(edit_message);
 						if(result == true)
 						{
@@ -604,7 +537,6 @@ public class WarGameCharacterView extends JFrame implements Observer{
 								String text[] = ((WarGameCharacterModel) o).getScore(i);
 								label_showScore[i].setText(text[0]+":"+text[1]);
 							}
-							//((WarGameCharacterModel) o).loadChar("Character"+characterID);
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block

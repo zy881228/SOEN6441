@@ -25,6 +25,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
+
+/**
+ * This viewer allow users to manipulate the map creation information in GUI
+ *
+ */
 @SuppressWarnings("serial")
 public class WarGameMapCreateView extends JFrame implements Observer{
 	private JTextField mapNameText;
@@ -43,14 +48,19 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 	private Boolean hasEntry;
 	private Boolean hasExit;
 
+	/**
+     * Update the map's creation information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
 	@Override
 	public void update(Observable o, Object arg) {
-		final ImageIcon wall = new ImageIcon("image/Map/wall.jpg");
-		final ImageIcon door = new ImageIcon("image/Map/door.jpg");
-		final ImageIcon chest = new ImageIcon("image/Map/chest.jpg");
-		final ImageIcon floor = new ImageIcon("image/Map/floor.jpg");
-		final ImageIcon monster = new ImageIcon("image/Map/monster.jpg");
-		final ImageIcon hero = new ImageIcon("image/Map/hero.jpg");
+		final ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
+		final ImageIcon door = new ImageIcon("src/image/Map/door.jpg");
+		final ImageIcon chest = new ImageIcon("src/image/Map/chest.jpg");
+		final ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+		final ImageIcon monster = new ImageIcon("src/image/Map/monster.jpg");
+		final ImageIcon hero = new ImageIcon("src/image/Map/hero.jpg");
 		
 		mapElementsLbls = new ArrayList<JLabel>();
 		element = "x";
@@ -68,7 +78,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 		}
 		
 		final JFrame frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("image/Map/hero.jpg"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
 		frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
@@ -557,6 +567,7 @@ public class WarGameMapCreateView extends JFrame implements Observer{
 						e1.printStackTrace();
 					}
 					JOptionPane.showMessageDialog(null, "Save successfully");
+					frame.dispose();
 					mapNameText.setEditable(true);
 					btnSave.setEnabled(false);
 					btnCreate.setEnabled(true);

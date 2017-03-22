@@ -26,7 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import warGame.Controller.WarGameController;
 import warGame.Model.*;
+
+/**
+ * This viewer allow users to manipulate the start game information in GUI
+ * @version build 2
+ */
 
 @SuppressWarnings("serial")
 public class WarGameStartView extends JFrame implements Observer{
@@ -50,6 +56,13 @@ public class WarGameStartView extends JFrame implements Observer{
 	WarGameItemModel itemModel = new WarGameItemModel();
 	ArrayList<WarGameMapModel> mapModelList = new ArrayList();
 	JLabel label_player = new JLabel();
+	
+	/**
+     * Update the start game information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
+	
 	@Override
 	public void update(final Observable o, Object arg) {
 		ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
@@ -61,7 +74,6 @@ public class WarGameStartView extends JFrame implements Observer{
 		
 		final JFrame frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("src/image/Map/hero.jpg"));
-		//frame.setResizable(false);
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
 		frame.setTitle("WarGame");
@@ -74,6 +86,7 @@ public class WarGameStartView extends JFrame implements Observer{
 		{
 			frame.dispose();
 			JOptionPane.showMessageDialog(null, "Complete Campaign!");
+			WarGameController newConroller = new WarGameController();
 		}
 		else
 		{
@@ -85,29 +98,6 @@ public class WarGameStartView extends JFrame implements Observer{
 		//adaption
 		int levelChange = characterModel.getLevel();
 		((WarGameStartModel) o).setAdaption(mapOnPage, levelChange);
-		/*int count=0;
-		for(WarGameCharacterModel characterModel_buffer : mapOnPage.getContainFriends())
-		{
-			characterModel_buffer.setLevel(characterModel.getLevel());
-			characterModel_buffer.scoresChange();
-			mapOnPage.getContainFriends().set(count, characterModel_buffer);
-			count++;
-		}
-		count=0;
-		for(WarGameCharacterModel characterModel_buffer : mapOnPage.getContainEnemies())
-		{
-			characterModel_buffer.setLevel(characterModel.getLevel());
-			characterModel_buffer.scoresChange();
-			mapOnPage.getContainEnemies().set(count, characterModel_buffer);
-			count++;
-		}
-		count =0;
-		for(WarGameItemModel itemModel_buffer : mapOnPage.getContainItems())
-		{
-			itemModel_buffer.itemAdaption(characterModel.getLevel());
-			mapOnPage.getContainItems().set(count, itemModel_buffer);
-			count++;
-		}*/
 		//adaption end
 		
 		map = mapOnPage.getMap();
@@ -253,12 +243,6 @@ public class WarGameStartView extends JFrame implements Observer{
 						heroPos = posY + " " + (posX+1) + " " + (index+1);
 						map[posY][posX] = "f";
 						map[posY][posX+1] = "h";				
-	//					for(int i=0;i<map.length;i++){
-	//					for(int j=0;j<map[i].length;j++){
-	//						System.out.print(map[i][j]);
-	//						}
-	//					System.out.print("\n");
-	//					}	
 					}else if(rightPos[2].equals("m")){
 						String str[] = map[posY][posX+1].trim().split(" ");
 						nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
@@ -679,7 +663,6 @@ public class WarGameStartView extends JFrame implements Observer{
 		label_pic.setBounds(210, 150, 150, 250);
 		characterViewPanel.add(label_pic);
 		characterViewPanel.setBackground(Color.lightGray);
-		//characterModel = mapOnPage.getContainFriends().get(0);
 		equip = characterModel.getEquip();
 		backpack = characterModel.getBackpack();
 		for(int i=0;i<12;i++)
@@ -716,7 +699,6 @@ public class WarGameStartView extends JFrame implements Observer{
 			else
 			{
 				String prefix[] = equip[i].trim().split(" ");
-				//String itemName = prefix[0]+prefix[1];
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -881,14 +863,12 @@ public class WarGameStartView extends JFrame implements Observer{
 			});
 		}//backpack for
 		
-		
-		
-		/*JPanel inventoryViewPanel = new JPanel();
-		inventoryViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
-		inventoryViewPanel.setBounds(750, 550, 520, 200);
-		frame.getContentPane().add(inventoryViewPanel);
-		inventoryViewPanel.setLayout(null);*/
 	}
+	
+	/**
+     * create the character view frame
+     * @param characterModel
+     */
 	
 	public void createCharacterView(WarGameCharacterModel characterModel){
 		JFrame frame = new JFrame("Character Info");
@@ -928,8 +908,6 @@ public class WarGameStartView extends JFrame implements Observer{
 		label_pic.setBounds(210, 150, 150, 250);
 		frame.add(label_pic);
 		
-		//equip = characterModel.getEquip();
-		//backpack = characterModel.getBackpack();
 		for(int i=0;i<7;i++)
 		{
 			final int event_i = i;
@@ -1003,6 +981,13 @@ public class WarGameStartView extends JFrame implements Observer{
 			});
 		}
 	}
+	
+
+	/**
+     * get the item from the loot when monster dead
+     * 
+     */
+	
 	public void getAllItem()
 	{
 		String equip_buffer[] = nonePlayerModel.getEquip();
@@ -1126,6 +1111,12 @@ public class WarGameStartView extends JFrame implements Observer{
 		}
 	}
 	
+
+	/**
+     * switch the player's item with none player's item
+     * 
+     */
+	
 	public void switchItem(){
 		JFrame frame = new JFrame("Switch Item");
 		frame.setBounds(300, 0, 800, 700);
@@ -1133,12 +1124,8 @@ public class WarGameStartView extends JFrame implements Observer{
 		frame.setLayout(null);
 		final JLabel label_equip[] = new JLabel[7];
 		final JLabel label_backpack[] = new JLabel[10];
-		//String backpackLocal[] = new String[10];
-		//String equipLocal[] = new String[7];
 		final JLabel label_equip_npc[] = new JLabel[7];
 		final JLabel label_backpack_npc[] = new JLabel[10];
-		//String backpackLocal_npc[] = new String[10];
-		//String equipLocal_npc[] = new String[7];
 		
 		equip = characterModel.getEquip();
 		backpack = characterModel.getBackpack();
@@ -1388,6 +1375,12 @@ public class WarGameStartView extends JFrame implements Observer{
 		}
 	}
 	
+
+	/**
+     * refresh the player's inventory
+     * l
+     */
+	
 	public void refreshInventory(){
 		for(int i=0;i<12;i++)
 		{
@@ -1404,7 +1397,6 @@ public class WarGameStartView extends JFrame implements Observer{
 			else
 			{
 				String prefix[] = equip[i].trim().split(" ");
-				//String itemName = prefix[0]+prefix[1];
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -1419,7 +1411,6 @@ public class WarGameStartView extends JFrame implements Observer{
 			else
 			{
 				String prefix[] = backpack[i].trim().split(" ");
-				//String itemName = prefix[0]+prefix[1];
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}

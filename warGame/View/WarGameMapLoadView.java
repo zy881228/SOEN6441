@@ -22,6 +22,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
+
+/**
+ * This viewer allow users to manipulate the map loading information in GUI
+ * 
+ */
 @SuppressWarnings("serial")
 public class WarGameMapLoadView extends JFrame implements Observer{
 	private WarGameMapModel mapOnPage;
@@ -39,6 +44,11 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 	private Boolean hasEntry;
 	private Boolean hasExit;
 
+	/**
+     * Update the map's loading information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
 	@Override
 	public void update(Observable o, Object arg) {
 		final ImageIcon wall = new ImageIcon("src/image/Map/wall.jpg");
@@ -475,25 +485,25 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 		lblItem.setBounds(170, 290, 80, 30);
 		manipulatePanel.add(lblItem);
 		
-//		final JComboBox<WarGameItemModel> itemCbox = new JComboBox<WarGameItemModel>();
-//		itemCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
-//		itemCbox.setBounds(260, 296, 100, 21);
-//		manipulatePanel.add(itemCbox);
-//		for (String itemID : itemsByMap.keySet()) {
-//			itemOnPage = new WarGameItemModel();
-//			itemOnPage = itemsByMap.get(itemID);
-//			itemCbox.addItem(itemOnPage);
-//			itemOnPage = null;
-//		}
-//		itemCbox.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				itemOnPage = new WarGameItemModel();
-//				itemOnPage = (WarGameItemModel) itemCbox.getSelectedItem();
-//				element = new String();
-//				element = "i";
-//			}
-//		});
+		final JComboBox<WarGameItemModel> itemCbox = new JComboBox<WarGameItemModel>();
+		itemCbox.setFont(new Font("Simplified Arabic", Font.PLAIN, 10));
+		itemCbox.setBounds(260, 296, 100, 21);
+		manipulatePanel.add(itemCbox);
+		for (String itemID : itemsByMap.keySet()) {
+			itemOnPage = new WarGameItemModel();
+			itemOnPage = itemsByMap.get(itemID);
+			itemCbox.addItem(itemOnPage);
+			itemOnPage = null;
+		}
+		itemCbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemOnPage = new WarGameItemModel();
+				itemOnPage = (WarGameItemModel) itemCbox.getSelectedItem();
+				element = new String();
+				element = "i";
+			}
+		});
 		
 
 		btnSave.addActionListener(new ActionListener() {
@@ -546,6 +556,7 @@ public class WarGameMapLoadView extends JFrame implements Observer{
 						e1.printStackTrace();
 					}
 					JOptionPane.showMessageDialog(null, "Save successfully");
+					frame.dispose();
 					mapToChooseCbox.setEnabled(true);
 					btnSave.setEnabled(false);
 					btnLoad.setEnabled(true);

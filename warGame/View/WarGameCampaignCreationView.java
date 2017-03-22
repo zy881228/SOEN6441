@@ -23,6 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import warGame.Model.*;
 
+/**
+ * This viewer allow users to manipulate the campaign creation in GUI
+ * 
+ */
 @SuppressWarnings("serial")
 public class WarGameCampaignCreationView extends JFrame implements Observer{
 	private JTextField campaignNameText;
@@ -31,6 +35,11 @@ public class WarGameCampaignCreationView extends JFrame implements Observer{
 	private Map<String, WarGameMapModel> mapsByMap;
 	private ArrayList<JLabel> mapsLbls;
 
+	/**
+     * Update the campaign's information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
 	@Override
 	public void update(Observable o, Object arg) {
 		try {

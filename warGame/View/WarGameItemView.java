@@ -22,12 +22,18 @@ import warGame.Model.WarGameItemModel;
 
 /**
  * This viewer allow users to manipulate the item information in GUI
- * @version build 1
+ *
  */
 
 public class WarGameItemView extends JFrame implements Observer{
 
 	WarGameItemModel itemModel;
+	
+	/**
+     * Update the item's information according to the value that get from Model and show the view frame.
+     * @param o
+     * @param arg
+     */
 	@Override
 	public void update(final Observable o, Object arg) {
 		// TODO Auto-generated method stub
@@ -52,16 +58,6 @@ public class WarGameItemView extends JFrame implements Observer{
 				label_result.setBounds(new Rectangle(80, 160, 200, 30));
 				frame.add(label_result);
 				
-				//create save and cancel button
-				/*int id = 0;
-				try {
-					 id = ((WarGameItemModel) o).getTotalNum();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-				//id = id+1;
-				//final String message = id+" "+itemType+" "+enchanType+" "+enchanNumber+"\r\n";
 				JButton button_save = new JButton("Save");
 				button_save.setBounds(new Rectangle(30,260,100,30));
 				frame.add(button_save);
@@ -69,7 +65,6 @@ public class WarGameItemView extends JFrame implements Observer{
 					@Override
 					public void actionPerformed(ActionEvent e) {
 		                  try {
-							//Boolean result = ((WarGameItemModel) o).saveItem(message);
 		                	itemModel = new WarGameItemModel((WarGameItemModel) o);
 		                	Boolean result = ((WarGameItemModel) o).saveItemJson(itemModel);
 							if(result == true)
@@ -182,7 +177,6 @@ public class WarGameItemView extends JFrame implements Observer{
 						String enchanNum = cbox_enchanNum.getSelectedItem().toString();
 						String itemID = ((WarGameItemModel) o).getItemID();
 						try {
-							//Boolean result = ((WarGameItemModel) o).editItem(itemID,itemType_selec,enchanType,enchanNum);
 							Boolean result = ((WarGameItemModel) o).editItemJson(itemID, itemType_selec, enchanType, enchanNum);
 							if(result == true)
 							{
