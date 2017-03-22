@@ -148,14 +148,14 @@ public class WarGameItemModel extends Observable{
 				message = new String();
 				message = newItemID+" "+newItemType+" "+newEnchanType+" "+newEnchanNumber+"\r\n";
 				itemList.add(message);
-				//System.out.println(message);
+				
 			}
 			else
 			{
 				message = new String();
 				message = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+"\r\n";
 				itemList.add(message);
-				//System.out.println(message);
+				
 			}
 		}
 		file.delete();
@@ -171,7 +171,7 @@ public class WarGameItemModel extends Observable{
 	}
 	
 	/**
-	 * @return the last key of the map in the json file
+	 * @return the last key of the item in the json file
 	 * @throws FileNotFoundException 
 	 * @throws UnsupportedEncodingException 
 	 */
@@ -190,6 +190,13 @@ public class WarGameItemModel extends Observable{
 		return lastMapID;
 	}
 	
+	/**
+	 * list all the items from the item file
+	 * @return a item
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	
 	public static Map<String, WarGameItemModel> listAllItems() throws UnsupportedEncodingException, FileNotFoundException{
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/items.json"), "UTF-8");
@@ -197,9 +204,14 @@ public class WarGameItemModel extends Observable{
 		return mapsByMap;
 	}
 	
+	/**
+	 * save the item into the item file
+	 * @param itemModel
+	 * @throws IOException 
+	 */
+	
 	public Boolean saveItemJson(WarGameItemModel itemModel) throws IOException{
 		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
-		//Map<String, WarGameCharacterModel> mapsByMap = null;
 		mapsByMap.put(itemModel.getItemID(), itemModel);
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		FileWriter fw = new FileWriter("src/file/items.json");
@@ -207,6 +219,14 @@ public class WarGameItemModel extends Observable{
 		fw.close();
 		return true;
 	}
+	
+	/**
+	 * load the specific item by itemID
+	 * @param itemID
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
 	
 	public void loadItemJson(String itemID) throws UnsupportedEncodingException, FileNotFoundException{
 		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
@@ -219,6 +239,17 @@ public class WarGameItemModel extends Observable{
 		setChanged();
     	notifyObservers(this);
 	}
+	
+	/**
+	 * edit the item
+	 * @param ItemID
+	 * @param ItemType
+	 * @param EnchanType
+	 * @param EnchanNumber
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
 	
 	public Boolean editItemJson(String newItemID,String newItemType, String newEnchanType, String newEnchanNumber) throws IOException{
 		Map<String, WarGameItemModel> mapsByMap = WarGameItemModel.listAllItems();
@@ -234,6 +265,11 @@ public class WarGameItemModel extends Observable{
 		return true;
 	}
 	
+	/**
+	 * item adaption
+	 * @param level
+	 * @return enchanNumber
+	 */
 	public String itemAdaption(int level){
 		String enchanNumber = new String();
 		if(level<5)
@@ -361,15 +397,24 @@ public class WarGameItemModel extends Observable{
 		return itemID;
 	}
 	
+	 /**
+     * <p>get the item info<br/>
+     */
 	public String getItemInfo(){
 		String info = itemType+" "+enchanType+" "+enchanNumber;
 		return info;
 	}
 	
+	 /**
+     * <p>set the item enchanNum<br/>
+     */
 	public void setEnchanNum(String newNum){
 		this.enchanNumber = newNum;
 	}
 	
+	/**
+     * <p>change item info to string<br/>
+     */
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub

@@ -43,9 +43,20 @@ import warGame.Builder.Character;
 
 public class WarGameCharacterModel extends Observable {
 
+	/**
+	 * default construct
+	 */
 	public WarGameCharacterModel(){
 		
 	}
+	/**
+	 * custom construct
+	 * @param picID
+	 * @param WarGameCharacterModel
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 * @throws NumberFormatException 
+	 */
 	public  WarGameCharacterModel(int picID,WarGameCharacterModel o){
 		this.characterID = o.getCharacterID();
     	this.level = o.getLevel();
@@ -152,12 +163,6 @@ public class WarGameCharacterModel extends Observable {
 			charisma = tank.getCharisma();
 		}
 		
-		/*strength = get4d6Number();
-		dexterity = get4d6Number();
-		constitution = get4d6Number();
-		intelligence = get4d6Number();
-		wisdom = get4d6Number();
-		charisma = get4d6Number();*/
 		strength_modifier = getModifierNum(strength);
 		dexterity_modifier = getModifierNum(dexterity);
 		constitution_modifier = getModifierNum(constitution);
@@ -300,18 +305,6 @@ public class WarGameCharacterModel extends Observable {
 		randNum[1] = rand.nextInt(6)+1;
 		randNum[2] = rand.nextInt(6)+1;
 		randNum[3] = rand.nextInt(6)+1;
-		/*for(int i=0;i<4;i++)
-		{
-			for(int j=1;j<3;j++)
-			{
-				if(randNum[i]<randNum[j])
-				{
-					int buffer = randNum[i];
-					randNum[i] = randNum[j];
-					randNum[j] = buffer;
-				}
-			}
-		}*/
 		int result = randNum[0]+randNum[1]+randNum[2]+randNum[3];
 		
 		return result;
@@ -440,7 +433,6 @@ public class WarGameCharacterModel extends Observable {
 			String str[] = buffer.trim().split(" ");
 			if(str[0].equals(newMessage[0]))
 			{
-				//System.out.println("run1");
 				message = new String();
 				for(int i=0;i<newMessage.length;i++)
 				{
@@ -461,7 +453,6 @@ public class WarGameCharacterModel extends Observable {
 			else
 			{
 				message = new String();
-				//System.out.println("run2");
 				for(int i=0;i<37;i++)
 				{
 					message = message + str[i] +" ";
@@ -476,8 +467,6 @@ public class WarGameCharacterModel extends Observable {
 		os = new FileOutputStream(file,true);
 		for(int i=0;i<characterList.size();i++)
 		{
-			//System.out.println("run3");
-			//System.out.println(characterList.get(i));
 			os.write(characterList.get(i).getBytes());
 		}
 		os.close();
@@ -674,7 +663,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 						String str[] = equip[i].trim().split(" ");
 						if(str[1].equals("Armor_class"))
 						{
-							//System.out.println(armor_class);
+							
 							armor_class = armor_class+ Integer.parseInt(str[2]);
 						}
 					}
@@ -815,11 +804,6 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			{
 				damage_bonus = 0;
 			}
-			//ability_scores = maxNumber(ability_scores,0);
-			//armor_class = maxNumber(armor_class,0);
-			//hit_points = maxNumber(hit_points,0);
-			//attack_bonus = maxNumber(attack_bonus,0);
-			//damage_bonus = maxNumber(damage_bonus,0);
 		}
 		else if((changeBefore != null)&&(changeAfter != null))//equip item and equip position is not null
 		{
@@ -1002,8 +986,6 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		{
 			if((backpack[i] == null)||(backpack[i].equals("null")))
 			{
-				//String strID[] = str[0].trim().split("m");
-				//System.out.println(strID[1]);
 				backpack[i] = str[1]+" "+str[2]+" "+str[3];
 				break;
 			}
@@ -1146,6 +1128,12 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		return lastMapID;
 	}
 	
+	/**
+	 * list all the characters from the character file
+	 * @return a character
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
 	public static Map<String, WarGameCharacterModel> listAllCharacters() throws UnsupportedEncodingException, FileNotFoundException{
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/characters.json"), "UTF-8");
@@ -1153,9 +1141,14 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		return mapsByMap;
 	}
 	
+	/**
+	 * save the character into the character file
+	 * @param characterModel
+	 * @return boolean
+	 * @throws IOException 
+	 */
 	public Boolean saveCharJson(WarGameCharacterModel characterModel) throws IOException{
 		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
-		//Map<String, WarGameCharacterModel> mapsByMap = null;
 		mapsByMap.put(characterModel.getCharacterID(), characterModel);
 		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
 		FileWriter fw = new FileWriter("src/file/characters.json");
@@ -1219,6 +1212,12 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	notifyObservers(this);
 	}
 	
+	/**
+	 * edit the character into the character file
+	 * @param newMessage[]
+	 * @return boolean
+	 * @throws IOException 
+	 */
 	public Boolean editCharacterJson(String newMessage[]) throws IOException{
 		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
 		WarGameCharacterModel characterModel = mapsByMap.get(newMessage[0]);
@@ -1266,6 +1265,9 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		return true;
 	}
 	
+	/**
+	 * change other scores when abilities scores change
+	 */
 	public void scoresChange(){
 		strength_modifier = getModifierNum(strength);
 		dexterity_modifier = getModifierNum(dexterity);
@@ -1769,6 +1771,9 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	level = newLevel;  	
     }
     
+    /**
+     * <p>switch character info to string<br/>
+     */
     @Override
     public String toString() {
     	// TODO Auto-generated method stub

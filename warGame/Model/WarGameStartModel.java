@@ -95,7 +95,9 @@ public class WarGameStartModel extends Observable{
 	
 	/**
 	 * set the adaption of the map
-	 *  
+	 *  @param mapModel
+	 *  @param level
+	 *  @return WarGameMapModel
 	 */
 	public WarGameMapModel setAdaption(WarGameMapModel mapModel, int level){
 		int count=0;
@@ -173,6 +175,11 @@ public class WarGameStartModel extends Observable{
 		
 	}
 	
+	/**
+	 * check the backpack if it is full
+	 *  @param newBackpack
+	 *  @return boolean
+	 */
 	public Boolean checkBackpack(String newBackpack[])
 	{
 		int count =0;
@@ -191,13 +198,81 @@ public class WarGameStartModel extends Observable{
 		return true;
 	}
 	
+
+	/**
+	 * character move 4 directions
+	 * @return
+	 */
+	public static WarGameMapModel characterMovement(ArrayList<WarGameMapModel> mapModelLists, String direction){
+		WarGameMapModel mapModel = mapModelLists.get(0);
+		String map[][] = mapModel.getMap();
+		int posX = 0;
+		int posY = 0;
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[i][j].equals("h")) {
+					posY = i;
+					posX = j;
+				}
+			}
+		}
+		switch (direction) {
+		case "left":
+			if (map[posY][posX-1].equals("f")) {
+				map[posY][posX] = "f";
+				map[posY][posX-1] = "h";
+				mapModel.setMap(map);
+			}
+			if (map[posY][posX-1].equals("O")) {
+				mapModelLists.remove(0);
+				mapModel = mapModelLists.get(0);
+			}
+			break;
+		case "right":
+			if (map[posY][posX+1].equals("f")) {
+				map[posY][posX] = "f";
+				map[posY][posX+1] = "h";
+				mapModel.setMap(map);
+			}
+			if (map[posY][posX+1].equals("O")) {
+				mapModelLists.remove(0);
+				mapModel = mapModelLists.get(0);
+			}
+			break;
+		case "up":
+			if (map[posY-1][posX].equals("f")) {
+				map[posY][posX] = "f";
+				map[posY-1][posX] = "h";
+				mapModel.setMap(map);
+			}
+			if (map[posY-1][posX].equals("O")) {
+				mapModelLists.remove(0);
+				mapModel = mapModelLists.get(0);
+			}
+			break;
+		case "down":
+			if (map[posY+1][posX].equals("f")) {
+				map[posY][posX] = "f";
+				map[posY+1][posX] = "h";
+				mapModel.setMap(map);
+			}
+			if (map[posY+1][posX].equals("O")) {
+				mapModelLists.remove(0);
+				mapModel = mapModelLists.get(0);
+			}
+			break;
+
+		}
+		return mapModel;
+	}
 	
 /************************************added************************************/
 	private
 	
+	/**
+	 * the mapID
+	 */
 	String mapID = "null";
-	
-
 	
 	/**
 	 * which campaign to playwith
@@ -212,26 +287,50 @@ public class WarGameStartModel extends Observable{
 	 */
 	private ArrayList<WarGameMapModel> mapsModel;
 	
+	/**
+	 * get the campaign model to play with
+	 * @return
+	 */
 	public WarGameCampaignModel getCampaignToPlay() {
 		return campaignToPlay;
 	}
 
+	/**
+	 * set the campaign model to play with
+	 * @param campaignToPlay
+	 */
 	public void setCampaignToPlay(WarGameCampaignModel campaignToPlay) {
 		this.campaignToPlay = campaignToPlay;
 	}
 
+	/**
+	 * get the character model to play with
+	 * @return
+	 */
 	public WarGameCharacterModel getCharacterToPlay() {
 		return characterToPlay;
 	}
 
+	/**
+	 * set the character model to play with
+	 * @param characterToPlay
+	 */
 	public void setCharacterToPlay(WarGameCharacterModel characterToPlay) {
 		this.characterToPlay = characterToPlay;
 	}
 
+	/**
+	 * get the map model arraylist of the campaign
+	 * @return
+	 */
 	public ArrayList<WarGameMapModel> getMapsModel() {
 		return mapsModel;
 	}
 
+	/**
+	 * set the map model arraylist of the campaign
+	 * @param mapsModel
+	 */
 	public void setMapsModel(ArrayList<WarGameMapModel> mapsModel) {
 		this.mapsModel = mapsModel;
 	}

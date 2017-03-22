@@ -124,24 +124,57 @@ public class WarGameCampaignModel extends Observable{
 	}
 	
 //--------------------------------------------------Getters/Setters--------------------------------------------------	
+	/**
+	 * get the campaign ID
+	 * @return
+	 */
 	public String getCampaignID() {
 		return campaignID;
 	}
+	
+	/**
+	 * set the campaign ID
+	 * @param campaignID
+	 */
 	public void setCampaignID(String campaignID) {
 		this.campaignID = campaignID;
 	}
+	
+	/**
+	 * get the name of the campaign
+	 * @return
+	 */
 	public String getCampaignName() {
 		return campaignName;
 	}
+	
+	/**
+	 * set the name of the campaign
+	 * @param campaignName
+	 */
 	public void setCampaignName(String campaignName) {
 		this.campaignName = campaignName;
 	}
+	
+	/**
+	 * get the map name arraylist of the campaign
+	 * @return
+	 */
 	public ArrayList<String> getMapLists() {
 		return mapLists;
 	}
+	
+	/**
+	 * set the map name arraylist of the campaign
+	 * @param mapLists
+	 */
 	public void setMapLists(ArrayList<String> mapLists) {
 		this.mapLists = mapLists;
 	}
+	
+	/**
+	 * override the toString method
+	 */
 	@Override
 	public String toString() {
 		return this.campaignName;
