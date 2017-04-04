@@ -322,6 +322,22 @@ public class WarGameStartModel extends Observable{
 		return true;
 	}
 	
+
+	/**
+	 * load the specific map by mapID
+	 * @param mapID
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public void loadCharacterJson(String characterID) throws UnsupportedEncodingException, FileNotFoundException{
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		WarGameCharacterModel characterModel = mapsByMap.get(characterID);
+		
+    	setChanged();
+    	notifyObservers(this);
+	}
+	
 /************************************added************************************/
 	private
 	
