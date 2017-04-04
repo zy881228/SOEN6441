@@ -1,12 +1,20 @@
 package warGame.Model;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 public class WarGameStartModel extends Observable{
 	
@@ -283,6 +291,35 @@ public class WarGameStartModel extends Observable{
 		}
 		String lastMapID = allKeysInMap.get(allKeysInMap.size()-1);
 		return lastMapID;
+	}
+	
+	/**
+	 * list all the characters from the character file
+	 * @return a character
+	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException
+	 */
+	public static Map<String, WarGameCharacterModel> listAllCharacters() throws UnsupportedEncodingException, FileNotFoundException{
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/characters.json"), "UTF-8");
+		Map<String, WarGameCharacterModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameCharacterModel>>(){}.getType());
+		return mapsByMap;
+	}
+	
+	/**
+	 * save the character into the character file
+	 * @param characterModel
+	 * @return boolean
+	 * @throws IOException 
+	 */
+	public Boolean saveCharJson(WarGameCharacterModel characterModel) throws IOException{
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		mapsByMap.put(characterModel.getCharacterID(), characterModel);
+		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+		FileWriter fw = new FileWriter("src/file/characters.json");
+		fw.write(gson.toJson(mapsByMap));
+		fw.close();
+		return true;
 	}
 	
 /************************************added************************************/
