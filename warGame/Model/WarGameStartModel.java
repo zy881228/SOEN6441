@@ -3,8 +3,10 @@ package warGame.Model;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Map.Entry;
 
 public class WarGameStartModel extends Observable{
 	
@@ -264,6 +266,23 @@ public class WarGameStartModel extends Observable{
 
 		}
 		return mapModel;
+	}
+	
+	/**
+	 * @return the last key of the map in the json file
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public String lastMapID() throws UnsupportedEncodingException, FileNotFoundException{
+		ArrayList<String> allKeysInMap = new ArrayList<String>();
+		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
+		Iterator<Entry<String, WarGameCharacterModel>> it = mapsByMap.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, WarGameCharacterModel> entry = (Map.Entry<String, WarGameCharacterModel>)it.next();
+			allKeysInMap.add(entry.getKey());
+		}
+		String lastMapID = allKeysInMap.get(allKeysInMap.size()-1);
+		return lastMapID;
 	}
 	
 /************************************added************************************/
