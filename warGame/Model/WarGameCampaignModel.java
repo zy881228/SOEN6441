@@ -66,38 +66,6 @@ public class WarGameCampaignModel extends Observable{
 		notifyObservers(this);
 	}
 	
-	//add
-	public ArrayList<Integer> BFS(){
-		//boolean[] isSearched = new boolean[vertices];
-		for (int i = 0; i < vertices; i++) {
-			if (!checked.contains(i)){
-				int count = 0;
-				Queue<Integer> q = new LinkedList<Integer>();
-				q.add(i);
-				while(!q.isEmpty()){
-					Integer currentV = q.remove();
-					checked.add(currentV);
-					for (int k = currentV+1; k < vertices; k++) {
-						if(bool_adj[currentV][k] && !checked.contains(k)){
-							q.add(k);
-							checked.add(k);
-						}
-					}
-					for (int j = 0; j < currentV; j++) {
-						if(bool_adj[j][currentV] && !checked.contains(j)){
-							q.add(j);
-							checked.add(j);
-						}
-					}
-					//q.remove();
-					count++;
-				}
-				subgraphsize.add(count);
-			}	
-		}
-		return this.subgraphsize;
-	}
-	
 	/**
 	 * @return the last key of the campaign in the json file
 	 * @throws FileNotFoundException 
