@@ -1416,6 +1416,21 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_backpack[i].setIcon(img_item);
 			}
 		}*/
+		for(int i=0;i<10;i++)
+		{
+			if(backpack[i].equals(null))
+			{
+				label_backpack[i].setIcon(null);
+				label_backpack[i].setBackground(Color.black);
+				label_backpack[i].setText(backpack[i]);
+			}
+			else
+			{
+				String prefix[] = backpack[i].trim().split(" ");
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_backpack[i].setIcon(img_item);
+			}
+		}
 	}
 	
 	
