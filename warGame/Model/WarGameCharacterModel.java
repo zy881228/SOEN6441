@@ -1318,13 +1318,13 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		if((0<=x&&x<maxX)&&(0<=y&&y<maxY)){
 
 
-		if(matrix[x][y]){// 吃到食物或者撞到身体
+		if(matrix[x][y]){
 
 
-		if(x==food.x&&y==food.y){// 吃到食物
+		if(x==food.x&&y==food.y){
 
 
-		nodeArray.addFirst(food);// 在头部加上一结点
+		nodeArray.addFirst(food);
 		//计分规则与移动长度和速度有关
 		int scoreGet=(10000-200*countMove)/timeInterval;
 		
@@ -1332,7 +1332,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		}
 		else return false;// 撞到身体
 		}
-		else{//什么都没有碰到
+		else{
 		nodeArray.addFirst(new Node(x,y));// 加上头部
 		matrix[x][y]=true;
 		n=(Node)nodeArray.removeLast();// 去掉尾部
@@ -1343,10 +1343,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		}
 		return false;//越界（撞到墙壁）
 		}
-		/*发了一份贪吃蛇游戏的代码，谁能帮我解释一下，贪吃蛇程序的运行过程，运行步骤*/
-		//run():贪吃蛇运动线程
-
-
+		
 		public void run(){
 		running=true;
 		while(running){
@@ -1420,12 +1417,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			flag = false;
 			}
 			Color color = new Color(50 + (int)(Math.random()*205),                         //颜色也随机一下
-			50 + (int)(Math.random()*205),
-			50 + (int)(Math.random()*205));
-			NewNode.setX(newX);
-			NewNode.setY(newY);
-			NewNode.setColor(color);
-			Snake.get(0).setColor(NewNode.getColor());
+			
 			}
 
 
