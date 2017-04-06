@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
 
-import chess.Chess;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -281,210 +279,15 @@ public class WarGameStartModel extends Observable{
 		return mapModel;
 	}
 	
-	//add
-	public static void solution(List firstlist, List secondlist)
+	//gameover
+	public void GameOver(String str)                              //GameOver
 	{
-		
-		for(int i=0;i<secondlist.size();i++)
-		{
-			List<String> listtemp = new ArrayList<String>();
-			List<String> list_out = new ArrayList<String>();
-			String temp1 = (String) secondlist.get(i);
-			for(int j=0;j<firstlist.size();j++)
-			{
-				String temp2 = (String) firstlist.get(j);
-				int length = temp2.length();
-				if(length == (temp1.length()))
-				{
-					listtemp.add(temp2);
-				}
-			}
-			//listtemp是删选过的长度和目标字符串相同的listl列表
-			
-			
-			//把 temp1 分割成单个字母的数组
-			int temp_length = temp1.length();
-			char temp[] = new char[temp_length];
-			//temp1分割成temp，temp1是字符串，temp[]是单个字母的数组
-			
-			//System.out.println(temp[]);
-			
-			/*for (int k =0; k < temp1.length() ; k++)
-			{
-				String  temps[] = temp1.split("");
-				
-				temp[k]= temps[k+1].toChar();
-				
-			}*/
-			temp = temp1.toCharArray();
-			
-			
-			
-			
-			
-			
-			for(int m = 0;m<listtemp.size();m++)
-			{
-				String temp3 = listtemp.get(m);
-				char temp3_char[] = new char[temp3.length()];
-				temp3_char = temp3.toCharArray();
-				int counter = 0;
-				for(int n =0;n<temp.length;n++)
-				{
-					//System.out.println("temp3:"+temp3);
-					//System.out.println("temp[]:"+temp[n]);
-					for(int j=0;j<temp3_char.length;j++)
-					{
-						//System.out.println("temp3_char[]:"+temp3_char[j]);
-						//System.out.println("temp[]:"+temp[n]);
-						if(temp3_char[j] == temp[n])
-						{
-							//System.out.println("***");
-							counter++;
-							break;
-						}
-					}
-					/*if(temp3.indexOf("i") != (-1));
-					{
-						System.out.println("***");
-						counter++;
-					}*/
-				}
-				//System.out.println(counter);
-				if(counter == temp_length)
-				{
-					list_out.add(temp3);
-				}
-			}//此循环完成后，输出list已获得
-			
-			
-			
-			if(list_out.size() != 0)
-			{
-			   System.out.println(list_out);
-			   System.out.println("-------------------");
-			}
-			else
-			{
-				System.out.println("No Answer Found");
-				System.out.println("-------------------");
-			}
-			
-		}//最大for循环
+	Calendar cal = new GregorianCalendar();
+	str = str + "\n 点击确定键结束游戏..." + "\n当前时间: " + cal.getTime().toString();
+	JOptionPane.showMessageDialog(null, str, "游戏结束 ———————By Mr.Xu", 1);
+	System.exit(0);
 	}
 	
-	public static long MaxNumber(long array[])
-	{
-		int i = 0;
-		long Max = 0;
-		long current = 0;
-		for(i=0;i<array.length;i++)
-		{
-			if(i==0)
-			{
-				Max = array[i];
-				current = current + array[i];
-			}
-			else
-			{
-				current = current + array[i];
-				if(Max<current)
-				{
-					Max = current;
-				}
-			}
-			//System.out.println("N[]:"+M.N[i]);
-		}
-		return Max;
-	}// this for Max Number
-	
-	 public static ArrayList<ArrayList<String>> ListAll = new ArrayList<ArrayList <String>>();
-		public static void Partition(String a, String b){
-			ArrayList M = new ArrayList();
-			ArrayList<String> listT;
-			ArrayList<String> listF = new ArrayList<String>();
-			ArrayList<String> listS = new ArrayList<String>();
-			int i = 0;
-			int first = -1;
-			int second = -1;
-			int repeat_time = 0;
-			int exist = 0;
-			//System.out.println("AB:"+a+" "+b);
-			for(i=0;i<M.ListAll.size();i++)
-			{
-				listT = M.ListAll.get(i);
-				//System.out.println("list:"+listT);
-				if((listT.contains(a)) && (!listT.contains(b)))
-				{
-					//listT.add(b);
-					//M.ListAll.add(listT);
-					first = i;
-					repeat_time ++;
-				}
-				else if((listT.contains(b)) && (!listT.contains(a)))
-				{
-					//listT.add(a);
-					//M.ListAll.add(listT);
-					second = i;
-					repeat_time++;
-				}
-				else if((listT.contains(b)) && (listT.contains(a)))
-				{
-					//do nothing
-				}
-				else
-				{
-					exist++;
-				}
-			}//for
-			if(repeat_time ==1)
-			{
-				if(first != -1)
-				{
-					listT = new ArrayList<String>();
-					listT = M.ListAll.get(first);
-					listT.add(b);
-					M.ListAll.remove(first);
-					M.ListAll.add(listT);
-				}
-				else if(second != -1)
-				{
-					listT = new ArrayList<String>();
-					listT = M.ListAll.get(second);
-					listT.add(a);
-					M.ListAll.remove(second);
-					M.ListAll.add(listT);
-				}
-			}
-			
-			if(i == exist)
-			{
-				listT = new ArrayList<String>();
-				listT.removeAll(listT);
-				listT.add(a);
-				listT.add(b);
-				M.ListAll.add(listT);
-				//System.out.println("ListAll:"+M.ListAll);
-			}
-			if(repeat_time == 2)
-			{
-				//System.out.println("*****");
-				listF = M.ListAll.get(first);
-				listS = M.ListAll.get(second);
-				if(first>second)
-				{
-					M.ListAll.remove(first);
-					M.ListAll.remove(second);
-				}
-				else
-				{
-				    M.ListAll.remove(first);
-				    M.ListAll.remove(second-1);
-				}
-				listF.addAll(listS);
-				M.ListAll.add(listF);
-			}
-		}
 	
 /************************************added************************************/
 	private
