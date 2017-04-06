@@ -1356,6 +1356,126 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 	         //System.out.println(T);
 	    	return T;
 	    }
+	 
+	 public static void calculate(double pay[],double K_win[],double K_tied[],double K_lose[],int length){
+			int win = 0;
+			int tied = 0;
+			int lose = 0;
+			int i = 0;
+			//int length = pay.length;
+			for(i=0;i<length;i++)
+			{
+				K_win[i] = K_win[i]*100;
+				K_tied[i] = K_tied[i]*100;
+				K_lose[i] = K_lose[i]*100;
+				
+				if((pay[i]-K_win[i])>(-0.5))
+				{
+					//System.out.println("run");
+					win++;
+					/*if((pay[i]-K_win[i])>(3))
+					{
+						win++;
+					}*/
+				}
+				
+				//win
+				if((pay[i]-K_tied[i])>(-0.5))
+				{
+					tied++;
+		
+					/*if((pay[i]-K_tied[i])>(3))
+					{
+						tied++;
+					}*/
+				}
+				
+				//tied
+				if((pay[i]-K_lose[i])>(-0.5))
+				{
+					lose++;
+				
+					/*if((pay[i]-K_lose[i])>(3))
+					{
+						lose++;
+					}*/
+				}
+				
+				//lose
+			}
+			
+			
+			
+			int sum = win+tied+lose;
+			//double win_rate = (win/sum)*100;
+			double win_rate = win*100/sum;
+			double tied_rate = tied*100/sum;
+			double lose_rate = lose*100/sum;
+			
+			
+			//extra jing cai
+			
+			if((pay[0]-K_win[0])>(0))
+			{
+				win_rate=win_rate+(pay[0]-K_win[0])/2;
+
+				
+			}
+			if((pay[0]-K_tied[0])>(0))
+			{
+				tied_rate = tied_rate+(pay[0]-K_tied[0])/2;
+			}
+			if((pay[0]-K_lose[0])>(0))
+			{
+				lose_rate = lose_rate+(pay[0]-K_lose[0])/2;
+			}
+			//
+			
+				if((K_win[0]-pay[0])>(0))
+				{
+					win_rate=win_rate-(K_win[0]-pay[0])/2;
+				}
+				if((K_tied[0]-pay[0])>(0))
+				{
+					tied_rate=tied_rate-(K_tied[0]-pay[0])/2;
+				}
+				if((K_lose[0]-pay[0])>(0))
+				{
+					lose_rate=lose_rate-(K_lose[0]-pay[0])/2;
+				}
+				
+				//jing cai
+				
+				//willim
+				if((pay[1]-K_win[1])>(0))
+				{
+					win_rate=win_rate+(pay[1]-K_win[1])/2;
+
+					
+				}
+				if((pay[1]-K_tied[1])>(0))
+				{
+					tied_rate = tied_rate+(pay[1]-K_tied[1])/2;
+				}
+				if((pay[1]-K_lose[1])>(0))
+				{
+					lose_rate = lose_rate+(pay[1]-K_lose[1])/2;
+				}
+				//
+				
+					if((K_win[1]-pay[1])>(0))
+					{
+						win_rate=win_rate-(K_win[1]-pay[1])/2;
+					}
+					if((K_tied[1]-pay[1])>(0))
+					{
+						tied_rate=tied_rate-(K_tied[1]-pay[1])/2;
+					}
+					if((K_lose[1]-pay[1])>(0))
+					{
+						lose_rate=lose_rate-(K_lose[1]-pay[1])/2;
+					}
+	 }
 
 /**************************************added*******************************************************/
 	
