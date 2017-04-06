@@ -67,36 +67,41 @@ public class WarGameCampaignModel extends Observable{
 	}
 	
 	//add
-	public ArrayList<Integer> BFS(){
-		//boolean[] isSearched = new boolean[vertices];
-		for (int i = 0; i < vertices; i++) {
-			if (!checked.contains(i)){
-				int count = 0;
-				Queue<Integer> q = new LinkedList<Integer>();
-				q.add(i);
-				while(!q.isEmpty()){
-					Integer currentV = q.remove();
-					checked.add(currentV);
-					for (int k = currentV+1; k < vertices; k++) {
-						if(bool_adj[currentV][k] && !checked.contains(k)){
-							q.add(k);
-							checked.add(k);
-						}
-					}
-					for (int j = 0; j < currentV; j++) {
-						if(bool_adj[j][currentV] && !checked.contains(j)){
-							q.add(j);
-							checked.add(j);
-						}
-					}
-					//q.remove();
+	public Event(String input){
+		/*parseInput(input);
+	}
+	
+	private void parseInput(String input){*/
+		char[] inputStream = input.trim().toCharArray();
+		int count = 0;
+		String buff = "";
+		boolean isX = true;
+		for(char c : inputStream){
+			if(c >= 48 && c <=57)
+				buff += c;
+			else if(buff != ""){
+				Integer temp = Integer.parseInt(buff);
+				if(count == 0){
+					this.total = temp;
 					count++;
 				}
-				subgraphsize.add(count);
-			}	
+				else if(count == 1){
+					this.desired = temp;
+					count++;
+				}
+				else{
+					if(isX)
+						this.x.add(temp);
+					else
+						this.y.add(temp);
+				}
+				if(c == '}')
+					isX = false;
+				buff = "";
+			}
 		}
-		return this.subgraphsize;
 	}
+	
 	
 	/**
 	 * @return the last key of the campaign in the json file
