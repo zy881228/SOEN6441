@@ -287,6 +287,16 @@ public class WarGameStartModel extends Observable{
 	JOptionPane.showMessageDialog(null, str, "游戏结束 ———————By Mr.Xu", 1);
 	System.exit(0);
 	}
+	protected static ImageIcon createImageIcon(String path)
+	{
+	        java.net.URL imgURL = Snake.class.getResource(path);
+	        if (imgURL != null) {
+	            return new ImageIcon(imgURL);
+	        } else {
+	            System.err.println("Couldn't find file: " + path);  //err   红字
+	            return null;
+	        }
+	}
 	
 	
 /************************************added************************************/
