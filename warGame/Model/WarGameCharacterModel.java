@@ -1401,6 +1401,32 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 
 			paused=!paused;
 			}
+			
+			public void CreateNode()                                             //产生随机点
+			{
+			boolean flag = true;
+			int newX = 0;
+			int newY = 0;
+			while(flag)
+			{
+			newX = (int)(Math.random() * (width-1));
+			newY = (int)(Math.random() * (height-1));
+			 
+			for(int i = 0;i < Length ;i++)
+			{
+			if((Snake.get(i).getX() == newX) && (Snake.get(i).getY() == newY))
+			break;
+			}
+			flag = false;
+			}
+			Color color = new Color(50 + (int)(Math.random()*205),                         //颜色也随机一下
+			50 + (int)(Math.random()*205),
+			50 + (int)(Math.random()*205));
+			NewNode.setX(newX);
+			NewNode.setY(newY);
+			NewNode.setColor(color);
+			Snake.get(0).setColor(NewNode.getColor());
+			}
 
 
 /**************************************added*******************************************************/
