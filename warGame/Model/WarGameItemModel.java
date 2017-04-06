@@ -294,6 +294,37 @@ public class WarGameItemModel extends Observable{
 		}
 		return enchanNumber;
 	}
+	
+	//set
+	public void setItemEquip(String itemInfo){
+		String str[] = itemInfo.trim().split(" ");
+		int count = 0;
+		switch(str[0])
+		{
+		case "Helmet":
+			equip[0] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Armor":
+			equip[1] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Shield":
+			equip[2] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Ring":
+			equip[3] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Belt":
+			equip[4] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Boots":
+			equip[5] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		case "Weapon":
+			equip[6] = str[0]+" "+str[1]+" "+str[2];
+			break;
+		}
+	}
+	
 /****************************added******************************************/
 	private
     
