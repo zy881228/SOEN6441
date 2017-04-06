@@ -1401,6 +1401,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_equip[i].setIcon(img_item);
 			}
 		}
+		/*
 		for(int i=0;i<10;i++)
 		{
 			if(backpack[i].equals("null"))
@@ -1414,8 +1415,9 @@ public class WarGameStartView extends JFrame implements Observer{
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}
-		}
+		}*/
 	}
+	
 	
 	
 }
