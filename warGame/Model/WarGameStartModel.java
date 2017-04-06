@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
 
+import chess.Chess;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -396,6 +398,93 @@ public class WarGameStartModel extends Observable{
 		return Max;
 	}// this for Max Number
 	
+	 public static ArrayList<ArrayList<String>> ListAll = new ArrayList<ArrayList <String>>();
+		public static void Partition(String a, String b){
+			ArrayList M = new ArrayList();
+			ArrayList<String> listT;
+			ArrayList<String> listF = new ArrayList<String>();
+			ArrayList<String> listS = new ArrayList<String>();
+			int i = 0;
+			int first = -1;
+			int second = -1;
+			int repeat_time = 0;
+			int exist = 0;
+			//System.out.println("AB:"+a+" "+b);
+			for(i=0;i<M.ListAll.size();i++)
+			{
+				listT = M.ListAll.get(i);
+				//System.out.println("list:"+listT);
+				if((listT.contains(a)) && (!listT.contains(b)))
+				{
+					//listT.add(b);
+					//M.ListAll.add(listT);
+					first = i;
+					repeat_time ++;
+				}
+				else if((listT.contains(b)) && (!listT.contains(a)))
+				{
+					//listT.add(a);
+					//M.ListAll.add(listT);
+					second = i;
+					repeat_time++;
+				}
+				else if((listT.contains(b)) && (listT.contains(a)))
+				{
+					//do nothing
+				}
+				else
+				{
+					exist++;
+				}
+			}//for
+			if(repeat_time ==1)
+			{
+				if(first != -1)
+				{
+					listT = new ArrayList<String>();
+					listT = M.ListAll.get(first);
+					listT.add(b);
+					M.ListAll.remove(first);
+					M.ListAll.add(listT);
+				}
+				else if(second != -1)
+				{
+					listT = new ArrayList<String>();
+					listT = M.ListAll.get(second);
+					listT.add(a);
+					M.ListAll.remove(second);
+					M.ListAll.add(listT);
+				}
+			}
+			
+			if(i == exist)
+			{
+				listT = new ArrayList<String>();
+				listT.removeAll(listT);
+				listT.add(a);
+				listT.add(b);
+				M.ListAll.add(listT);
+				//System.out.println("ListAll:"+M.ListAll);
+			}
+			if(repeat_time == 2)
+			{
+				//System.out.println("*****");
+				listF = M.ListAll.get(first);
+				listS = M.ListAll.get(second);
+				if(first>second)
+				{
+					M.ListAll.remove(first);
+					M.ListAll.remove(second);
+				}
+				else
+				{
+				    M.ListAll.remove(first);
+				    M.ListAll.remove(second-1);
+				}
+				listF.addAll(listS);
+				M.ListAll.add(listF);
+			}
+		}
 	
 /************************************added************************************/
 	private
