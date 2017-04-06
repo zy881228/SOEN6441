@@ -1294,12 +1294,88 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		multiple_attacks = getMultiple(attack_bonus);
 	}
 	
-	//
-	public int Adaption(int level){
-		//String enchanNumber = new String();
-		this.level = level;
-		return this.level;
-	}
+	//move
+	public boolean moveOn(){
+
+
+		Node n=(Node)nodeArray.getFirst();
+		int x=n.x;
+		int y=n.y;
+		switch(direction){
+		case UP:
+		y--;
+		break;
+		case DOWN:
+		y++;
+		break;
+		case LEFT:
+		x--;
+		break;
+		case RIGHT:
+		x++;
+		break;
+		}
+		if((0<=x&&x<maxX)&&(0<=y&&y<maxY)){
+
+
+		if(matrix[x][y]){// 吃到食物或者撞到身体
+
+
+		if(x==food.x&&y==food.y){// 吃到食物
+
+
+		nodeArray.addFirst(food);// 在头部加上一结点
+		//计分规则与移动长度和速度有关
+		int scoreGet=(10000-200*countMove)/timeInterval;
+		score+=scoreGet>0 ? scoreGet : 10;
+		countMove=0;
+		food=createFood();
+		matrix[food.x][food.y]=true;
+		return true;
+		}
+		else return false;// 撞到身体
+		}
+		else{//什么都没有碰到
+		nodeArray.addFirst(new Node(x,y));// 加上头部
+		matrix[x][y]=true;
+		n=(Node)nodeArray.removeLast();// 去掉尾部
+		matrix[n.x][n.y]=false;
+		countMove++;
+		return true;
+		}
+		}
+		return false;//越界（撞到墙壁）
+		}
+		/*发了一份贪吃蛇游戏的代码，谁能帮我解释一下，贪吃蛇程序的运行过程，运行步骤*/
+		//run():贪吃蛇运动线程
+
+
+		public void run(){
+		running=true;
+		while(running){
+		try{
+		Thread.sleep(timeInterval);
+		}
+		catch(Exception e){
+		break;
+		}
+		if(!paused){
+
+
+		if(moveOn()){// 未结束
+		gs.repaint();
+		}
+		else{//游戏结束
+		JOptionPane.showMessageDialog(null,"GAME OVER",
+		"Game Over",JOptionPane.INFORMATION_MESSAGE);
+		break;
+		}
+		}
+		}
+		running=false;
+		}
+
+
 /**************************************added*******************************************************/
 	
 	private
