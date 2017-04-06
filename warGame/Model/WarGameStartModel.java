@@ -1,5 +1,7 @@
 package warGame.Model;
 
+
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -368,6 +370,31 @@ public class WarGameStartModel extends Observable{
 			
 		}//最大for循环
 	}
+	
+	public static long MaxNumber(long array[])
+	{
+		int i = 0;
+		long Max = 0;
+		long current = 0;
+		for(i=0;i<array.length;i++)
+		{
+			if(i==0)
+			{
+				Max = array[i];
+				current = current + array[i];
+			}
+			else
+			{
+				current = current + array[i];
+				if(Max<current)
+				{
+					Max = current;
+				}
+			}
+			//System.out.println("N[]:"+M.N[i]);
+		}
+		return Max;
+	}// this for Max Number
 	
 	
 /************************************added************************************/
