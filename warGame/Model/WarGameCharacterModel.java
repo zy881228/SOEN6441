@@ -1327,10 +1327,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		nodeArray.addFirst(food);// 在头部加上一结点
 		//计分规则与移动长度和速度有关
 		int scoreGet=(10000-200*countMove)/timeInterval;
-		score+=scoreGet>0 ? scoreGet : 10;
-		countMove=0;
-		food=createFood();
-		matrix[food.x][food.y]=true;
+		
 		return true;
 		}
 		else return false;// 撞到身体
@@ -1393,22 +1390,10 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			//speedUp():加快蛇运动速度
 
 
-			public void speedUp(){
-			timeInterval*=speedChangeRate;
-			}
+		
 
 
-			//speedDown():放慢蛇运动速度
-
-
-			public void speedDown(){
-
-
-			timeInterval/=speedChangeRate;
-			}
-
-
-			//changePauseState(): 改变游戏状态（暂停或继续）
+			
 
 
 			public void changePauseState(){
