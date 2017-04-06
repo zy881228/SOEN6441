@@ -1374,6 +1374,48 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		}
 		running=false;
 		}
+		
+		private Node createFood(){
+
+
+			int x=0;
+			int y=0;
+			do{
+			Random r=new Random();
+			x=r.nextInt(maxX);
+			y=r.nextInt(maxY);
+			}
+			while(matrix[x][y]);
+			return new Node(x,y);
+			}
+
+
+			//speedUp():加快蛇运动速度
+
+
+			public void speedUp(){
+			timeInterval*=speedChangeRate;
+			}
+
+
+			//speedDown():放慢蛇运动速度
+
+
+			public void speedDown(){
+
+
+			timeInterval/=speedChangeRate;
+			}
+
+
+			//changePauseState(): 改变游戏状态（暂停或继续）
+
+
+			public void changePauseState(){
+
+
+			paused=!paused;
+			}
 
 
 /**************************************added*******************************************************/
