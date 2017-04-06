@@ -1294,6 +1294,68 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		multiple_attacks = getMultiple(attack_bonus);
 	}
 	
+	//add
+	 public static long compute(String Sub)
+	    {
+	    	 String A = Sub;
+	         long T = 0;
+	         int i = 0;
+	         int j = 0;
+	         int m = 0;
+	         for(m=1;m<A.length();m++)
+	         {
+	      	   String S = new String();
+	      	   String R = new String();
+	      	   S = A.substring(0, m);
+	      	   R = A.substring(m,A.length());
+	      	   long N[][] = new long[S.length()+1][R.length()+1];
+	      	   //System.out.println("R length:"+R.length());
+	      	   //System.out.println("S length:"+S.length());
+	      	   //System.out.println("R:"+R);
+	      	   //System.out.println("S:"+S);
+	      	   for(i=0;i<S.length()+1;i++)
+	      	   {
+	      		   for(j=0;j<R.length()+1;j++)
+	      		   {
+	      			   N[i][j] = 0;
+	      			   //System.out.print(" "+N[i][j]);
+	      		   }
+	      		   //System.out.println();
+	      	   }
+	      			   
+	         for(i=1;i<S.length()+1;i++)
+	         {//System.out.println("abp");
+	      	   for(j=1;j<R.length()+1;j++)
+	      	   {//System.out.println("abo");
+	      		   if(S.charAt(i-1) == R.charAt(j-1))
+	      		   {
+	      			   //System.out.println("equal:"+N[i][j]);
+	      			   N[i][j] = N[i-1][j]+N[i][j-1]+1;
+	      			   //System.out.println("equal:"+N[i][j]);
+	      		   }
+	      		   else
+	      		   {
+	      			  //System.out.println("2:"+i);
+	      			   //System.out.println("2:"+j);
+	      			   N[i][j] = N[i-1][j]+N[i][j-1]-N[i-1][j-1];
+	      			   //System.out.println("2:"+N[i][j]);
+	      		   }
+	      		//System.out.print(" "+N[i][j]);
+	      	   }
+	      	 //System.out.println();
+	         }
+	         //System.out.println(i);
+	         //System.out.println(j);
+	         if(T == 0)
+	        	 T= T+N[S.length()][R.length()];
+	         else
+	       
+	             T = T+N[S.length()][R.length()]-N[S.length()-1][R.length()];
+	             //System.out.println("T value:"+T);
+	         }// for split
+	         //System.out.println(T);
+	    	return T;
+	    }
 
 /**************************************added*******************************************************/
 	
