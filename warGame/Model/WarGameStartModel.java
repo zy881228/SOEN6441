@@ -276,67 +276,7 @@ public class WarGameStartModel extends Observable{
 		return mapModel;
 	}
 	
-	/**
-	 * @return the last key of the map in the json file
-	 * @throws FileNotFoundException 
-	 * @throws UnsupportedEncodingException 
-	 */
-	public String lastMapID() throws UnsupportedEncodingException, FileNotFoundException{
-		ArrayList<String> allKeysInMap = new ArrayList<String>();
-		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
-		Iterator<Entry<String, WarGameCharacterModel>> it = mapsByMap.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, WarGameCharacterModel> entry = (Map.Entry<String, WarGameCharacterModel>)it.next();
-			allKeysInMap.add(entry.getKey());
-		}
-		String lastMapID = allKeysInMap.get(allKeysInMap.size()-1);
-		return lastMapID;
-	}
 	
-	/**
-	 * list all the characters from the character file
-	 * @return a character
-	 * @throws UnsupportedEncodingException
-	 * @throws FileNotFoundException
-	 */
-	public static Map<String, WarGameCharacterModel> listAllCharacters() throws UnsupportedEncodingException, FileNotFoundException{
-		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-		InputStreamReader isreader = new InputStreamReader(new FileInputStream("src/file/characters.json"), "UTF-8");
-		Map<String, WarGameCharacterModel> mapsByMap = gson.fromJson(isreader, new TypeToken<Map<String, WarGameCharacterModel>>(){}.getType());
-		return mapsByMap;
-	}
-	
-	/**
-	 * save the character into the character file
-	 * @param characterModel
-	 * @return boolean
-	 * @throws IOException 
-	 */
-	public Boolean saveCharJson(WarGameCharacterModel characterModel) throws IOException{
-		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
-		mapsByMap.put(characterModel.getCharacterID(), characterModel);
-		Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
-		FileWriter fw = new FileWriter("src/file/characters.json");
-		fw.write(gson.toJson(mapsByMap));
-		fw.close();
-		return true;
-	}
-	
-
-	/**
-	 * load the specific map by mapID
-	 * @param mapID
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws FileNotFoundException
-	 */
-	public void loadCharacterJson(String characterID) throws UnsupportedEncodingException, FileNotFoundException{
-		Map<String, WarGameCharacterModel> mapsByMap = WarGameCharacterModel.listAllCharacters();
-		WarGameCharacterModel characterModel = mapsByMap.get(characterID);
-		
-    	setChanged();
-    	notifyObservers(this);
-	}
 	
 /************************************added************************************/
 	private
