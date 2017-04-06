@@ -276,6 +276,117 @@ public class WarGameStartModel extends Observable{
 		return mapModel;
 	}
 	
+	//add
+	public void rollDice()
+	{
+		
+	}
+	public static void changeStratergy(int userID[], int upperID[],int message[],String interest[]){
+		int i = 0;
+		int j = 0;
+		int e = 0;
+		int m = 0;
+		int v = 0;
+		int upper = 0;
+		int SumZero = 0;
+		double temp = 1;
+		int MessageE[] = new int[5];
+		int SumMessage[] = new int[5];
+		//for simi
+		String strtemp = new String();
+		String str[] = new String[10];
+		int size = 0;
+		int s = 0;
+		double result_sim;
+		while((upperID[i] == 0)&&(i<1000))
+		{
+			SumZero = SumZero + message[i];
+			i++;
+			
+		}
+		for(i=0;i<1000;i++)
+		{
+			//System.out.println("iyeye:"+i);
+			//System.out.println("upperID:"+upperID[i]);
+			//System.out.println("message:"+message[i]);
+			e = 0;
+			j = 0;
+			m = 0;
+			v = 0;
+			upper = 0;
+			//System.out.println("nima1:"+i);
+			if(upperID[i] != 0)
+			{
+				upper = i;
+				//System.out.println("nima2:"+i);
+				while(upperID[upper] != 0)
+				{
+					j = 0;
+					//System.out.println("nima3:"+i);
+					//System.out.println("e:"+e);
+					SumMessage[e] =0;
+					//System.out.println("SumMessage[e]:"+SumMessage[e]);
+					MessageE[e] = message[upper];
+					while((userID[j] != upperID[upper])&&(j<999))
+					{
+						//System.out.println("nima4:"+i);
+						//System.out.println("j:"+j);
+						//System.out.println("upper:"+upper);
+						if(j<999)
+						{j++;
+						}
+						
+					}
+					for(m=0;m<1000;m++)
+					{
+						if((upperID[m] == upperID[upper]))
+						{
+							//System.out.println("###:"+message[m]);
+							SumMessage[e] = SumMessage[e]+message[m];
+							
+						}
+					}
+					
+					upper = j;
+					//System.out.println("&&&:"+message[upper]);
+					SumMessage[e] = SumMessage[e]+message[upper];
+					e++;
+					//System.out.println("nima5:"+i);
+				}//while
+				MessageE[e] = message[upper];
+				SumMessage[e] = SumZero;
+			}//if
+			else
+			{
+				MessageE[0] = message[i];
+				SumMessage[0] = SumZero;
+				
+			}
+			temp = 1;
+			for(v=0;v<e+1;v++)
+			{
+				//System.out.println("SumM:"+SumMessage[v]);
+				//System.out.println("Message:"+MessageE[v]);
+				temp = temp*MessageE[v]/SumMessage[v];
+			}
+			//System.out.println("temp:"+temp);
+			//similarity
+			strtemp = interest[i];
+			str = strtemp.split(",");
+			size = str.length;
+			String interest_each[] = new String[size];
+		    for(s=0;s<size;s++)
+		    {
+		    	interest_each[s] = str[s];
+		    }
+			//result_sim = similarity_in(interest_each);
+			
+			String F = String.format("%.7f",temp);
+			//String S = String.format("%.7f",result_sim);
+			//String T = String.format("%.7f",temp+result_sim);
+  	        //System.out.println(F+" "+S+" "+T);
+		}//for1
+	}
 	
 	
 /************************************added************************************/
