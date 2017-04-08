@@ -2,14 +2,26 @@ package warGame.Decorator;
 
 import java.util.ArrayList;
 
+import warGame.Model.WarGameItemModel;
+
 public class Freezing extends WeaponDecorator{
-	
-	public Freezing(Weapon decoratedWeapon, ArrayList<String> enchantList){
-		super(decoratedWeapon, enchantList);
+
+	public Freezing(WarGameItemModel decoratedWeapon) {
+		super(decoratedWeapon);
 	}
-	
+
 	@Override
-	public ArrayList<String> addToEnchantList(String enchantment) {
-		return super.addToEnchantList(enchantment);
+	public WarGameItemModel addEnchantment() {
+		if (decoratedWeapon.getEnchantList()==null) {
+			ArrayList<String>enchantList = new ArrayList<String>();
+			enchantList.add("Freezing");
+			decoratedWeapon.setEnchantList(enchantList);
+		}else{
+			ArrayList<String>enchantList = decoratedWeapon.getEnchantList();
+			enchantList.add("Freezing");
+			decoratedWeapon.setEnchantList(enchantList);
+		}
+		return decoratedWeapon;
 	}
+
 }

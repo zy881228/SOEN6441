@@ -1,17 +1,19 @@
 package warGame.Decorator;
 
-import java.util.ArrayList;
-
 import warGame.Model.WarGameItemModel;
 
 public class WeaponDecorator extends WarGameItemModel{
 	
-	protected WarGameItemModel decoratedWeapon;
+	protected final WarGameItemModel decoratedWeapon;
 	
-	public WeaponDecorator(WarGameItemModel decoratedWeapon, ArrayList<String> enchantList, int attackRange){
+	public WeaponDecorator(WarGameItemModel decoratedWeapon){
 		this.decoratedWeapon = decoratedWeapon;
-		decoratedWeapon.setEnchantList(enchantList);
-		decoratedWeapon.setAttackRange(attackRange);
+	}
+
+	@Override
+	public WarGameItemModel addEnchantment() {
+		decoratedWeapon.addEnchantment();
+		return decoratedWeapon;
 	}
 
 }
