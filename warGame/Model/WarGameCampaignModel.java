@@ -147,7 +147,7 @@ public class WarGameCampaignModel extends Observable{
 		fw.close();
 	}
 	
-	//add
+	//add 
 	private void drawScore(Graphics g)
     {
         int i = lV + 1;
@@ -182,6 +182,54 @@ public class WarGameCampaignModel extends Observable{
 
         }
         catch(Exception exception) { }
+    }
+	//add1 move
+	public void drawMoveBobble(Graphics g)
+    {
+        GameCanvas _tmp = this;
+        int k = Bobble.aN - 1;
+        g.drawImage(awaI[k], ofSc2.getWidth() - aWidth, ofSc2.getHeight() - aWidth, 0x10 | 0x4);
+        if(pS >= 0)
+        {
+            g.drawImage(plyI[bobP], 0, ofSc2.getHeight() - plyI[bobP].getHeight(), 20);
+            if(bobP > 0)
+                bobP = 0;
+        } else
+        {
+            g.drawImage(plyI[4], 0, ofSc2.getHeight() - plyI[bobP].getHeight(), 20);
+        }
+        if(upA)
+        {
+            mV = 21;
+            upA = false;
+        }
+        GameCanvas _tmp1 = this;
+        int i = 56 + (Bobble.CO[mV] * 24) / 1000 + -8;
+        GameCanvas _tmp2 = this;
+        int j = 160 + (Bobble.SI[mV] * 24) / 1000 + -8;
+        GameCanvas _tmp3 = this;
+        k = 56 + (Bobble.CO[(21 - mV) + 21] * 16) / 1000 + -8;
+        GameCanvas _tmp4 = this;
+        int i1 = 160 + (Bobble.SI[(21 - mV) + 21] * -16) / 1000 + -8;
+        g.setColor(255, 255, 0);
+        g.drawLine(i, j, k, i1);
+        g.drawLine(i, j, ARW1[mV][0] + -8, ARW1[mV][1] + -8);
+        g.drawLine(i, j, ARW2[mV][0] + -8, ARW2[mV][1] + -8);
+        if(gF && pS < 3)
+        {
+            GameCanvas _tmp5 = this;
+            int l = Bobble.aM - 1;
+            GameCanvas _tmp6 = this;
+            GameCanvas _tmp7 = this;
+            g.drawImage(awaI[l], Bobble.aX - aWidth / 2, Bobble.aY - aWidth / 2, 0x10 | 0x4);
+        } else
+        if(pS == 0)
+        {
+            GameCanvas _tmp8 = this;
+            GameCanvas _tmp9 = this;
+            GameCanvas _tmp10 = this;
+            g.drawImage(awaI[Bobble.aM - 1], Bobble.aX - aWidth / 2, Bobble.aY - aWidth / 2, 0x10 | 0x4);
+        }
     }
 	
 	/**
