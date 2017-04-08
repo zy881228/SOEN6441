@@ -325,6 +325,74 @@ public class WarGameItemModel extends Observable{
 		}
 	}
 	
+	//modify
+	public void paint(Graphics g)
+    {
+        g.setFont(sFont);
+        if(tgS == -1)
+        {
+            g.setColor(0);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage(nI, (getWidth() - nI.getWidth()) / 2, (getHeight() - nI.getHeight()) / 2, 0x10 | 0x4);
+        } else
+        if(tgS == 0)
+        {
+            int i = sFont.getHeight();
+            g.setColor(0);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage(pI, (getWidth() - pI.getWidth()) / 2, 0, 0x10 | 0x4);
+            g.drawImage(sI, (getWidth() - sI.getWidth()) / 2, getHeight() - eI.getHeight(), 0x20 | 0x4);
+            g.drawImage(eI, getWidth() - eI.getWidth(), getHeight() - eI.getHeight(), 0x10 | 0x4);
+            g.drawImage(oI, 0, getHeight() - oI.getHeight(), 0x10 | 0x4);
+            int k = (getHeight() - eI.getHeight() - sI.getHeight() - pI.getHeight()) / 2 + pI.getHeight();
+            g.setColor(0xffffff);
+            g.drawString("PRESS JOYSTICK", (getWidth() - sFont.stringWidth("PRESS JOYSTICK")) / 2, k - 2, 0x20 | 0x4);
+            g.drawString("TO START", (getWidth() - sFont.stringWidth("TO START")) / 2, k + 2, 0x10 | 0x4);
+        } else
+        if(tgS == 2)
+        {
+            int j = sFont.getHeight();
+            g.setColor(0);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage(bI, getWidth() - bI.getWidth(), getHeight() - bI.getHeight(), 0x10 | 0x4);
+            if(indeX < 2)
+            {
+                g.setColor(0xff0000);
+                if(indeX == 0)
+                    g.fillRect((getWidth() - sFont.stringWidth(" Audio off")) / 2, sFont.getHeight() * 4 - 1, sFont.stringWidth(" Audio off"), sFont.getHeight());
+                else
+                if(indeX == 1)
+                    g.fillRect((getWidth() - sFont.stringWidth(" Show Help")) / 2, sFont.getHeight() * 6 - 1, sFont.stringWidth(" Show Help"), sFont.getHeight());
+                g.setColor(0xffffff);
+                g.drawString("== Select ==", (getWidth() - sFont.stringWidth("== Select ==")) / 2, sFont.getHeight() * 2, 0x10 | 0x4);
+                if(!sE)
+                    g.drawString("Audio on ", (getWidth() - sFont.stringWidth("Audio on ")) / 2, sFont.getHeight() * 4, 0x10 | 0x4);
+                else
+                    g.drawString("Audio off", (getWidth() - sFont.stringWidth("Audio off")) / 2, sFont.getHeight() * 4, 0x10 | 0x4);
+                g.drawString("Show Help", (getWidth() - sFont.stringWidth("Show Help")) / 2, sFont.getHeight() * 6, 0x10 | 0x4);
+            }
+        } else
+        {
+            if(pS == 0 || resumeFlag)
+            {
+                g.setColor(0);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                g.drawImage(ofSc1, 0, 0, 0x10 | 0x4);
+                if(pS == 0)
+                    pS = 1;
+                resumeFlag = false;
+            }
+            g.drawImage(tI, getWidth() - tI.getWidth(), getHeight() - tI.getHeight(), 0x10 | 0x4);
+            if(pS < 0)
+                g.drawImage(rI, 0, getHeight() - rI.getHeight(), 0x10 | 0x4);
+            else
+                g.drawImage(oI, 0, getHeight() - oI.getHeight(), 0x10 | 0x4);
+            g.drawImage(ofSc2, 16, 16, 0x10 | 0x4);
+            drawScore(g);
+        }
+    }
+	
+	
 /****************************added******************************************/
 	private
     
