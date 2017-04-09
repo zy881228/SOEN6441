@@ -48,11 +48,6 @@ public class WarGameStartView extends JFrame implements Observer{
 	JLabel label_equip[] = new JLabel[7];
 	JLabel label_backpack[] = new JLabel[10];
 	JLabel label_showScore[] = new JLabel[12];
-	JLabel label_pic_npc = new JLabel();
-	JLabel label_scores_npc[] = new JLabel[12];
-	JLabel label_equip_npc[] = new JLabel[7];
-	JLabel label_backpack_npc[] = new JLabel[10];
-	JLabel label_showScore_npc[] = new JLabel[12];
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
 	String backpack_npc[] = new String[10];
@@ -65,8 +60,6 @@ public class WarGameStartView extends JFrame implements Observer{
 	ArrayList<WarGameMapModel> mapModelList = new ArrayList();
 	JLabel label_player = new JLabel();
 	CardLayout card=new CardLayout();
-	JPanel characterViewPanel = new JPanel();
-	JPanel nonePlayerPanel = new JPanel();
 	/**
      * Update the start game information according to the value that get from Model and show the view frame.
      * @param o
@@ -778,7 +771,7 @@ public class WarGameStartView extends JFrame implements Observer{
 		//logging window panel
 		JPanel logViewPanel = new JPanel();
 		logViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
-		logViewPanel.setBounds(750, 500, 520, 400);
+		logViewPanel.setBounds(750, 480, 520, 200);
 		frame.getContentPane().add(logViewPanel);
 		logViewPanel.setLayout(null);
 		logViewPanel.setBackground(Color.gray);
