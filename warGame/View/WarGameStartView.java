@@ -1,5 +1,6 @@
 package warGame.View;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -47,16 +48,25 @@ public class WarGameStartView extends JFrame implements Observer{
 	JLabel label_equip[] = new JLabel[7];
 	JLabel label_backpack[] = new JLabel[10];
 	JLabel label_showScore[] = new JLabel[12];
+	JLabel label_pic_npc = new JLabel();
+	JLabel label_scores_npc[] = new JLabel[12];
+	JLabel label_equip_npc[] = new JLabel[7];
+	JLabel label_backpack_npc[] = new JLabel[10];
+	JLabel label_showScore_npc[] = new JLabel[12];
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
 	String backpack_npc[] = new String[10];
 	String equip_npc[] = new String[7];
 	WarGameCharacterModel characterModel = new WarGameCharacterModel();
 	WarGameCharacterModel nonePlayerModel = new WarGameCharacterModel();
+	WarGameCharacterModel nonePlayerFight1 = new WarGameCharacterModel();
+	WarGameCharacterModel nonePlayerFight2 = new WarGameCharacterModel();
 	WarGameItemModel itemModel = new WarGameItemModel();
 	ArrayList<WarGameMapModel> mapModelList = new ArrayList();
 	JLabel label_player = new JLabel();
-	
+	CardLayout card=new CardLayout();
+	JPanel characterViewPanel = new JPanel();
+	JPanel nonePlayerPanel = new JPanel();
 	/**
      * Update the start game information according to the value that get from Model and show the view frame.
      * @param o
@@ -580,7 +590,9 @@ public class WarGameStartView extends JFrame implements Observer{
 							{
 								String str[] = map[i_buffer][j_buffer].trim().split(" ");
 								WarGameCharacterModel characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-								createCharacterView(characterModel);
+								//createCharacterView(characterModel);
+								card.show(nonePlayerPanel,"1");
+								
 							}
 						}
 					});
@@ -652,16 +664,17 @@ public class WarGameStartView extends JFrame implements Observer{
 			}
 		}	
 		
-		JPanel characterViewPanel = new JPanel();
+		//player panel
+		//JPanel characterViewPanel = new JPanel();
 		characterViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
 		characterViewPanel.setBounds(750, 0, 520, 650);
 		frame.getContentPane().add(characterViewPanel);
-		characterViewPanel.setLayout(null);
+		characterViewPanel.setLayout(card);
 		int picNum = characterModel.getPicNumber();
 		ImageIcon img = new ImageIcon("src/image/Character/"+picNum+".png");
 		label_pic.setIcon(img);
 		label_pic.setBounds(210, 150, 150, 250);
-		characterViewPanel.add(label_pic);
+		characterViewPanel.add("0",label_pic);
 		characterViewPanel.setBackground(Color.lightGray);
 		equip = characterModel.getEquip();
 		backpack = characterModel.getBackpack();
@@ -683,13 +696,13 @@ public class WarGameStartView extends JFrame implements Observer{
 			{
 				label_scores[i].setBounds(359, i*30-240, 150, 30);
 			}
-			characterViewPanel.add(label_scores[i]);
+			characterViewPanel.add("0",label_scores[i]);
 		}
 		for(int i=0;i<7;i++)
 		{
 			final int event_i = i;
 			label_equip[i] = new JLabel();
-			characterViewPanel.add(label_equip[i]);
+			characterViewPanel.add("0",label_equip[i]);
 			label_equip[i].setBounds(i*70+18, 400, 66, 66);
 			label_equip[i].setOpaque(true);
 			if(equip[i].equals("null"))
@@ -753,7 +766,7 @@ public class WarGameStartView extends JFrame implements Observer{
 		{
 			final int event_i = i;
 			label_backpack[i] = new JLabel();
-			characterViewPanel.add(label_backpack[i]);
+			characterViewPanel.add("0",label_backpack[i]);
 			if(i<5)
 			{
 				label_backpack[i].setBounds(i*70+85, 500, 66, 66);
@@ -862,6 +875,117 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 			});
 		}//backpack for
+		//player panel end
+		
+		//none-player panel
+		//JPanel nonePlayerPanel = new JPanel();
+		nonePlayerPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
+		nonePlayerPanel.setBounds(750, 0, 520, 650);
+		frame.getContentPane().add(nonePlayerPanel);
+		nonePlayerPanel.setLayout(card);
+		int picNum_nonePlayer = nonePlayerModel.getPicNumber();
+		ImageIcon img_nonePlayer = new ImageIcon("src/image/Character/"+picNum+".png");
+		label_pic_npc.setIcon(img_nonePlayer);
+		label_pic_npc.setBounds(210, 150, 150, 250);
+		nonePlayerPanel.add("1",label_pic_npc);
+		nonePlayerPanel.setBackground(Color.lightGray);
+		equip_npc = nonePlayerModel.getEquip();
+		backpack_npc = nonePlayerModel.getBackpack();
+		for(int i=0;i<12;i++)
+		{
+			
+			String result[] = nonePlayerModel.getScore(i);
+			label_scores_npc[i] = new JLabel(result[0]+":"+result[1]);
+			
+			if(i<4)
+			{
+				label_scores_npc[i].setBounds(25, i*30, 150, 30);
+			}
+			if(i>3 && i<8)
+			{
+				label_scores_npc[i].setBounds(192, i*30-120, 150, 30);
+			}
+			if(i>7)
+			{
+				label_scores_npc[i].setBounds(359, i*30-240, 150, 30);
+			}
+			nonePlayerPanel.add("1",label_scores_npc[i]);
+		}
+		for(int i=0;i<7;i++)
+		{
+			final int event_i = i;
+			label_equip_npc[i] = new JLabel();
+			nonePlayerPanel.add("1",label_equip_npc[i]);
+			label_equip_npc[i].setBounds(i*70+18, 400, 66, 66);
+			label_equip_npc[i].setOpaque(true);
+			if(equip_npc[i].equals("null"))
+			{
+				label_equip_npc[i].setBackground(Color.GRAY);
+			}
+			else
+			{
+				String prefix[] = equip_npc[i].trim().split(" ");
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_equip_npc[i].setIcon(img_item);
+			}
+			label_equip_npc[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						if(!equip_npc[event_i].equals("null"))
+						{
+							JPopupMenu pop_info = new JPopupMenu();
+							pop_info.add(equip_npc[event_i]);
+							pop_info.show(label_equip_npc[event_i], e.getX(), e.getY());
+						}
+					}
+				}
+			});
+		}
+		for(int i=0;i<10;i++)
+		{
+			final int event_i = i;
+			label_backpack_npc[i] = new JLabel();
+			label_backpack_npc[i].setOpaque(true);
+			nonePlayerPanel.add("1",label_backpack_npc[i]);
+			if(i<5)
+			{
+				label_backpack_npc[i].setBounds(i*70+85, 500, 66, 66);
+			}
+			if(i>4)
+			{
+				label_backpack_npc[i].setBounds(i*70-265, 570, 66, 66);
+			}
+			if(backpack_npc[i].equals("null"))
+			{
+				label_backpack_npc[i].setBackground(Color.BLACK);
+			}
+			else
+			{
+				String prefix[] = backpack_npc[i].trim().split(" ");
+				String itemName = prefix[0]+prefix[1];
+				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
+				label_backpack_npc[i].setIcon(img_item);
+			}
+			label_backpack_npc[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent e){
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						if(!backpack_npc[event_i].equals("null"))
+						{
+							JPopupMenu pop_info = new JPopupMenu();
+							pop_info.add(backpack_npc[event_i]);
+							pop_info.show(label_backpack_npc[event_i], e.getX(), e.getY());
+						}
+					}
+				}
+			});
+		}
+		//none-player panel end
+		card.show(characterViewPanel, "0");
+		
 		
 	}
 	
@@ -1401,7 +1525,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_equip[i].setIcon(img_item);
 			}
 		}
-		/*
+		
 		for(int i=0;i<10;i++)
 		{
 			if(backpack[i].equals("null"))
@@ -1415,24 +1539,22 @@ public class WarGameStartView extends JFrame implements Observer{
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}
-		}*/
-		for(int i=0;i<10;i++)
-		{
-			if(backpack[i].equals(null))
-			{
-				label_backpack[i].setIcon(null);
-				label_backpack[i].setBackground(Color.black);
-				label_backpack[i].setText(backpack[i]);
-			}
-			else
-			{
-				String prefix[] = backpack[i].trim().split(" ");
-				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
-				label_backpack[i].setIcon(img_item);
-			}
 		}
 	}
 	
+	/**
+	 * set corresponde value to panel
+	 */
+	public void setPanel(WarGameCharacterModel characterModel, int type)
+	{
+		if(type == 0)
+		{
+			for(int i=0;i<0;i++)
+			{
+				
+			}
+		}
+	}
 	
 	
 }
