@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -279,24 +280,36 @@ public class WarGameStartModel extends Observable{
 		return mapModel;
 	}
 	
-	//gameover
-	public void GameOver(String str)                              //GameOver
+	/**
+	 * calculte the value of two character
+	 */
+	
+	public WarGameCharacterModel fightChange(WarGameCharacterModel character1,WarGameCharacterModel character2)
 	{
-	Calendar cal = new GregorianCalendar();
-	str = str + "\n 点击确定键结束游戏..." + "\n当前时间: " + cal.getTime().toString();
-	JOptionPane.showMessageDialog(null, str, "游戏结束 ———————By Mr.Xu", 1);
-	System.exit(0);
+		WarGameCharacterModel output = new WarGameCharacterModel();
+		String hitPoints[] = character2.getScore(7);
+		String armorClass[] = character2.getScore(8);
+		String attack[] = character1.getScore(9);
+		String damage[] = character1.getScore(10);
+		Random rand = new Random();
+		if(Integer.parseInt(hitPoints[1]) > 0)
+		{
+			int attackRand = rand.nextInt(20)+1;
+			int attackTotal = attackRand + Integer.parseInt(attack[1]);
+			if(attackTotal > Integer.parseInt(armorClass[1]))
+			{
+				int damageRand = rand.nextInt(8)+1;
+				int damageTotal = damageRand + Integer.parseInt(damage[1]);
+				int result = Integer.parseInt(hitPoints[1]) - damageTotal;
+				character2.setHitPoints(result);
+				output = character2;
+			}
+		}
+		
+		return output;
 	}
-	protected static ImageIcon createImageIcon(String path)
-	{
-	        java.net.URL imgURL = Snake.class.getResource(path);
-	        if (imgURL != null) {
-	            return new ImageIcon(imgURL);
-	        } else {
-	            System.err.println("Couldn't find file: " + path);  //err   红字
-	            return null;
-	        }
-	}
+	
+	
 	
 	
 /************************************added************************************/

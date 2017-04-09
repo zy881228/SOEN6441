@@ -1294,132 +1294,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		multiple_attacks = getMultiple(attack_bonus);
 	}
 	
-	//move
-	public boolean moveOn(){
-
-
-		Node n=(Node)nodeArray.getFirst();
-		int x=n.x;
-		int y=n.y;
-		switch(direction){
-		case UP:
-		y--;
-		break;
-		case DOWN:
-		y++;
-		break;
-		case LEFT:
-		x--;
-		break;
-		case RIGHT:
-		x++;
-		break;
-		}
-		if((0<=x&&x<maxX)&&(0<=y&&y<maxY)){
-
-
-		if(matrix[x][y]){
-
-
-		if(x==food.x&&y==food.y){
-
-
-		nodeArray.addFirst(food);
-		//计分规则与移动长度和速度有关
-		int scoreGet=(10000-200*countMove)/timeInterval;
-		
-		return true;
-		}
-		else return false;// 撞到身体
-		}
-		else{
-		nodeArray.addFirst(new Node(x,y));// 加上头部
-		matrix[x][y]=true;
-		n=(Node)nodeArray.removeLast();// 去掉尾部
-		matrix[n.x][n.y]=false;
-		countMove++;
-		return true;
-		}
-		}
-		return false;//越界（撞到墙壁）
-		}
-		
-		public void run(){
-		running=true;
-		while(running){
-		try{
-		Thread.sleep(timeInterval);
-		}
-		catch(Exception e){
-		break;
-		}
-		if(!paused){
-
-
-		if(moveOn()){// 未结束
-		gs.repaint();
-		}
-		else{//游戏结束
-		JOptionPane.showMessageDialog(null,"GAME OVER",
-		"Game Over",JOptionPane.INFORMATION_MESSAGE);
-		break;
-		}
-		}
-		}
-		running=false;
-		}
-		
-		private Node createFood(){
-
-
-			int x=0;
-			int y=0;
-			do{
-			Random r=new Random();
-			x=r.nextInt(maxX);
-			y=r.nextInt(maxY);
-			}
-			while(matrix[x][y]);
-			return new Node(x,y);
-			}
-
-
-			//speedUp():加快蛇运动速度
-
-
-		
-
-
-			
-
-
-			public void changePauseState(){
-
-
-			paused=!paused;
-			}
-			
-			public void CreateNode()                                             //产生随机点
-			{
-			boolean flag = true;
-			int newX = 0;
-			int newY = 0;
-			while(flag)
-			{
-			newX = (int)(Math.random() * (width-1));
-			newY = (int)(Math.random() * (height-1));
-			 
-			for(int i = 0;i < Length ;i++)
-			{
-			if((Snake.get(i).getX() == newX) && (Snake.get(i).getY() == newY))
-			break;
-			}
-			flag = false;
-			}
-			Color color = new Color(50 + (int)(Math.random()*205),                         //颜色也随机一下
-			
-			}
-
+	
 
 /**************************************added*******************************************************/
 	
@@ -1905,6 +1780,14 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	// TODO Auto-generated method stub
     	String name = "Character" + characterID;
     	return name;
+    }
+    
+    /**
+     * <p>set the value of hitpoints<br/>
+     */
+    public void setHitPoints(int newHitPoints) {
+    	// TODO Auto-generated method stub
+    	hit_points = newHitPoints;
     }
     
    
