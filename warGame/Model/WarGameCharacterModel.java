@@ -1795,6 +1795,22 @@ public void setEquipChanged(String changeBefore,String changeAfter){
     	hit_points = newHitPoints;
     }
     
+    /**
+     * <p>get the status of character<br/>
+     */
+    public ArrayList<String> getStatus() {
+    	// TODO Auto-generated method stub
+    	return status;
+    }
+    
+    /**
+     * <p>set the status of character<br/>
+     */
+    public void setStatus(ArrayList<String> newStatus) {
+    	// TODO Auto-generated method stub
+    	this.status = newStatus;
+    }
+    
    
 }
 
