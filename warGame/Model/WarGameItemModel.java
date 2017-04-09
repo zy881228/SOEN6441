@@ -329,6 +329,201 @@ public class WarGameItemModel extends Observable{
 		return enchanNumber;
 	}
 	
+	//modify move
+	public static int move()
+    {
+        byte byte0 = 2;
+        int k = CO[mD];
+        int l = SI[mD];
+        cX += 1 * k;
+        cY += 1 * l;
+        aX = cX / 1000;
+        aY = cY / 1000;
+        bY = aY / 16;
+        int i;
+        if(aA[5 + 6 * bY] == -1)
+        {
+            i = 1;
+            bX = (aX - 8) / 16;
+        } else
+        {
+            i = 0;
+            bX = aX / 16;
+        }
+        int j = bX + 6 * bY;
+        if(mD != 21 && (bX > 0 && bX < 5 - i && aA[j - 1] > 0 && aA[j + 1] > 0 || i == 0 && bX == 0 && aA[j + 1] > 0 || i == 0 && bX == 5 && aA[j - 1] > 0))
+        {
+            aA[j] = aM;
+            sbA();
+            nA++;
+            return 0;
+        }
+        int i1 = aX + 1;
+        int j1 = aX - 1;
+        int k1 = 89;
+        byte byte1 = 7;
+        if(i1 > k1 || j1 < byte1)
+        {
+            if(i1 > k1)
+                aX = k1;
+            if(j1 < byte1)
+                aX = byte1 + 1;
+            mD = 42 - mD;
+            k = CO[mD];
+            l = SI[mD];
+            byte0 = 1;
+        }
+        if(aY - 1 < 15)
+        {
+            aY = 8;
+            bY = aY / 16;
+            if(aA[5 + 6 * bY] == -1)
+                bX = (aX - 8) / 16;
+            else
+                bX = aX / 16;
+            j = bX + 6 * bY;
+            aA[j] = aM;
+            sbA();
+            nA++;
+            return 0;
+        }
+        j = bX + 6 * bY;
+        int l1 = (cY + 1 * l) / 1000 / 16;
+        int i2;
+        if(aA[5 + 6 * l1] == -1)
+            i2 = ((cX + 1 * k) / 1000 - 8) / 16;
+        else
+            i2 = ((cX + 1 * k) / 1000 - 0) / 16;
+        int j2 = i2 + 6 * l1;
+        if(aA[j2] > 0)
+        {
+            if(aA[j] == -1)
+            {
+                if(aA[j - 1] > 0)
+                {
+                    bY++;
+                    aA[j + 6] = aM;
+                } else
+                {
+                    bX--;
+                    aA[j - 1] = aM;
+                }
+            } else
+            {
+                aA[j] = aM;
+            }
+            sbA();
+            nA++;
+            return 0;
+        }
+        if(j2 > 0 && j2 < 59)
+        {
+            if((j + 1) % 6 == 0 || j % 6 == 0)
+                return byte0;
+            if(mD == 21 && (aA[j2 - 1] > 0 || aA[j2] > 0))
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == (j - 6) + 1 || aA[5 + 6 * bY] != -1 && j2 == j - 6)
+                {
+                    aA[j] = aM;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD > 21 && aA[j2] > 0)
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == (j - 6) + 1 || aA[5 + 6 * bY] != -1 && j2 == j - 6)
+                {
+                    aA[j] = aM;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD > 21 && aA[j2 - 1] > 0 && aA[j + 1] > 0)
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == (j - 6) + 1 || aA[5 + 6 * bY] != -1 && j2 == j - 6)
+                {
+                    aA[j] = aM;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD > 21 && aA[j2 - 1] > 0 && aA[j2 + 1] > 0)
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == (j - 6) + 1 || aA[5 + 6 * bY] != -1 && j2 == j - 6)
+                {
+                    aA[j2] = aM;
+                    bY = l1;
+                    bX = i2;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD < 21 && aA[j2] > 0)
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == j - 6 || aA[5 + 6 * bY] != -1 && j2 == j - 6 - 1)
+                {
+                    aA[j] = aM;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD < 21 && aA[j2 + 1] > 0 && aA[j - 1] > 0)
+            {
+                if(aA[5 + 6 * bY] == -1 && j2 == j - 6 || aA[5 + 6 * bY] != -1 && j2 == j - 6 - 1)
+                {
+                    aA[j] = aM;
+                    sbA();
+                    nA++;
+                    return 0;
+                }
+            } else
+            if(mD < 21 && aA[j2 + 1] > 0 && aA[j2 - 1] > 0 && (aA[5 + 6 * bY] == -1 && j2 == j - 6 || aA[5 + 6 * bY] != -1 && j2 == j - 6 - 1))
+            {
+                aA[j2] = aM;
+                bY = l1;
+                bX = i2;
+                sbA();
+                nA++;
+                return 0;
+            }
+        }
+        if(bX > 0 && bX < 5 - i && mD > 21)
+        {
+            int k2;
+            if(aA[5 + 6 * bY] == -1)
+                k2 = aX - 8;
+            else
+                k2 = aX - 0;
+            if(k2 % 16 >= 13 && k2 % 16 <= 15 && aA[j + 1] > 0)
+            {
+                aA[j] = aM;
+                sbA();
+                nA++;
+                return 0;
+            }
+        } else
+        if(bX > 0 && bX < 5 - i && mD < 21)
+        {
+            int l2;
+            if(aA[5 + 6 * bY] == -1)
+                l2 = aX - 8;
+            else
+                l2 = aX - 0;
+            if(l2 % 16 >= 0 && l2 % 16 <= 2 && aA[j - 1] > 0)
+            {
+                aA[j] = aM;
+                sbA();
+                nA++;
+                return 0;
+            }
+        }
+        return byte0;
+    }
 	
 	
 /****************************added******************************************/
