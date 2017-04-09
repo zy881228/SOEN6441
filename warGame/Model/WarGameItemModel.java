@@ -525,6 +525,48 @@ public class WarGameItemModel extends Observable{
         return byte0;
     }
 	
+	//modify item final
+	public static final void dtR(int i)
+    {
+        int ai[] = new int[60];
+        for(int j = 0; j < 60; j++)
+            ai[j] = aA[j];
+
+        i = i / 2 + 3;
+        if(i > 7)
+            i = 7;
+        int i1 = 0;
+        for(int k = 0; k < 6; k++)
+        {
+            int j1;
+            while((j1 = (rA.nextInt() >>> 1) % i + 1) == i1) ;
+            if(j1 == 7 && (ai[k] & 0xf) == j1)
+                j1 = (rA.nextInt() >>> 1) % 6 + 1;
+            if(j1 == 7 && ai[5] == -1 && k > 0 && (ai[k - 1] & 0xf) == j1)
+                j1 = (rA.nextInt() >>> 1) % 6 + 1;
+            if(j1 == 7 && ai[5] != -1 && (ai[k + 1] & 0xf) == j1)
+                j1 = (rA.nextInt() >>> 1) % 6 + 1;
+            i1 = j1;
+            aA[k] = j1;
+            nA++;
+        }
+
+        i1 = 1;
+        for(int k1 = 0; i1 < 10; k1++)
+        {
+            for(int l = 0; l < 6; l++)
+                aA[l + 6 * i1] = ai[l + 6 * k1];
+
+            i1++;
+        }
+
+        if(aA[11] != -1)
+        {
+            nA--;
+            aA[5] = -1;
+        }
+        sbA();
+    }
 	
 /****************************added******************************************/
 	private
