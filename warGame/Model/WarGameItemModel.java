@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Map.Entry;
 
+import warGame.Decorator.*;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -45,16 +47,41 @@ public class WarGameItemModel extends Observable{
      * @param newItemType item tyoe
      * @param newEnchanType enchantment bonus type
      * @param newEnchanNumber enchantment bonus value
+     * @param newEnchanSpeList enchantmentSpe bonus type
      * @throws FileNotFoundException 
      * @throws UnsupportedEncodingException 
      * @throws NumberFormatException 
      */
 
 
-	public void createItem(String newItemType, String newEnchanType, String newEnchanNumber) throws NumberFormatException, UnsupportedEncodingException, FileNotFoundException{
+	public void createItem(String newItemType, String newEnchanType, String newEnchanNumber, 
+			               ArrayList<String> newEnchanSpeList,String newRange) throws NumberFormatException, UnsupportedEncodingException, FileNotFoundException{
 		itemType = newItemType;
 		enchanType = newEnchanType;
 		enchanNumber = newEnchanNumber;
+		WarGameItemModel weapon = new WarGameItemModel();
+		for (String str : newEnchanSpeList) {
+			switch(str)
+			{
+				case "Freezing":
+					weapon = new Freezing(weapon);
+					break;
+				case "Burning":
+					weapon = new Burning(weapon);
+					break;
+				case "Slaying":
+					weapon = new Slaying(weapon);
+					break;
+				case "Frightening":
+					weapon = new Frightening(weapon);
+					break;
+				case "Pacifying":
+					weapon = new Pacifying(weapon);
+					break;		
+			}
+		}
+		attackRange = Integer.parseInt(newRange);
+		enchantList = weapon.getEnchantList();
 		itemID = Integer.parseInt(lastMapID())+1+"";
 		viewType = 1;
 		setChanged();
@@ -295,102 +322,6 @@ public class WarGameItemModel extends Observable{
 		return enchanNumber;
 	}
 	
-	//set
-	public void setItemEquip(String itemInfo){
-		String str[] = itemInfo.trim().split(" ");
-		int count = 0;
-		switch(str[0])
-		{
-		case "Helmet":
-			equip[0] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Armor":
-			equip[1] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Shield":
-			equip[2] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Ring":
-			equip[3] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Belt":
-			equip[4] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Boots":
-			equip[5] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		case "Weapon":
-			equip[6] = str[0]+" "+str[1]+" "+str[2];
-			break;
-		}
-	}
-	
-	//modify
-	public void paint(Graphics g)
-    {
-        g.setFont(sFont);
-        if(tgS == -1)
-        {
-            g.setColor(0);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.drawImage(nI, (getWidth() - nI.getWidth()) / 2, (getHeight() - nI.getHeight()) / 2, 0x10 | 0x4);
-        } else
-        if(tgS == 0)
-        {
-            int i = sFont.getHeight();
-            g.setColor(0);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.drawImage(pI, (getWidth() - pI.getWidth()) / 2, 0, 0x10 | 0x4);
-            g.drawImage(sI, (getWidth() - sI.getWidth()) / 2, getHeight() - eI.getHeight(), 0x20 | 0x4);
-            g.drawImage(eI, getWidth() - eI.getWidth(), getHeight() - eI.getHeight(), 0x10 | 0x4);
-            g.drawImage(oI, 0, getHeight() - oI.getHeight(), 0x10 | 0x4);
-            int k = (getHeight() - eI.getHeight() - sI.getHeight() - pI.getHeight()) / 2 + pI.getHeight();
-            g.setColor(0xffffff);
-            g.drawString("PRESS JOYSTICK", (getWidth() - sFont.stringWidth("PRESS JOYSTICK")) / 2, k - 2, 0x20 | 0x4);
-            g.drawString("TO START", (getWidth() - sFont.stringWidth("TO START")) / 2, k + 2, 0x10 | 0x4);
-        } else
-        if(tgS == 2)
-        {
-            int j = sFont.getHeight();
-            g.setColor(0);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.drawImage(bI, getWidth() - bI.getWidth(), getHeight() - bI.getHeight(), 0x10 | 0x4);
-            if(indeX < 2)
-            {
-                g.setColor(0xff0000);
-                if(indeX == 0)
-                    g.fillRect((getWidth() - sFont.stringWidth(" Audio off")) / 2, sFont.getHeight() * 4 - 1, sFont.stringWidth(" Audio off"), sFont.getHeight());
-                else
-                if(indeX == 1)
-                    g.fillRect((getWidth() - sFont.stringWidth(" Show Help")) / 2, sFont.getHeight() * 6 - 1, sFont.stringWidth(" Show Help"), sFont.getHeight());
-                g.setColor(0xffffff);
-                g.drawString("== Select ==", (getWidth() - sFont.stringWidth("== Select ==")) / 2, sFont.getHeight() * 2, 0x10 | 0x4);
-                if(!sE)
-                    g.drawString("Audio on ", (getWidth() - sFont.stringWidth("Audio on ")) / 2, sFont.getHeight() * 4, 0x10 | 0x4);
-                else
-                    g.drawString("Audio off", (getWidth() - sFont.stringWidth("Audio off")) / 2, sFont.getHeight() * 4, 0x10 | 0x4);
-                g.drawString("Show Help", (getWidth() - sFont.stringWidth("Show Help")) / 2, sFont.getHeight() * 6, 0x10 | 0x4);
-            }
-        } else
-        {
-            if(pS == 0 || resumeFlag)
-            {
-                g.setColor(0);
-                g.fillRect(0, 0, getWidth(), getHeight());
-                g.drawImage(ofSc1, 0, 0, 0x10 | 0x4);
-                if(pS == 0)
-                    pS = 1;
-                resumeFlag = false;
-            }
-            g.drawImage(tI, getWidth() - tI.getWidth(), getHeight() - tI.getHeight(), 0x10 | 0x4);
-            if(pS < 0)
-                g.drawImage(rI, 0, getHeight() - rI.getHeight(), 0x10 | 0x4);
-            else
-                g.drawImage(oI, 0, getHeight() - oI.getHeight(), 0x10 | 0x4);
-            g.drawImage(ofSc2, 16, 16, 0x10 | 0x4);
-            drawScore(g);
-        }
-    }
 	
 	
 /****************************added******************************************/
@@ -520,6 +451,28 @@ public class WarGameItemModel extends Observable{
 		String message = "Item"+this.getItemID()+" "+this.itemType+" "+this.enchanType+" "+this.enchanNumber;
 		return message;
 	}
+	
+	//bulid3
+		private ArrayList<String> enchantList;
+		private int attackRange;
+		
+		public WarGameItemModel addEnchantment() {
+			return this;
+		}
+		public ArrayList<String> getEnchantList() {
+			return enchantList;
+		}
+		public void setEnchantList(ArrayList<String> enchantList) {
+			this.enchantList = enchantList;
+		}
+		public int getAttackRange() {
+			return attackRange;
+		}
+		public void setAttackRange(int attackRange) {
+			this.attackRange = attackRange;
+		}
+		//bulid3
+
 
 	
 }
