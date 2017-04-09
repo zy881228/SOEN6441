@@ -1,5 +1,7 @@
 package warGame.JUnitTest;
 
+import java.util.ArrayList;
+
 import warGame.Model.WarGameCharacterModel;
 import warGame.Model.WarGameItemModel;
 import junit.framework.TestCase;
@@ -14,8 +16,10 @@ public class CharacterModelTest2 extends TestCase{
 	public void setUp() throws Exception {
 		System.out.println("Character Test2 begins");
 		characterModel.createCharacter(0);
-		itemModel.createItem("Ring","Strength","3");
-		itemModel2.createItem("Ring","Wisdom","3");
+		ArrayList<String> str = new ArrayList<String>();
+		str.add("Freezing");
+		itemModel.createItem("Ring","Strength","3",str,"1");
+		itemModel2.createItem("Ring","Wisdom","3",str,"1");
 	}
 	
 	public void tearDown() throws Exception {
