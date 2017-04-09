@@ -568,6 +568,27 @@ public class WarGameItemModel extends Observable{
         sbA();
     }
 	
+	//modify bom
+	public static int bom()
+    {
+        int ai[] = new int[60];
+        for(int i = 0; i < 60; i++)
+            ai[i] = aA[i];
+
+        int k = sNB(bX + 6 * bY);
+        if(k >= 3)
+        {
+            nA -= k;
+        } else
+        {
+            for(int j = 0; j < 60; j++)
+                aA[j] = ai[j];
+
+            k = 0;
+        }
+        return k;
+    }
+	
 /****************************added******************************************/
 	private
     
