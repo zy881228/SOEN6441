@@ -41,6 +41,8 @@ public class WarGameItemModel extends Observable{
 		this.itemType = o.getItemType();
 		this.enchanType = o.getEnchanType();
 		this.enchanNumber = o.getEnchanNumber();
+		this.attackRange = o.getAttackRange();
+		this.enchantList = o.getEnchantList();
 	}
     /**
      * Create a new item
@@ -65,18 +67,23 @@ public class WarGameItemModel extends Observable{
 			{
 				case "Freezing":
 					weapon = new Freezing(weapon);
+					weapon = weapon.addEnchantment();
 					break;
 				case "Burning":
 					weapon = new Burning(weapon);
+					weapon = weapon.addEnchantment();
 					break;
 				case "Slaying":
 					weapon = new Slaying(weapon);
+					weapon = weapon.addEnchantment();
 					break;
 				case "Frightening":
 					weapon = new Frightening(weapon);
+					weapon = weapon.addEnchantment();
 					break;
 				case "Pacifying":
 					weapon = new Pacifying(weapon);
+					weapon = weapon.addEnchantment();
 					break;		
 			}
 		}
@@ -453,8 +460,8 @@ public class WarGameItemModel extends Observable{
 	}
 	
 	//bulid3
-		private ArrayList<String> enchantList;
 		private int attackRange;
+		private ArrayList<String> enchantList;
 		
 		public WarGameItemModel addEnchantment() {
 			return this;
