@@ -1485,6 +1485,11 @@ public void setEquipChanged(String changeBefore,String changeAfter){
      */
     String equipID[] = new String[7];
     
+    /**
+     *<p> character's status.<br/>
+     */
+    ArrayList<String> status = new ArrayList<String>();
+    
     
     /**
      * <p>get the level of the character<br/>
