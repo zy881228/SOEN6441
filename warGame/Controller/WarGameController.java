@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -55,7 +56,7 @@ public class WarGameController extends JFrame{
 	WarGameCampaignModel campaignModel;
 	WarGameCampaignCreationView campaignCreateView;
 	WarGameCampaignLoadView campaignLoadView;
-	
+	ArrayList<String> enchanSpeList = new ArrayList<String>();
 	/**
 	 * custom construct method 
 	 */
@@ -239,6 +240,11 @@ public class WarGameController extends JFrame{
 				label_enchanNumber.setBounds(new Rectangle(0, 100, 150, 30));
 				frame.add(label_enchanNumber);
 				
+				//weapon range
+				JLabel label_range = new JLabel("Weapon Range:");
+				label_range.setBounds(new Rectangle(0, 150, 150, 30));
+				frame.add(label_range);
+				
 				
 				final JComboBox cbox_itemType = new JComboBox();
 				cbox_itemType.setBounds(160, 0, 150, 30);
@@ -254,28 +260,47 @@ public class WarGameController extends JFrame{
 				cbox_enchanType.setBounds(160, 50, 150, 30);
 				frame.add(cbox_enchanType);
 				cbox_enchanType.setEnabled(false);
+				
+				final JComboBox cbox_enchanSpe = new JComboBox();
+				cbox_enchanSpe.setBounds(310, 100, 150, 30);
+				frame.add(cbox_enchanSpe);
+				cbox_enchanSpe.setEnabled(false);
+				
+				final JComboBox cbox_range = new JComboBox();
+				cbox_range.setBounds(160, 150, 150, 30);
+				frame.add(cbox_range);
+				cbox_range.setEnabled(false);
+				
 				cbox_itemType.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						
 						cbox_enchanType.removeAllItems();
+						cbox_enchanSpe.removeAllItems();
+						cbox_range.removeAllItems();
 						if(cbox_itemType.getSelectedItem().toString().equals("Helmet"))
 						{
 							cbox_enchanType.addItem("Intelligence");
 							cbox_enchanType.addItem("Wisdom");
 							cbox_enchanType.addItem("Armor_class");
-							cbox_enchanType.setEnabled(true);							
+							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Armor"))
 						{
 							cbox_enchanType.addItem("Armor_class");
 							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Shield"))
 						{
 							cbox_enchanType.addItem("Armor_class");
 							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Ring"))
 						{
@@ -285,24 +310,42 @@ public class WarGameController extends JFrame{
 							cbox_enchanType.addItem("Wisdom");
 							cbox_enchanType.addItem("Charisma");
 							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Belt"))
 						{
 							cbox_enchanType.addItem("Constitution");
 							cbox_enchanType.addItem("Strength");
 							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Boots"))
 						{
 							cbox_enchanType.addItem("Dexterity");
 							cbox_enchanType.addItem("Armor_class");
 							cbox_enchanType.setEnabled(true);
+							cbox_enchanSpe.setEnabled(false);
+							cbox_range.setEnabled(false);
 						}
 						if(cbox_itemType.getSelectedItem().toString().equals("Weapon"))
 						{
 							cbox_enchanType.addItem("Attack_bonus");
 							cbox_enchanType.addItem("Damage_bonus");
+							cbox_enchanSpe.addItem("Freezing");
+							cbox_enchanSpe.addItem("Burning");
+							cbox_enchanSpe.addItem("Slaying");
+							cbox_enchanSpe.addItem("Frightening");
+							cbox_enchanSpe.addItem("Pacifying");
+							cbox_range.addItem("1");
+							cbox_range.addItem("2");
+							cbox_range.addItem("3");
+							cbox_range.addItem("4");
+							cbox_range.addItem("5");
+							cbox_enchanSpe.setEnabled(true);
 							cbox_enchanType.setEnabled(true);
+							cbox_range.setEnabled(true);
 						}
 					}
 				});
@@ -316,11 +359,21 @@ public class WarGameController extends JFrame{
 				cbox_enchanNum.addItem("4");
 				cbox_enchanNum.addItem("5");
 				
-				
+				//create add enchanSpe button
+				JButton button_addEnchanSpe = new JButton("add");
+				frame.add(button_addEnchanSpe);
+				button_addEnchanSpe.setBounds(460,100,100,30);
+				button_addEnchanSpe.addActionListener(new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						enchanSpeList.add(cbox_enchanSpe.getSelectedItem().toString());
+					}
+				});
 				//create item button
 				JButton button_createItem = new JButton("Create");
 				frame.add(button_createItem);
-				button_createItem.setBounds(160,150,150,50);
+				button_createItem.setBounds(160,200,150,50);
 				button_createItem.addActionListener(new ActionListener(){
 
 					@Override
@@ -328,8 +381,9 @@ public class WarGameController extends JFrame{
 						String itemType = cbox_itemType.getSelectedItem().toString();
 						String enchanType = cbox_enchanType.getSelectedItem().toString();
 						String enchanNumber = cbox_enchanNum.getSelectedItem().toString();
+						String range = cbox_range.getSelectedItem().toString();
 						try {
-							itemModel.createItem(itemType,enchanType,enchanNumber);
+							itemModel.createItem(itemType,enchanType,enchanNumber,enchanSpeList,range);
 						} catch (NumberFormatException
 								| UnsupportedEncodingException
 								| FileNotFoundException e1) {
