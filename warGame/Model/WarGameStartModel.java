@@ -61,7 +61,7 @@ public class WarGameStartModel extends Observable{
 						if (j==0) {
 							mapArr[i][j+1] = "h"+" "+this.characterToPlay.getCharacterID();
 						}else
-						if(i==mapArr[0].length-1){
+						if(j==mapArr[0].length-1){
 							mapArr[i][j-1] = "h"+" "+this.characterToPlay.getCharacterID();
 						}else{
 							mapArr[5][5] = "h"+" "+this.characterToPlay.getCharacterID();
@@ -334,6 +334,11 @@ public class WarGameStartModel extends Observable{
 	private ArrayList<WarGameMapModel> mapsModel;
 	
 	/**
+	 * order list
+	 */
+	private ArrayList<WarGameCharacterModel> orderList;
+
+	/**
 	 * get the campaign model to play with
 	 * @return
 	 */
@@ -381,4 +386,19 @@ public class WarGameStartModel extends Observable{
 		this.mapsModel = mapsModel;
 	}
 	
+	/**
+	 * get order list
+	 * @return
+	 */
+	public ArrayList<WarGameCharacterModel> getOrderList() {
+		return orderList;
+	}
+
+	/**
+	 * set order list
+	 * @param orderList
+	 */
+	public void setOrderList(ArrayList<WarGameCharacterModel> orderList) {
+		this.orderList = orderList;
+	}
 }
