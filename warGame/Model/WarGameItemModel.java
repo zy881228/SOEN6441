@@ -588,6 +588,44 @@ public class WarGameItemModel extends Observable{
         }
         return k;
     }
+	//add drp
+	public static int drp()
+    {
+        int k = 0;
+        for(int i = 0; i < 60; i++)
+            if(aA[i] > 0 && (aA[i] & 0x40) != 64 && !sND(i))
+            {
+                aA[i] |= 0x10;
+                aA[i] &= 0x18ffff;
+                k++;
+            }
+
+        for(int j = 59; j >= 0; j--)
+            if(aA[j] > 0)
+            {
+                if((aA[j] & 0x40) == 64)
+                    aA[j] &= 0xffffffbf;
+                if((aA[j] & 0x10) == 16)
+                {
+                    int l = 0;
+                    if(aA[((j / 6) * 6 + 6) - 1] == -1)
+                        l = 1;
+                    if((aA[j] & 0x80000) > 0 && aA[j + 6 + l] > 0 && (aA[j + 6 + l] & 0x10) == 0)
+                    {
+                        aA[j] &= 0xffffffef;
+                        k--;
+                    }
+                    if((aA[j] & 0x100000) > 0 && aA[j + 5 + l] > 0 && (aA[j + 5 + l] & 0x10) == 0)
+                    {
+                        aA[j] &= 0xffffffef;
+                        k--;
+                    }
+                }
+            }
+
+        nA -= k;
+        return k;
+    }
 	
 /****************************added******************************************/
 	private
