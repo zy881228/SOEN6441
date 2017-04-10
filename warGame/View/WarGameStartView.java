@@ -2,9 +2,12 @@ package warGame.View;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -12,8 +15,15 @@ import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -26,6 +36,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.text.DefaultCaret;
 
 import warGame.Controller.WarGameController;
 import warGame.Model.*;
@@ -59,7 +73,11 @@ public class WarGameStartView extends JFrame implements Observer{
 	WarGameItemModel itemModel = new WarGameItemModel();
 	ArrayList<WarGameMapModel> mapModelList = new ArrayList();
 	JLabel label_player = new JLabel();
-	CardLayout card=new CardLayout();
+	JLabel label_noneplayer = new JLabel();
+	ArrayList<WarGameCharacterModel> orderList;
+	int round = 1;
+	static JTextArea text_logging = new JTextArea();
+	WarGameCharacterModel characterForStrategy = new WarGameCharacterModel();
 	/**
      * Update the start game information according to the value that get from Model and show the view frame.
      * @param o
@@ -83,6 +101,8 @@ public class WarGameStartView extends JFrame implements Observer{
 		frame.setBounds(0, 0, 1280, 1000);
 		frame.setSize(1280, 1000);
 		frame.getContentPane().setLayout(null);
+		characterForStrategy = new WarGameCharacterModel();
+		round = 1;
 		characterModel=((WarGameStartModel) o).getCharacterToPlay();
 		mapModelList = ((WarGameStartModel) o).getMapsModel();
 		if(mapModelList.isEmpty())
@@ -96,6 +116,68 @@ public class WarGameStartView extends JFrame implements Observer{
 			mapOnPage = mapModelList.get(0);
 			mapModelList.remove(0);
 			((WarGameStartModel) o).setMapsModel(mapModelList);		
+			
+			orderList = new ArrayList<WarGameCharacterModel>();
+			orderList.add(characterModel);
+			for (WarGameCharacterModel enemy : mapOnPage.getContainEnemies()) {
+				orderList.add(enemy);
+			}
+			for (WarGameCharacterModel friend : mapOnPage.getContainFriends()) {
+				orderList.add(friend);
+			}
+			Random random = new Random();
+			Map<Integer, WarGameCharacterModel> orderListMap = new HashMap<Integer, WarGameCharacterModel>();
+			orderListMap.clear();
+			
+			for (int i = 0; i < orderList.size(); i++) {
+				int randomNum = random.nextInt(20)+1;
+				if (orderList.get(i).equals(characterModel)) {
+					System.out.println("Player  roll "+randomNum);
+					System.out.println("Player's dexterity modifier is "+orderList.get(i).getScore(13)[1]);
+				}else if (mapOnPage.getContainEnemies().contains(orderList.get(i))) {
+					System.out.println("Aggressive "+orderList.get(i)+" roll "+randomNum);
+					System.out.println("Aggressive "+orderList.get(i)+"'s dexterity modifier is "+orderList.get(i).getScore(13)[1]);
+				}else if (mapOnPage.getContainFriends().contains(orderList.get(i))) {
+					System.out.println("Friendly "+orderList.get(i)+" roll "+randomNum);
+					System.out.println("Friendly "+orderList.get(i)+"'s dexterity modifier is "+orderList.get(i).getScore(13)[1]);
+				}
+				randomNum += Integer.parseInt(orderList.get(i).getScore(13)[1]);
+				if (orderListMap.containsKey(randomNum)) {
+					randomNum += 1;
+				}
+				orderListMap.put(randomNum, orderList.get(i));
+			}
+			ArrayList<Integer> allKeysInMap = new ArrayList<Integer>();
+			allKeysInMap.clear();
+			Iterator<Entry<Integer, WarGameCharacterModel>> it = orderListMap.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<Integer, WarGameCharacterModel> entry = (Map.Entry<Integer, WarGameCharacterModel>) it.next();
+				allKeysInMap.add(entry.getKey());
+			}
+			for (int i = 0; i < allKeysInMap.size()-1; i++) {
+				for (int j = 0; j <allKeysInMap.size()-1-i; j++) {
+					if (allKeysInMap.get(j)<=allKeysInMap.get(j+1)) {
+						int tempInt = allKeysInMap.get(j);
+						allKeysInMap.set(j, allKeysInMap.get(j+1));
+						allKeysInMap.set(j+1, tempInt);
+					}
+				}
+			}
+			orderList.clear();
+			for (Integer integer : allKeysInMap) {
+				orderList.add(orderListMap.get(integer));
+			}
+			System.out.println("The order to take turn:");
+			for (WarGameCharacterModel character : orderList) {
+				if (character.equals(characterModel)) {
+					System.out.println("Player");
+				}else if (mapOnPage.getContainEnemies().contains(character)) {
+					System.out.println("Aggressive "+character);
+				}else if (mapOnPage.getContainFriends().contains(character)) {
+					System.out.println("Friendly "+character);
+				}
+			}
+			((WarGameStartModel) o).setOrderList(orderList);
 		}
 
 		//adaption
@@ -122,422 +204,491 @@ public class WarGameStartView extends JFrame implements Observer{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_LEFT){
-					frame.repaint();
-					int posX;
-					int posY;
-					int index;
-					String[] heroPosArray = heroPos.split(" ");
-					posY = Integer.parseInt(heroPosArray[0]);//12
-					posX = Integer.parseInt(heroPosArray[1]);//9
-					index = Integer.parseInt(heroPosArray[2]);//309
-					String[] leftPos = mapElementsLbls.get(index-1).getText().split(" ");
-					if(leftPos[2].equals("f")){
-						JLabel heroPosLbl = mapElementsLbls.get(index);
-						Rectangle posB = heroPosLbl.getBounds();
-						JLabel heroDesLbl = mapElementsLbls.get(index-1);
-						Rectangle desB = heroDesLbl.getBounds();
-						heroPosLbl.setBounds(desB);
-						heroDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, heroDesLbl);
-						mapElementsLbls.set((index-1), heroPosLbl);
-						heroPos = posY + " " + (posX-1) + " " + (index-1);
-						map[posY][posX] = "f";
-						map[posY][posX-1] = "h";
-					}else if(leftPos[2].equals("m")){
-						String str[] = map[posY][posX-1].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-						if(leftPos[3].equals("alive"))
-						{
-							JOptionPane.showMessageDialog(null, "Monster Dead!");
-							mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
-						}
-						if(leftPos[3].equals("dead"))
-						{
-							getAllItem();
-							mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-						}
-					}else if(leftPos[2].equals("i")){
-						String str[] = map[posY][posX-1].trim().split(" ");
-						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
-						String itemType = itemModel.getItemType();
-						String enchanType = itemModel.getEnchanType();
-						String enchanNum = itemModel.getEnchanNumber();
-						WarGameStartModel startModel = new WarGameStartModel();
-						Boolean result = startModel.checkBackpack(backpack);
-						if(result == true)
-						{
-							for(int i =0;i<10;i++)
+					if(characterForStrategy.equals(characterModel))
+					{
+						frame.repaint();
+						int posX;
+						int posY;
+						int index;
+						String[] heroPosArray = heroPos.split(" ");
+						posY = Integer.parseInt(heroPosArray[0]);//12
+						posX = Integer.parseInt(heroPosArray[1]);//9
+						index = Integer.parseInt(heroPosArray[2]);//309
+						String[] leftPos = mapElementsLbls.get(index-1).getText().split(" ");
+						if(leftPos[2].equals("f")){
+							JLabel heroPosLbl = mapElementsLbls.get(index);
+							Rectangle posB = heroPosLbl.getBounds();
+							JLabel heroDesLbl = mapElementsLbls.get(index-1);
+							Rectangle desB = heroDesLbl.getBounds();
+							heroPosLbl.setBounds(desB);
+							heroDesLbl.setBounds(posB);
+							mapElementsLbls.set(index, heroDesLbl);
+							mapElementsLbls.set((index-1), heroPosLbl);
+							heroPos = posY + " " + (posX-1) + " " + (index-1);
+							map[posY][posX] = "f";
+							map[posY][posX-1] = "h";
+						}else if(leftPos[2].equals("m")){
+							String str[] = map[posY][posX-1].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							if(leftPos[3].equals("alive"))
 							{
-								if((backpack[i] == null)||(backpack[i].equals("null")))
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
+							}
+							if(leftPos[3].equals("dead"))
+							{
+								getAllItem();
+								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+							}
+						}else if(leftPos[2].equals("i")){
+							String str[] = map[posY][posX-1].trim().split(" ");
+							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+							String itemType = itemModel.getItemType();
+							String enchanType = itemModel.getEnchanType();
+							String enchanNum = itemModel.getEnchanNumber();
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
+							{
+								for(int i =0;i<10;i++)
 								{
-									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-									label_backpack[i].setIcon(img_item);
-									map[posY][posX-1] = "f";
-									mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"f");
-									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-									mapElementsLbls.get(index-1).setIcon(floor);
-									break;
+									if((backpack[i] == null)||(backpack[i].equals("null")))
+									{
+										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+										label_backpack[i].setIcon(img_item);
+										map[posY][posX-1] = "f";
+										mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"f");
+										ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+										mapElementsLbls.get(index-1).setIcon(floor);
+										break;
+									}
 								}
 							}
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Backpack is full !");
-						}
-												
-					}else if(leftPos[2].equals("O")){
-						int count = 0;
-						for (JLabel label : mapElementsLbls) 
-						{
-							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
+							}
+													
+						}else if(leftPos[2].equals("O")){
+							int count = 0;
+							for (JLabel label : mapElementsLbls) 
+							{
+								String str[] = mapElementsLbls.get(count).getText().split(" ");
+								
+								if(str[2].equals("i"))
+								{
+									JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
+									break;
+								}
+								if(str[2].equals("m"))
+								{
+									if(str[3].equals("alive"))
+									{
+										JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+										break;
+									}
+								}
+								count++;
+							}
 							
-							if(str[2].equals("i"))
+							if(count == mapElementsLbls.size())
 							{
-								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
-								break;
+								frame.dispose();
+								characterModel.setLevel(characterModel.getLevel()+1);
+								characterModel.scoresChange();
+								((WarGameStartModel) o).setCharacterModel(characterModel);
+								((WarGameStartModel) o).DisplayMapView();
 							}
-							if(str[2].equals("m"))
-							{
-								if(str[3].equals("alive"))
-								{
-									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
-									break;
-								}
-							}
-							count++;
+						}else if(leftPos[2].equals("n")){
+							String str[] = map[posY][posX-1].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+							switchItem();
+							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
-						
-						if(count == mapElementsLbls.size())
-						{
-							frame.dispose();
-							characterModel.setLevel(characterModel.getLevel()+1);
-							characterModel.scoresChange();
-							((WarGameStartModel) o).setCharacterModel(characterModel);
-							((WarGameStartModel) o).DisplayMapView();
-						}
-					}else if(leftPos[2].equals("n")){
-						String str[] = map[posY][posX-1].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
-						switchItem();
-						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
-					
 				}
 				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-					frame.repaint();
-					int posX;
-					int posY;
-					int index;
-					String[] heroPosArray = heroPos.split(" ");
-					posY = Integer.parseInt(heroPosArray[0]);//12
-					posX = Integer.parseInt(heroPosArray[1]);//9
-					index = Integer.parseInt(heroPosArray[2]);//309
-					String[] rightPos = mapElementsLbls.get(index+1).getText().split(" ");
-					if(rightPos[2].equals("f")){
-						JLabel heroPosLbl = mapElementsLbls.get(index);
-						Rectangle posB = heroPosLbl.getBounds();
-						JLabel heroDesLbl = mapElementsLbls.get(index+1);
-						Rectangle desB = heroDesLbl.getBounds();
-						heroPosLbl.setBounds(desB);
-						heroDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, heroDesLbl);
-						mapElementsLbls.set((index+1), heroPosLbl);
-						heroPos = posY + " " + (posX+1) + " " + (index+1);
-						map[posY][posX] = "f";
-						map[posY][posX+1] = "h";				
-					}else if(rightPos[2].equals("m")){
-						String str[] = map[posY][posX+1].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-						if(rightPos[3].equals("alive"))
-						{
-							JOptionPane.showMessageDialog(null, "Monster Dead!");
-							mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"m dead");
-						}
-						if(rightPos[3].equals("dead"))
-						{
-							getAllItem();
-							mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-						}
-					}else if(rightPos[2].equals("i")){
-						String str[] = map[posY][posX+1].trim().split(" ");
-						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
-						String itemType = itemModel.getItemType();
-						String enchanType = itemModel.getEnchanType();
-						String enchanNum = itemModel.getEnchanNumber();
-						WarGameStartModel startModel = new WarGameStartModel();
-						Boolean result = startModel.checkBackpack(backpack);
-						if(result == true)
-						{
-							for(int i =0;i<10;i++)
+					if(characterForStrategy.equals(characterModel))
+					{
+						frame.repaint();
+						int posX;
+						int posY;
+						int index;
+						String[] heroPosArray = heroPos.split(" ");
+						posY = Integer.parseInt(heroPosArray[0]);//12
+						posX = Integer.parseInt(heroPosArray[1]);//9
+						index = Integer.parseInt(heroPosArray[2]);//309
+						String[] rightPos = mapElementsLbls.get(index+1).getText().split(" ");
+						if(rightPos[2].equals("f")){
+							JLabel heroPosLbl = mapElementsLbls.get(index);
+							Rectangle posB = heroPosLbl.getBounds();
+							JLabel heroDesLbl = mapElementsLbls.get(index+1);
+							Rectangle desB = heroDesLbl.getBounds();
+							heroPosLbl.setBounds(desB);
+							heroDesLbl.setBounds(posB);
+							mapElementsLbls.set(index, heroDesLbl);
+							mapElementsLbls.set((index+1), heroPosLbl);
+							heroPos = posY + " " + (posX+1) + " " + (index+1);
+							map[posY][posX] = "f";
+							map[posY][posX+1] = "h";				
+						}else if(rightPos[2].equals("m")){
+							String str[] = map[posY][posX+1].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							if(rightPos[3].equals("alive"))
 							{
-								if((backpack[i] == null)||(backpack[i].equals("null")))
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"m dead");
+							}
+							if(rightPos[3].equals("dead"))
+							{
+								getAllItem();
+								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+							}
+						}else if(rightPos[2].equals("i")){
+							String str[] = map[posY][posX+1].trim().split(" ");
+							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+							String itemType = itemModel.getItemType();
+							String enchanType = itemModel.getEnchanType();
+							String enchanNum = itemModel.getEnchanNumber();
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
+							{
+								for(int i =0;i<10;i++)
 								{
-									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-									label_backpack[i].setIcon(img_item);
-									map[posY][posX+1] = "f";
-									mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"f");
-									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-									mapElementsLbls.get(index+1).setIcon(floor);
-									break;
+									if((backpack[i] == null)||(backpack[i].equals("null")))
+									{
+										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+										label_backpack[i].setIcon(img_item);
+										map[posY][posX+1] = "f";
+										mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"f");
+										ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+										mapElementsLbls.get(index+1).setIcon(floor);
+										break;
+									}
 								}
 							}
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Backpack is full !");
-						}
-						
-					}else if(rightPos[2].equals("O")){
-						int count = 0;
-						for (JLabel label : mapElementsLbls) 
-						{
-							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
+							}
 							
-							if(str[2].equals("i"))
+						}else if(rightPos[2].equals("O")){
+							int count = 0;
+							for (JLabel label : mapElementsLbls) 
 							{
-								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
-								break;
-							}
-							if(str[2].equals("m"))
-							{
-								if(str[3].equals("alive"))
+								String str[] = mapElementsLbls.get(count).getText().split(" ");
+								
+								if(str[2].equals("i"))
 								{
-									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
 									break;
 								}
+								if(str[2].equals("m"))
+								{
+									if(str[3].equals("alive"))
+									{
+										JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+										break;
+									}
+								}
+								count++;
 							}
-							count++;
+							
+							if(count == mapElementsLbls.size())
+							{
+								frame.dispose();
+								characterModel.setLevel(characterModel.getLevel()+1);
+								characterModel.scoresChange();
+								((WarGameStartModel) o).setCharacterModel(characterModel);
+								((WarGameStartModel) o).DisplayMapView();
+							}
+						}else if(rightPos[2].equals("n")){
+							String str[] = map[posY][posX+1].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+							switchItem();
+							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
-						
-						if(count == mapElementsLbls.size())
-						{
-							frame.dispose();
-							characterModel.setLevel(characterModel.getLevel()+1);
-							characterModel.scoresChange();
-							((WarGameStartModel) o).setCharacterModel(characterModel);
-							((WarGameStartModel) o).DisplayMapView();
-						}
-					}else if(rightPos[2].equals("n")){
-						String str[] = map[posY][posX+1].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
-						switchItem();
-						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_UP){
-					frame.repaint();
-					int posX;
-					int posY;
-					int index;
-					String[] heroPosArray = heroPos.split(" ");
-					posY = Integer.parseInt(heroPosArray[0]);//12
-					posX = Integer.parseInt(heroPosArray[1]);//9
-					index = Integer.parseInt(heroPosArray[2]);//309
-					String[] upPos = null;
-					if(index-map[0].length>0){
-						upPos = mapElementsLbls.get(index-map[0].length).getText().split(" ");
-					}
-					if(upPos[2].equals("f")){
-						JLabel heroPosLbl = mapElementsLbls.get(index);
-						Rectangle posB = heroPosLbl.getBounds();
-						JLabel heroDesLbl = mapElementsLbls.get(index-(map[0].length));
-						Rectangle desB = heroDesLbl.getBounds();
-						heroPosLbl.setBounds(desB);
-						heroDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, heroDesLbl);
-						mapElementsLbls.set((index-(map[0].length)), heroPosLbl);
-						heroPos = (posY-1) + " " + posX + " " + (index-(map[0].length));
-						map[posY][posX] = "f";
-						map[posY-1][posX] = "h";
-					}else if(upPos[2].equals("m")){
-						String str[] = map[posY-1][posX].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-						if(upPos[3].equals("alive"))
-						{
-							JOptionPane.showMessageDialog(null, "Monster Dead!");
-							mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"m dead");
+					if(characterForStrategy.equals(characterModel))
+					{
+						frame.repaint();
+						int posX;
+						int posY;
+						int index;
+						String[] heroPosArray = heroPos.split(" ");
+						posY = Integer.parseInt(heroPosArray[0]);//12
+						posX = Integer.parseInt(heroPosArray[1]);//9
+						index = Integer.parseInt(heroPosArray[2]);//309
+						String[] upPos = null;
+						if(index-map[0].length>0){
+							upPos = mapElementsLbls.get(index-map[0].length).getText().split(" ");
 						}
-						if(upPos[3].equals("dead"))
-						{
-							getAllItem();
-							mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-						}
-					}else if(upPos[2].equals("i")){
-						String str[] = map[posY-1][posX].trim().split(" ");
-						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
-						String itemType = itemModel.getItemType();
-						String enchanType = itemModel.getEnchanType();
-						String enchanNum = itemModel.getEnchanNumber();
-						WarGameStartModel startModel = new WarGameStartModel();
-						Boolean result = startModel.checkBackpack(backpack);
-						if(result == true)
-						{
-							for(int i =0;i<10;i++)
+						if(upPos[2].equals("f")){
+							JLabel heroPosLbl = mapElementsLbls.get(index);
+							Rectangle posB = heroPosLbl.getBounds();
+							JLabel heroDesLbl = mapElementsLbls.get(index-(map[0].length));
+							Rectangle desB = heroDesLbl.getBounds();
+							heroPosLbl.setBounds(desB);
+							heroDesLbl.setBounds(posB);
+							mapElementsLbls.set(index, heroDesLbl);
+							mapElementsLbls.set((index-(map[0].length)), heroPosLbl);
+							heroPos = (posY-1) + " " + posX + " " + (index-(map[0].length));
+							map[posY][posX] = "f";
+							map[posY-1][posX] = "h";
+							WarGameStartView.logging("Player move up to ("+(posY+1)+","+posX+")");
+						}else if(upPos[2].equals("m")){
+							String str[] = map[posY-1][posX].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							if(upPos[3].equals("alive"))
 							{
-								if((backpack[i] == null)||(backpack[i].equals("null")))
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"m dead");
+							}
+							if(upPos[3].equals("dead"))
+							{
+								getAllItem();
+								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+							}
+						}else if(upPos[2].equals("i")){
+							String str[] = map[posY-1][posX].trim().split(" ");
+							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+							String itemType = itemModel.getItemType();
+							String enchanType = itemModel.getEnchanType();
+							String enchanNum = itemModel.getEnchanNumber();
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
+							{
+								for(int i =0;i<10;i++)
 								{
-									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-									label_backpack[i].setIcon(img_item);
-									map[posY-1][posX] = "f";
-									mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"f");
-									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-									mapElementsLbls.get(index-(map[0].length)).setIcon(floor);
-									break;
+									if((backpack[i] == null)||(backpack[i].equals("null")))
+									{
+										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+										label_backpack[i].setIcon(img_item);
+										map[posY-1][posX] = "f";
+										mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"f");
+										ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+										mapElementsLbls.get(index-(map[0].length)).setIcon(floor);
+										break;
+									}
 								}
 							}
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Backpack is full !");
-						}
-						
-					}else if(upPos[2].equals("O")){
-						int count = 0;
-						for (JLabel label : mapElementsLbls) 
-						{
-							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
+							}
 							
-							if(str[2].equals("i"))
+						}else if(upPos[2].equals("O")){
+							int count = 0;
+							for (JLabel label : mapElementsLbls) 
 							{
-								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
-								break;
-							}
-							if(str[2].equals("m"))
-							{
-								if(str[3].equals("alive"))
+								String str[] = mapElementsLbls.get(count).getText().split(" ");
+								
+								if(str[2].equals("i"))
 								{
-									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
 									break;
 								}
+								if(str[2].equals("m"))
+								{
+									if(str[3].equals("alive"))
+									{
+										JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+										break;
+									}
+								}
+								count++;
 							}
-							count++;
+							
+							if(count == mapElementsLbls.size())
+							{
+								frame.dispose();
+								characterModel.setLevel(characterModel.getLevel()+1);
+								characterModel.scoresChange();
+								((WarGameStartModel) o).setCharacterModel(characterModel);
+								((WarGameStartModel) o).DisplayMapView();
+							}
+							
+						}else if(upPos[2].equals("n")){
+							String str[] = map[posY-1][posX].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+							switchItem();
+							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
-						
-						if(count == mapElementsLbls.size())
-						{
-							frame.dispose();
-							characterModel.setLevel(characterModel.getLevel()+1);
-							characterModel.scoresChange();
-							((WarGameStartModel) o).setCharacterModel(characterModel);
-							((WarGameStartModel) o).DisplayMapView();
-						}
-						
-					}else if(upPos[2].equals("n")){
-						String str[] = map[posY-1][posX].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
-						switchItem();
-						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
-					frame.repaint();
-					int posX;
-					int posY;
-					int index;
-					String[] heroPosArray = heroPos.split(" ");
-					posY = Integer.parseInt(heroPosArray[0]);//12
-					posX = Integer.parseInt(heroPosArray[1]);//9
-					index = Integer.parseInt(heroPosArray[2]);//309
-					String[] downPos = null;
-					if(index+map[0].length<(map.length)*(map[0].length)){
-						downPos = mapElementsLbls.get(index+map[0].length).getText().split(" ");
-					}
-					if(downPos[2].equals("f")){
-						JLabel heroPosLbl = mapElementsLbls.get(index);
-						Rectangle posB = heroPosLbl.getBounds();
-						JLabel heroDesLbl = mapElementsLbls.get(index+(map[0].length));
-						Rectangle desB = heroDesLbl.getBounds();
-						heroPosLbl.setBounds(desB);
-						heroDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, heroDesLbl);
-						mapElementsLbls.set((index+(map[0].length)), heroPosLbl);
-						heroPos = (posY+1) + " " + posX + " " + (index+(map[0].length));
-						map[posY][posX] = "f";
-						map[posY+1][posX] = "h";		
-					}else if(downPos[2].equals("m")){
-						String str[] = map[posY+1][posX].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-						if(downPos[3].equals("alive"))
-						{
-							JOptionPane.showMessageDialog(null, "Monster Dead!");
-							mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"m dead");
+					if(characterForStrategy.equals(characterModel))
+					{
+						frame.repaint();
+						int posX;
+						int posY;
+						int index;
+						String[] heroPosArray = heroPos.split(" ");
+						posY = Integer.parseInt(heroPosArray[0]);//12
+						posX = Integer.parseInt(heroPosArray[1]);//9
+						index = Integer.parseInt(heroPosArray[2]);//309
+						String[] downPos = null;
+						if(index+map[0].length<(map.length)*(map[0].length)){
+							downPos = mapElementsLbls.get(index+map[0].length).getText().split(" ");
 						}
-						if(downPos[3].equals("dead"))
-						{
-							getAllItem();
-							mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-						}
-					}else if(downPos[2].equals("i")){
-						String str[] = map[posY+1][posX].trim().split(" ");
-						itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
-						String itemType = itemModel.getItemType();
-						String enchanType = itemModel.getEnchanType();
-						String enchanNum = itemModel.getEnchanNumber();
-						WarGameStartModel startModel = new WarGameStartModel();
-						Boolean result = startModel.checkBackpack(backpack);
-						if(result == true)
-						{
-							for(int i =0;i<10;i++)
+						if(downPos[2].equals("f")){
+							JLabel heroPosLbl = mapElementsLbls.get(index);
+							Rectangle posB = heroPosLbl.getBounds();
+							JLabel heroDesLbl = mapElementsLbls.get(index+(map[0].length));
+							Rectangle desB = heroDesLbl.getBounds();
+							heroPosLbl.setBounds(desB);
+							heroDesLbl.setBounds(posB);
+							mapElementsLbls.set(index, heroDesLbl);
+							mapElementsLbls.set((index+(map[0].length)), heroPosLbl);
+							heroPos = (posY+1) + " " + posX + " " + (index+(map[0].length));
+							map[posY][posX] = "f";
+							map[posY+1][posX] = "h";
+							WarGameStartView.logging("Player move down to ("+(posY+1)+","+posX+")");
+						}else if(downPos[2].equals("m")){
+							String str[] = map[posY+1][posX].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							if(downPos[3].equals("alive"))
 							{
-								if((backpack[i] == null)||(backpack[i].equals("null")))
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"m dead");
+							}
+							if(downPos[3].equals("dead"))
+							{
+								getAllItem();
+								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+							}
+						}else if(downPos[2].equals("i")){
+							String str[] = map[posY+1][posX].trim().split(" ");
+							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
+							String itemType = itemModel.getItemType();
+							String enchanType = itemModel.getEnchanType();
+							String enchanNum = itemModel.getEnchanNumber();
+							WarGameStartModel startModel = new WarGameStartModel();
+							Boolean result = startModel.checkBackpack(backpack);
+							if(result == true)
+							{
+								for(int i =0;i<10;i++)
 								{
-									backpack[i] = itemType+" "+enchanType+" "+enchanNum;
-									ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
-									label_backpack[i].setIcon(img_item);
-									map[posY+1][posX] = "f";
-									mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"f");
-									ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
-									mapElementsLbls.get(index+(map[0].length)).setIcon(floor);
-									break;
+									if((backpack[i] == null)||(backpack[i].equals("null")))
+									{
+										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
+										label_backpack[i].setIcon(img_item);
+										map[posY+1][posX] = "f";
+										mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"f");
+										ImageIcon floor = new ImageIcon("src/image/Map/floor.jpg");
+										mapElementsLbls.get(index+(map[0].length)).setIcon(floor);
+										break;
+									}
 								}
 							}
-						}
-						else
-						{
-							JOptionPane.showMessageDialog(null, "Backpack is full !");
-						}
-						
-					}else if(downPos[2].equals("O")){
-						int count = 0;
-						for (JLabel label : mapElementsLbls) 
-						{
-							String str[] = mapElementsLbls.get(count).getText().split(" ");
+							else
+							{
+								JOptionPane.showMessageDialog(null, "Backpack is full !");
+							}
 							
-							if(str[2].equals("i"))
+						}else if(downPos[2].equals("O")){
+							int count = 0;
+							for (JLabel label : mapElementsLbls) 
 							{
-								JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
-								break;
-							}
-							if(str[2].equals("m"))
-							{
-								if(str[3].equals("alive"))
+								String str[] = mapElementsLbls.get(count).getText().split(" ");
+								
+								if(str[2].equals("i"))
 								{
-									JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+									JOptionPane.showMessageDialog(null, "Chest not fulfilled!");
 									break;
 								}
+								if(str[2].equals("m"))
+								{
+									if(str[3].equals("alive"))
+									{
+										JOptionPane.showMessageDialog(null, "Monster not fulfilled!");
+										break;
+									}
+								}
+								count++;
 							}
-							count++;
+							
+							if(count == mapElementsLbls.size())
+							{
+								frame.dispose();
+								characterModel.setLevel(characterModel.getLevel()+1);
+								characterModel.scoresChange();
+								((WarGameStartModel) o).setCharacterModel(characterModel);
+								((WarGameStartModel) o).DisplayMapView();
+							}
+						}else if(downPos[2].equals("n")){
+							String str[] = map[posY+1][posX].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+							switchItem();
+							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
-						
-						if(count == mapElementsLbls.size())
-						{
-							frame.dispose();
-							characterModel.setLevel(characterModel.getLevel()+1);
-							characterModel.scoresChange();
-							((WarGameStartModel) o).setCharacterModel(characterModel);
-							((WarGameStartModel) o).DisplayMapView();
-						}
-					}else if(downPos[2].equals("n")){
-						String str[] = map[posY+1][posX].trim().split(" ");
-						nonePlayerModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
-						switchItem();
-						mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 					}
 				}
-			}
+				
+				else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+					System.out.println("Round "+round);
+					for (WarGameCharacterModel character : orderList) {
+						characterForStrategy = character;
+						if (character.equals(characterModel)) {
+							System.out.println("Player turn");
+							//((WarGameStartModel) o).setStrategy(new HumanPlayer(), characterModel);
+							//actionList = ((WarGameStartModel) o).turn();
+				
+							break;
+						}else if (mapOnPage.getContainEnemies().contains(character)) {
+							System.out.println("Aggressive "+character+"'s turn");
+							try {
+								TimeUnit.SECONDS.sleep(5);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}else if (mapOnPage.getContainFriends().contains(character)) {
+							System.out.println("Friendly "+character+"'s turn");
+							try {
+								TimeUnit.SECONDS.sleep(5);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}//for
+					
+				}
+				else if(e.getKeyCode() == KeyEvent.VK_O){
+					for (int i = orderList.indexOf(characterModel)+1; i < orderList.size(); i++) {
+						
+						if (mapOnPage.getContainEnemies().contains(orderList.get(i))) {
+							System.out.println("Aggressive "+orderList.get(i)+"'s turn");
+							try {
+								TimeUnit.SECONDS.sleep(5);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}else if (mapOnPage.getContainFriends().contains(orderList.get(i))) {
+							System.out.println("Friendly "+orderList.get(i)+"'s turn");
+							try {
+								TimeUnit.SECONDS.sleep(5);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+						
+					}
+					round++;
+					JOptionPane.showMessageDialog(null, "Round End!");
+				}
+			}//keypressed
 		});
 		
 		for (int i = 0; i < map.length; i++) {
@@ -562,7 +713,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					mapElement.setIcon(hero);
 					mapElementsLbls.add(mapElement);
 					heroPos = i+" "+j+" "+(mapElementsLbls.size()-1);
-					mapElement.addMouseListener(new MouseAdapter() {
+					/*mapElement.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mousePressed(MouseEvent e){
 							if(e.getButton() == MouseEvent.BUTTON1)
@@ -570,13 +721,13 @@ public class WarGameStartView extends JFrame implements Observer{
 								
 							}
 						}
-					});
+					});*/
 					break;
 				case "m":
 					mapElement = new JLabel(i+" "+j+" "+"m alive");
 					mapElement.setIcon(monster);
 					mapElementsLbls.add(mapElement);
-					mapElement.addMouseListener(new MouseAdapter() {
+					/*mapElement.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mousePressed(MouseEvent e){
 							if(e.getButton() == MouseEvent.BUTTON1)
@@ -587,7 +738,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								setPanel(characterModel);
 							}
 						}
-					});
+					});*/
 					break;
 				case "I":
 					mapElement = new JLabel(i+" "+j+" "+"I");
@@ -605,10 +756,10 @@ public class WarGameStartView extends JFrame implements Observer{
 					mapElementsLbls.add(mapElement);
 					break;
 				case "n":
-					mapElement = new JLabel(i+" "+j+" "+"n");
+					mapElement = new JLabel(i+" "+j+" "+"n alive");
 					mapElement.setIcon(hero);
 					mapElementsLbls.add(mapElement);
-					mapElement.addMouseListener(new MouseAdapter() {
+					/*mapElement.addMouseListener(new MouseAdapter() {
 						@Override
 						public void mousePressed(MouseEvent e){
 							if(e.getButton() == MouseEvent.BUTTON1)
@@ -619,7 +770,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								setPanel(characterModel);
 							}
 						}
-					});
+					});*/
 					break;
 				}
 			}
@@ -649,6 +800,55 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 				});
 			}
+			else if(lblArray[2].equals("m"))
+			{
+				posY = Integer.parseInt(lblArray[0]);
+				posX = Integer.parseInt(lblArray[1]);
+				final int i_buffer = posY;
+				final int j_buffer = posX;
+				label_noneplayer = new JLabel(posY+" "+posX+" "+"m alive");
+				label_noneplayer.setBounds(posX*30, posY*30, 30, 30);
+				label_noneplayer.setIcon(monster);
+				mapPanel.add(label_noneplayer);
+				mapElementsLbls.set(mapElementsLbls.indexOf(lbl), label_noneplayer);
+				label_noneplayer.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e){
+						if(e.getButton() == MouseEvent.BUTTON1)
+						{
+							String str[] = map[i_buffer][j_buffer].trim().split(" ");
+							WarGameCharacterModel characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							//createCharacterView(characterModel);
+							setPanel(characterModel);
+						}
+					}
+				});
+			}
+			else if(lblArray[2].equals("n"))
+			{
+				posY = Integer.parseInt(lblArray[0]);
+				posX = Integer.parseInt(lblArray[1]);
+				final int i_buffer = posY;
+				final int j_buffer = posX;
+				label_noneplayer = new JLabel(posY+" "+posX+" "+"n alive");
+				label_noneplayer.setBounds(posX*30, posY*30, 30, 30);
+				label_noneplayer.setIcon(hero);
+				mapPanel.add(label_noneplayer);
+				mapElementsLbls.set(mapElementsLbls.indexOf(lbl), label_noneplayer);
+				label_noneplayer.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent e){
+						if(e.getButton() == MouseEvent.BUTTON1)
+						{
+							String str[] = map[i_buffer][j_buffer].trim().split(" ");
+							WarGameCharacterModel characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[2]));
+							//createCharacterView(characterModel);
+							setPanel(characterModel);
+						}
+					}
+				});
+			}
+			
 			else
 			{
 				posY = Integer.parseInt(lblArray[0]);
@@ -769,13 +969,20 @@ public class WarGameStartView extends JFrame implements Observer{
 		//player panel end
 		
 		//logging window panel
-		JPanel logViewPanel = new JPanel();
-		logViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
-		logViewPanel.setBounds(750, 480, 520, 200);
-		frame.getContentPane().add(logViewPanel);
-		logViewPanel.setLayout(null);
-		logViewPanel.setBackground(Color.gray);
+		text_logging.setBounds(750, 480, 520, 220);
+		text_logging.setLineWrap(true);
+		text_logging.setWrapStyleWord(true);
+		text_logging.setEditable(false);
+		text_logging.setLayout(null);
+		text_logging.setEnabled(false);
+		DefaultCaret caret = (DefaultCaret)text_logging.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		JScrollPane jsp = new JScrollPane(text_logging);
+		jsp.setBounds(750, 480, 520, 220);
+		frame.add(jsp);
 		//loogging window panel end
+		
+	
 		
 	}
 	/**
@@ -1601,5 +1808,9 @@ public class WarGameStartView extends JFrame implements Observer{
 		}
 	}
 	
+	public static void logging(String newMessage)
+	{
+		text_logging.append(newMessage+"\r\n");
+	}
 	
 }
