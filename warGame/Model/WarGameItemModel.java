@@ -588,43 +588,169 @@ public class WarGameItemModel extends Observable{
         }
         return k;
     }
-	//add drp
-	public static int drp()
+	//add key
+	protected void keyPressed(int i)
     {
-        int k = 0;
-        for(int i = 0; i < 60; i++)
-            if(aA[i] > 0 && (aA[i] & 0x40) != 64 && !sND(i))
+        int j = 0;
+        int k = i;
+        try
+        {
+            j = getGameAction(k);
+        }
+        catch(Exception exception) { }
+        if(tgS == 0)
+        {
+            if(k == -6)
             {
-                aA[i] |= 0x10;
-                aA[i] &= 0x18ffff;
-                k++;
-            }
-
-        for(int j = 59; j >= 0; j--)
-            if(aA[j] > 0)
+                bgS = 0;
+                tgS = 2;
+                indeX = 0;
+                repaint();
+            } else
+            if(k == -7)
+                owM.exitApp();
+            else
+            if(k == 49 || j == 8)
             {
-                if((aA[j] & 0x40) == 64)
-                    aA[j] &= 0xffffffbf;
-                if((aA[j] & 0x10) == 16)
+                init(mH, sE);
+                tgS = 1;
+                repaint();
+                if(sD[0] != null && !sE)
                 {
-                    int l = 0;
-                    if(aA[((j / 6) * 6 + 6) - 1] == -1)
-                        l = 1;
-                    if((aA[j] & 0x80000) > 0 && aA[j + 6 + l] > 0 && (aA[j + 6 + l] & 0x10) == 0)
-                    {
-                        aA[j] &= 0xffffffef;
-                        k--;
-                    }
-                    if((aA[j] & 0x100000) > 0 && aA[j + 5 + l] > 0 && (aA[j + 5 + l] & 0x10) == 0)
-                    {
-                        aA[j] &= 0xffffffef;
-                        k--;
-                    }
+                    if(sD[0].getState() == 0)
+                        sD[0].stop();
+                    sD[0].play(1);
                 }
             }
-
-        nA -= k;
-        return k;
+        } else
+        if(tgS == 2)
+        {
+            if(k == -7)
+            {
+                if(indeX == 2)
+                    indeX = 0;
+                else
+                    tgS = bgS;
+                if(tgS == 1)
+                {
+                    pauseFlag = false;
+                    resumeFlag = true;
+                }
+                repaint();
+                serviceRepaints();
+            } else
+            if(k == -2)
+            {
+                if(indeX == 0)
+                    indeX = 1;
+                repaint();
+            } else
+            if(k == -1)
+            {
+                if(indeX == 1)
+                    indeX = 0;
+                repaint();
+            } else
+            if(j == 8)
+                if(indeX == 0)
+                {
+                    sE = !sE;
+                    setGConf(mH, sE);
+                    saveData();
+                    repaint();
+                } else
+                if(indeX == 1)
+                {
+                    indeX = 2;
+                    Display.getDisplay(owM).setCurrent(hForm);
+                }
+        } else
+        if(tgS == 1)
+        {
+            if(pS == -2)
+            {
+                if(k == -6)
+                    retryPlease();
+            } else
+            if(k == -6)
+            {
+                bgS = 1;
+                tgS = 2;
+                pauseFlag = true;
+                indeX = 0;
+                repaint();
+            }
+            if(k == 50 || k == -1)
+            {
+                if(gF)
+                    synchronized(this)
+                    {
+                        upA = true;
+                    }
+            } else
+            if(k == -3 || k == -4)
+            {
+                if(gF)
+                    if(k == -3 && mV > 0)
+                        mV--;
+                    else
+                    if(k == -4 && mV < 42)
+                        mV++;
+            } else
+            if(k == 52 || k == 54)
+            {
+                if(gF && !kF)
+                {
+                    kY = k;
+                    kF = true;
+                }
+            } else
+            if(k == 53 || j == 8)
+            {
+                if(gF && pS == 1)
+                {
+                    System.gc();
+                    kF = false;
+                    synchronized(this)
+                    {
+                        pS = 2;
+                    }
+                    GameCanvas _tmp = this;
+                    Bobble.mD = mV;
+                    sC++;
+                    if(sD[2] != null && !sE)
+                    {
+                        if(sD[2].getState() == 0)
+                            sD[2].stop();
+                        sD[2].play(1);
+                    }
+                }
+            } else
+            if(k == -7)
+            {
+                setGConf(mH, sE);
+                saveData();
+                if(pS == -2)
+                {
+                    initTitle();
+                    tgS = 0;
+                    repaint();
+                } else
+                {
+                    dF = true;
+                    gF = false;
+                    while(pS != -2) 
+                        try
+                        {
+                            Thread.sleep(10L);
+                        }
+                        catch(Exception exception1) { }
+                    initTitle();
+                    tgS = 0;
+                    repaint();
+                }
+            }
+        }
     }
 	//score
 	 private void drawScore(Graphics g)
