@@ -626,6 +626,42 @@ public class WarGameItemModel extends Observable{
         nA -= k;
         return k;
     }
+	//score
+	 private void drawScore(Graphics g)
+    {
+        int i = lV + 1;
+        int j = mS;
+        if(j > 0x1869f)
+            j = 0x1869f;
+        if(mS > mH)
+        {
+            mH = mS;
+            setGConf(mH, sE);
+            saveData();
+        }
+        int k = mH;
+        if(k > 0x1869f)
+            k = 0x1869f;
+        try
+        {
+            char ac[] = Integer.toString(i).toCharArray();
+            int l = ac.length;
+            for(int i1 = 0; i1 < l; i1++)
+                g.drawImage(numI[Character.digit(ac[i1], 10)], 132 + (5 - (l - i1)) * 8, 36, 0x10 | 0x4);
+
+            ac = Integer.toString(j).toCharArray();
+            l = ac.length;
+            for(int j1 = 0; j1 < l; j1++)
+                g.drawImage(numI[Character.digit(ac[j1], 10)], 132 + (5 - (l - j1)) * 8, 84, 0x10 | 0x4);
+
+            ac = Integer.toString(k).toCharArray();
+            l = ac.length;
+            for(int k1 = 0; k1 < l; k1++)
+                g.drawImage(numI[Character.digit(ac[k1], 10)], 132 + (5 - (l - k1)) * 8, 132, 0x10 | 0x4);
+
+        }
+        catch(Exception exception) { }
+    }
 	
 /****************************added******************************************/
 	private
