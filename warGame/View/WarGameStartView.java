@@ -62,6 +62,8 @@ public class WarGameStartView extends JFrame implements Observer{
 	JLabel label_equip[] = new JLabel[7];
 	JLabel label_backpack[] = new JLabel[10];
 	JLabel label_showScore[] = new JLabel[12];
+	String backpack_view[] = new String[10];
+	String equip_view[] = new String[7];
 	String backpack[] = new String[10];
 	String equip[] = new String[7];
 	String backpack_npc[] = new String[10];
@@ -206,6 +208,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_LEFT){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -311,6 +314,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -416,6 +420,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_UP){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -526,6 +531,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -870,6 +876,8 @@ public class WarGameStartView extends JFrame implements Observer{
 		label_pic.setBounds(0, 150, 150, 250);
 		characterViewPanel.add(label_pic);
 		characterViewPanel.setBackground(Color.lightGray);
+		equip_view = characterModel.getEquip();
+		backpack_view = characterModel.getBackpack();
 		equip = characterModel.getEquip();
 		backpack = characterModel.getBackpack();
 		for(int i=0;i<12;i++)
@@ -899,13 +907,13 @@ public class WarGameStartView extends JFrame implements Observer{
 			characterViewPanel.add(label_equip[i]);
 			label_equip[i].setBounds(i*70+18, 400, 66, 66);
 			label_equip[i].setOpaque(true);
-			if(equip[i].equals("null"))
+			if(equip_view[i].equals("null"))
 			{
 				label_equip[i].setBackground(Color.GRAY);
 			}
 			else
 			{
-				String prefix[] = equip[i].trim().split(" ");
+				String prefix[] = equip_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -914,10 +922,10 @@ public class WarGameStartView extends JFrame implements Observer{
 				public void mousePressed(MouseEvent e){
 					if(e.getButton() == MouseEvent.BUTTON3)
 					{
-						if(!equip[event_i].equals("null"))
+						if(!equip_view[event_i].equals("null"))
 						{
 							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(equip[event_i]);
+							pop_info.add(equip_view[event_i]);
 							pop_info.show(label_equip[event_i], e.getX(), e.getY());
 						}
 					}
@@ -940,13 +948,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_backpack[i].setBounds(i*70-200, 300, 66, 66);
 			}
 			label_backpack[i].setOpaque(true);
-			if(backpack[i].equals("null"))
+			if(backpack_view[i].equals("null"))
 			{
 				label_backpack[i].setBackground(Color.black);
 			}
 			else
 			{
-				String prefix[] = backpack[i].trim().split(" ");
+				String prefix[] = backpack_view[i].trim().split(" ");
 				String itemName = prefix[0]+prefix[1];
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
@@ -956,10 +964,10 @@ public class WarGameStartView extends JFrame implements Observer{
 				public void mousePressed(MouseEvent e){
 					if(e.getButton() == MouseEvent.BUTTON3)
 					{
-						if(!backpack[event_i].equals("null"))
+						if(!backpack_view[event_i].equals("null"))
 						{
 							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(backpack[event_i]);
+							pop_info.add(backpack_view[event_i]);
 							pop_info.show(label_backpack[event_i], e.getX(), e.getY());
 						}
 					}
@@ -1768,10 +1776,10 @@ public class WarGameStartView extends JFrame implements Observer{
 		int picNum = characterModel.getPicNumber();
 		ImageIcon img = new ImageIcon("src/image/Character/"+picNum+".png");
 		label_pic.setIcon(img);
-		String equip[] = new String[7];
-		String backpack[] = new String[10];
-		equip = characterModel.getEquip();
-		backpack = characterModel.getBackpack();
+		equip_view = new String[7];
+		backpack_view = new String[10];
+		equip_view = characterModel.getEquip();
+		backpack_view = characterModel.getBackpack();
 		for(int i=0;i<12;i++)
 		{
 			String result[] = characterModel.getScore(i);
@@ -1779,14 +1787,14 @@ public class WarGameStartView extends JFrame implements Observer{
 		}
 		for(int i=0;i<7;i++)
 		{
-			if(equip[i].equals("null"))
+			if(equip_view[i].equals("null"))
 			{
 				label_equip[i].setIcon(null);
 				label_equip[i].setBackground(Color.gray);
 			}
 			else
 			{
-				String prefix[] = equip[i].trim().split(" ");
+				String prefix[] = equip_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -1794,14 +1802,14 @@ public class WarGameStartView extends JFrame implements Observer{
 		
 		for(int i=0;i<10;i++)
 		{
-			if(backpack[i].equals("null"))
+			if(backpack_view[i].equals("null"))
 			{
 				label_backpack[i].setIcon(null);
 				label_backpack[i].setBackground(Color.black);
 			}
 			else
 			{
-				String prefix[] = backpack[i].trim().split(" ");
+				String prefix[] = backpack_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}
