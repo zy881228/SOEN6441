@@ -329,6 +329,12 @@ public class WarGameItemModel extends Observable{
 		return enchanNumber;
 	}
 	
+	//add retry
+	public void retryPlease()
+    {
+        init(mH, sE);
+        repaint();
+    }
 	
 	
 /****************************added******************************************/
