@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Observer;
@@ -194,7 +195,28 @@ public class WarGameCharacterView extends JFrame implements Observer{
 				String enchanType = itemModel_buffer.getEnchanType();
 				String enchanNum = itemModel_buffer.getEnchanNumber();
 				
-				cbox_loadChar.addItem("Item"+id+" "+itemType+" "+enchanType+" "+enchanNum);
+				if(itemType.equals("Weapon"))
+				{
+					ArrayList<String> speList = itemModel_buffer.getEnchantList();
+					int attackRange = itemModel_buffer.getAttackRange();
+					String spe = new String();
+					for (String str : speList) {
+						int i = speList.indexOf(str);
+						if(i == 0)
+						{
+							spe = str;
+						}
+						else
+						{
+							spe = spe+","+str;
+						}
+					}
+					cbox_loadChar.addItem("Item"+id+" "+itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange);
+				}
+				else
+				{
+					cbox_loadChar.addItem("Item"+id+" "+itemType+" "+enchanType+" "+enchanNum);
+				}
 			}
 			JButton button_setBackpack = new JButton("Set Backpack");
 			button_setBackpack.setBounds(400, 80, 150, 30);
@@ -218,7 +240,15 @@ public class WarGameCharacterView extends JFrame implements Observer{
 				public void actionPerformed(ActionEvent e) {
 					String itemSelectInfo = cbox_loadChar.getSelectedItem().toString();
 					String str[] = itemSelectInfo.trim().split(" ");
-					String itemInfo = str[1] +" "+str[2]+" "+str[3];
+					String itemInfo = new String();
+					if(str[1].equals("Weapon"))
+					{
+						itemInfo = str[1] +" "+str[2]+" "+str[3]+" "+str[4]+" "+str[5];
+					}
+					else
+					{
+						itemInfo = str[1] +" "+str[2]+" "+str[3];
+					}
 					String changeBefore = ((WarGameCharacterModel) o).getChangeBefore(itemInfo);
 					((WarGameCharacterModel) o).setEquipChanged(changeBefore, itemInfo);
 					((WarGameCharacterModel) o).setItemEquip(itemInfo);	
