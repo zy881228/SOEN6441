@@ -2193,131 +2193,139 @@ public class WarGameStartView extends JFrame implements Observer{
 			}
 		}else if(moveType.equals("Move_Randomly")){
 			ArrayList<String> canMove = new ArrayList<String>();
-			if (upPos[2].equals("i")) {
-				String str[] = map[posY-1][posX].trim().split(" ");
-				result = "i"+" "+str[2];
-			}
-			if (upPos[2].equals("m")) {
-				String str[] = map[posY-1][posX].trim().split(" ");
-				result = "m"+" "+str[2];
-			}
-			if (upPos[2].equals("n")) {
-				String str[] = map[posY-1][posX].trim().split(" ");
-				result = "n"+" "+str[2];
-			}
+
 			if (upPos[2].equals("f")) {
 				canMove.add("up");
 			}
-			if (downPos[2].equals("i")) {
-				String str[] = map[posY+1][posX].trim().split(" ");
-				result = "i"+" "+str[2];
-			}
-			if (downPos[2].equals("m")) {
-				String str[] = map[posY+1][posX].trim().split(" ");
-				result = "m"+" "+str[2];
-			}
-			if (downPos[2].equals("n")) {
-				String str[] = map[posY+1][posX].trim().split(" ");
-				result = "n"+" "+str[2];
-			}
+			
 			if (downPos[2].equals("f")) {
 				canMove.add("down");
 			}
-			if (leftPos[2].equals("i")) {
-				String str[] = map[posY][posX-1].trim().split(" ");
-				result = "i"+" "+str[2];
-			}
-			if (leftPos[2].equals("m")) {
-				String str[] = map[posY][posX-1].trim().split(" ");
-				result = "m"+" "+str[2];
-			}
-			if (leftPos[2].equals("n")) {
-				String str[] = map[posY][posX-1].trim().split(" ");
-				result = "n"+" "+str[2];
-			}
+			
 			if (leftPos[2].equals("f")) {
 				canMove.add("left");
 			}
-			if (rightPos[2].equals("i")) {
-				String str[] = map[posY][posX+1].trim().split(" ");
-				result = "i"+" "+str[2];
-			}
-			if (rightPos[2].equals("m")) {
-				String str[] = map[posY][posX+1].trim().split(" ");
-				result = "m"+" "+str[2];
-			}
-			if (rightPos[2].equals("n")) {
-				String str[] = map[posY][posX+1].trim().split(" ");
-				result = "n"+" "+str[2];
-			}
+			
 			if (rightPos[2].equals("f")) {
 				canMove.add("right");
 			}
 			Random random = new Random();
 			int direction = random.nextInt(canMove.size());
 			if (canMove.get(direction).equals("up")) {
-				JLabel characterPosLbl = mapElementsLbls.get(index);
-				Rectangle posB = characterPosLbl.getBounds();
-				JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
-				Rectangle desB = characterDesLbl.getBounds();
-				characterPosLbl.setBounds(desB);
-				characterDesLbl.setBounds(posB);
-				mapElementsLbls.set(index, characterDesLbl);
-				mapElementsLbls.set((index-(map[0]).length), characterPosLbl);
-				result = (posY-1) + " " + posX + " " + (index-(map[0].length)) + " " + indexInList;
-				friendPosList.remove(result);
-				friendPosList.add(result);
-				map[posY][posX] = "f";
-				map[posY-1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-				System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				if (upPos[2].equals("i")) {
+					String str[] = map[posY-1][posX].trim().split(" ");
+					result = "i"+" "+str[2];
+				}
+				else if (upPos[2].equals("m")) {
+					String str[] = map[posY-1][posX].trim().split(" ");
+					result = "m"+" "+str[2];
+				}
+				else if (upPos[2].equals("n")) {
+					String str[] = map[posY-1][posX].trim().split(" ");
+					result = "n"+" "+str[2];
+				}else if(upPos[2].equals("f")){
+					JLabel characterPosLbl = mapElementsLbls.get(index);
+					Rectangle posB = characterPosLbl.getBounds();
+					JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
+					Rectangle desB = characterDesLbl.getBounds();
+					characterPosLbl.setBounds(desB);
+					characterDesLbl.setBounds(posB);
+					mapElementsLbls.set(index, characterDesLbl);
+					mapElementsLbls.set((index-(map[0]).length), characterPosLbl);
+					result = (posY-1) + " " + posX + " " + (index-(map[0].length)) + " " + indexInList;
+					friendPosList.remove(result);
+					friendPosList.add(result);
+					map[posY][posX] = "f";
+					map[posY-1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				}
 			}
 			if (canMove.get(direction).equals("down")) {
-				JLabel characterPosLbl = mapElementsLbls.get(index);
-				Rectangle posB = characterPosLbl.getBounds();
-				JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
-				Rectangle desB = characterDesLbl.getBounds();
-				characterPosLbl.setBounds(desB);
-				characterDesLbl.setBounds(posB);
-				mapElementsLbls.set(index, characterDesLbl);
-				mapElementsLbls.set((index+(map[0]).length), characterPosLbl);
-				result = (posY+1) + " " + posX + " " + (index+(map[0].length)) + " " + indexInList;
-				friendPosList.remove(result);
-				friendPosList.add(result);
-				map[posY][posX] = "f";
-				map[posY+1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-				System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				if (downPos[2].equals("i")) {
+					String str[] = map[posY+1][posX].trim().split(" ");
+					result = "i"+" "+str[2];
+				}
+				else if (downPos[2].equals("m")) {
+					String str[] = map[posY+1][posX].trim().split(" ");
+					result = "m"+" "+str[2];
+				}
+				else if (downPos[2].equals("n")) {
+					String str[] = map[posY+1][posX].trim().split(" ");
+					result = "n"+" "+str[2];
+				}else if(downPos[2].equals("f")){
+					JLabel characterPosLbl = mapElementsLbls.get(index);
+					Rectangle posB = characterPosLbl.getBounds();
+					JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
+					Rectangle desB = characterDesLbl.getBounds();
+					characterPosLbl.setBounds(desB);
+					characterDesLbl.setBounds(posB);
+					mapElementsLbls.set(index, characterDesLbl);
+					mapElementsLbls.set((index+(map[0]).length), characterPosLbl);
+					result = (posY+1) + " " + posX + " " + (index+(map[0].length)) + " " + indexInList;
+					friendPosList.remove(result);
+					friendPosList.add(result);
+					map[posY][posX] = "f";
+					map[posY+1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				}
 			}
 			if (canMove.get(direction).equals("left")) {
-				JLabel characterPosLbl = mapElementsLbls.get(index);
-				Rectangle posB = characterPosLbl.getBounds();
-				JLabel characterDesLbl = mapElementsLbls.get(index-1);
-				Rectangle desB = characterDesLbl.getBounds();
-				characterPosLbl.setBounds(desB);
-				characterDesLbl.setBounds(posB);
-				mapElementsLbls.set(index, characterDesLbl);
-				mapElementsLbls.set((index-1), characterPosLbl);
-				result = posY + " " + (posX-1) + " " + (index-1) + " " + indexInList;
-				friendPosList.remove(result);
-				friendPosList.add(result);
-				map[posY][posX] = "f";
-				map[posY][posX-1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-				System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				if (leftPos[2].equals("i")) {
+					String str[] = map[posY][posX-1].trim().split(" ");
+					result = "i"+" "+str[2];
+				}
+				else if (leftPos[2].equals("m")) {
+					String str[] = map[posY][posX-1].trim().split(" ");
+					result = "m"+" "+str[2];
+				}
+				else if (leftPos[2].equals("n")) {
+					String str[] = map[posY][posX-1].trim().split(" ");
+					result = "n"+" "+str[2];
+				}else if(leftPos[2].equals("f")){
+					JLabel characterPosLbl = mapElementsLbls.get(index);
+					Rectangle posB = characterPosLbl.getBounds();
+					JLabel characterDesLbl = mapElementsLbls.get(index-1);
+					Rectangle desB = characterDesLbl.getBounds();
+					characterPosLbl.setBounds(desB);
+					characterDesLbl.setBounds(posB);
+					mapElementsLbls.set(index, characterDesLbl);
+					mapElementsLbls.set((index-1), characterPosLbl);
+					result = posY + " " + (posX-1) + " " + (index-1) + " " + indexInList;
+					friendPosList.remove(result);
+					friendPosList.add(result);
+					map[posY][posX] = "f";
+					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				}
 			}
 			if (canMove.get(direction).equals("right")) {
-				JLabel characterPosLbl = mapElementsLbls.get(index);
-				Rectangle posB = characterPosLbl.getBounds();
-				JLabel characterDesLbl = mapElementsLbls.get(index+1);
-				Rectangle desB = characterDesLbl.getBounds();
-				characterPosLbl.setBounds(desB);
-				characterDesLbl.setBounds(posB);
-				mapElementsLbls.set(index, characterDesLbl);
-				mapElementsLbls.set((index+1), characterPosLbl);
-				result = posY + " " + (posX+1) + " " + (index+1) + " " + indexInList;
-				friendPosList.remove(result);
-				friendPosList.add(result);
-				map[posY][posX] = "f";
-				map[posY][posX+1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-				System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				if (rightPos[2].equals("i")) {
+					String str[] = map[posY][posX+1].trim().split(" ");
+					result = "i"+" "+str[2];
+				}
+				else if (rightPos[2].equals("m")) {
+					String str[] = map[posY][posX+1].trim().split(" ");
+					result = "m"+" "+str[2];
+				}
+				else if (rightPos[2].equals("n")) {
+					String str[] = map[posY][posX+1].trim().split(" ");
+					result = "n"+" "+str[2];
+				}else if(rightPos[2].equals("f")){
+					JLabel characterPosLbl = mapElementsLbls.get(index);
+					Rectangle posB = characterPosLbl.getBounds();
+					JLabel characterDesLbl = mapElementsLbls.get(index+1);
+					Rectangle desB = characterDesLbl.getBounds();
+					characterPosLbl.setBounds(desB);
+					characterDesLbl.setBounds(posB);
+					mapElementsLbls.set(index, characterDesLbl);
+					mapElementsLbls.set((index+1), characterPosLbl);
+					result = posY + " " + (posX+1) + " " + (index+1) + " " + indexInList;
+					friendPosList.remove(result);
+					friendPosList.add(result);
+					map[posY][posX] = "f";
+					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+				}
 			}
 		}
 		return result;
