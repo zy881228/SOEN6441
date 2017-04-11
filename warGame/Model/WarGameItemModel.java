@@ -383,6 +383,45 @@ public class WarGameItemModel extends Observable{
         catch(RecordStoreException recordstoreexception) { }
     }
 	
+	//change load
+	private void loadData()
+    {
+        if(rStore == null)
+            return;
+        Object obj = null;
+        try
+        {
+            if(rStore.getNumRecords() == 0)
+            {
+                ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+                DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+                try
+                {
+                    dataoutputstream.writeInt(0);
+                    dataoutputstream.writeBoolean(false);
+                }
+                catch(IOException ioexception) { }
+                byte abyte0[] = bytearrayoutputstream.toByteArray();
+                rStore.addRecord(abyte0, 0, abyte0.length);
+            } else
+            {
+                byte abyte1[] = rStore.getRecord(1);
+                if(abyte1 != null)
+                {
+                    ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(abyte1);
+                    DataInputStream datainputstream = new DataInputStream(bytearrayinputstream);
+                    mH = datainputstream.readInt();
+                    sE = datainputstream.readBoolean();
+                } else
+                {
+                    mH = 0;
+                    sE = false;
+                }
+            }
+        }
+        catch(Exception exception) { }
+    }
+	
 /****************************added******************************************/
 	private
     
