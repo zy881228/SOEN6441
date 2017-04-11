@@ -381,7 +381,11 @@ public class WarGameController extends JFrame{
 						String itemType = cbox_itemType.getSelectedItem().toString();
 						String enchanType = cbox_enchanType.getSelectedItem().toString();
 						String enchanNumber = cbox_enchanNum.getSelectedItem().toString();
-						String range = cbox_range.getSelectedItem().toString();
+						String range = "0";
+						if(itemType.equals("Weapon"))
+						{
+							range = cbox_range.getSelectedItem().toString();
+						}
 						try {
 							itemModel.createItem(itemType,enchanType,enchanNumber,enchanSpeList,range);
 						} catch (NumberFormatException
