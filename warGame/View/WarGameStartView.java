@@ -24,6 +24,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
+
 import warGame.Controller.WarGameController;
 import warGame.Model.*;
 import warGame.Strategy.*;
@@ -68,10 +72,12 @@ public class WarGameStartView extends JFrame implements Observer{
 	int round = 1;
 	int specialTurn = 0;
 	int attackRange = 1;
+	static JTextArea text_logging = new JTextArea();
 	ArrayList<String> enchantList = new ArrayList<String>();
 	WarGameCharacterModel characterForStrategy = new WarGameCharacterModel();
 	ArrayList<String> actionList = new ArrayList<String>();
 	Map<String, ArrayList<String>> characterActionsByMap;
+	ArrayList<String> highLightList = new ArrayList<String>();
 	JFrame frame;
 	ImageIcon wall;
 	ImageIcon door;
@@ -82,7 +88,7 @@ public class WarGameStartView extends JFrame implements Observer{
 	ImageIcon friend;
 	ImageIcon heroHighlight;
 	ImageIcon friendHighlight;
-	ImageIcon enemyHighlight;
+	ImageIcon monsterHighlight;
 	ImageIcon floorHighlight;
 	ArrayList<JLabel> label_noneplayer_list = new ArrayList<JLabel>();
 	int noneplayer_label_count = 0;
@@ -103,7 +109,7 @@ public class WarGameStartView extends JFrame implements Observer{
 		friend = new ImageIcon("src/image/Map/friend.jpg");
 		heroHighlight = new ImageIcon("src/image/Map/heroHighlight.jpg");
 		friendHighlight = new ImageIcon("src/image/Map/friendHighlight.jpg");
-		enemyHighlight = new ImageIcon("src/image/Map/enemyHighlight.jpg");
+		monsterHighlight = new ImageIcon("src/image/Map/monsterHighlight.jpg");
 		floorHighlight = new ImageIcon("src/image/Map/floorHighlight.jpg");
 
 		
@@ -228,6 +234,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_LEFT){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -249,6 +256,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = posY + " " + (posX-1) + " " + (index-1);
 							map[posY][posX] = "f";
 							map[posY][posX-1] = "h";
+							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(leftPos[2].equals("m")){
 							String str[] = map[posY][posX-1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
@@ -333,6 +341,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -353,7 +362,8 @@ public class WarGameStartView extends JFrame implements Observer{
 							mapElementsLbls.set((index+1), heroPosLbl);
 							heroPos = posY + " " + (posX+1) + " " + (index+1);
 							map[posY][posX] = "f";
-							map[posY][posX+1] = "h";				
+							map[posY][posX+1] = "h";		
+							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(rightPos[2].equals("m")){
 							String str[] = map[posY][posX+1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
@@ -438,6 +448,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_UP){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -462,6 +473,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = (posY-1) + " " + posX + " " + (index-(map[0].length));
 							map[posY][posX] = "f";
 							map[posY-1][posX] = "h";
+							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(upPos[2].equals("m")){
 							String str[] = map[posY-1][posX].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
@@ -547,6 +559,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
 					if(characterForStrategy.equals(characterModel))
 					{
+						setPanel(characterModel);
 						frame.repaint();
 						int posX;
 						int posY;
@@ -571,6 +584,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = (posY+1) + " " + posX + " " + (index+(map[0].length));
 							map[posY][posX] = "f";
 							map[posY+1][posX] = "h";		
+							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(downPos[2].equals("m")){
 							String str[] = map[posY+1][posX].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
@@ -658,9 +672,9 @@ public class WarGameStartView extends JFrame implements Observer{
 						if (string.equals("Player")) {
 							System.out.println("Player turn");
 							characterForStrategy = characterModel;
-							showHighlight(characterForStrategy, string);
 							((WarGameStartModel) o).setStrategy(new HumanPlayer(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
+							//showHighlight(characterForStrategy, "Player", heroPos);
 							break;
 //							characterActionsByMap.put(string, actionList);
 //							takeAction(characterActionsByMap);
@@ -714,7 +728,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						if (orderList.get(i).startsWith("m")) {
 							System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 							characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-							showHighlight(characterForStrategy, orderList.get(i));
+							//showHighlight(characterForStrategy, orderList.get(i));
 							((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
@@ -728,7 +742,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						}else if (orderList.get(i).startsWith("n")) {
 							System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 							characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-							showHighlight(characterForStrategy, orderList.get(i));
+							//showHighlight(characterForStrategy, orderList.get(i));
 							((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
@@ -825,6 +839,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						{
 							createPlayerView();
 							setPanel(characterModel);
+							showHighlight(characterModel, "Player",heroPos);
 						}
 					}
 				});
@@ -841,6 +856,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				mapElementsLbls.set(mapElementsLbls.indexOf(lbl), label_buffer);
 				label_noneplayer_list.add(label_buffer);
 				final int event_i = noneplayer_label_count;
+				
 				label_buffer.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mousePressed(MouseEvent e){
@@ -851,9 +867,10 @@ public class WarGameStartView extends JFrame implements Observer{
 							String text = label_buffer.getText();
 							
 							String str[] = text.trim().split(" ");
-					
+							String pos = str[0]+" "+str[1]+" "+(Integer.parseInt(str[0])*(map[0].length)+Integer.parseInt(str[1]));
 							WarGameCharacterModel characterModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[4]));
 							setPanel(characterModel);
+							showHighlight(characterModel, "m",pos);
 						}
 					}
 				});
@@ -868,9 +885,11 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_buffer.setBounds(posX*30, posY*30, 30, 30);
 				label_buffer.setIcon(friend);
 				mapPanel.add(label_buffer);
+			
 				mapElementsLbls.set(mapElementsLbls.indexOf(lbl), label_buffer);
 				label_noneplayer_list.add(label_buffer);
 				final int event_i = noneplayer_label_count;
+				
 				label_buffer.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mousePressed(MouseEvent e){
@@ -881,9 +900,10 @@ public class WarGameStartView extends JFrame implements Observer{
 							String text = label_buffer.getText();
 							
 							String str[] = text.trim().split(" ");
-					
+							String pos = str[0]+" "+str[1]+" "+(Integer.parseInt(str[0])*(map[0].length)+Integer.parseInt(str[1]));
 							WarGameCharacterModel characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[4]));
 							setPanel(characterModel);
+							showHighlight(characterModel, "n",pos);
 						}
 					}
 				});
@@ -913,6 +933,8 @@ public class WarGameStartView extends JFrame implements Observer{
 		characterViewPanel.setBackground(Color.lightGray);
 		equip = characterModel.getEquip();
 		backpack = characterModel.getBackpack();
+		equip_view = characterModel.getEquip();
+		backpack_view = characterModel.getBackpack();
 		for(int i=0;i<12;i++)
 		{
 			
@@ -940,13 +962,13 @@ public class WarGameStartView extends JFrame implements Observer{
 			characterViewPanel.add(label_equip[i]);
 			label_equip[i].setBounds(i*70+18, 400, 66, 66);
 			label_equip[i].setOpaque(true);
-			if(equip[i].equals("null"))
+			if(equip_view[i].equals("null"))
 			{
 				label_equip[i].setBackground(Color.GRAY);
 			}
 			else
 			{
-				String prefix[] = equip[i].trim().split(" ");
+				String prefix[] = equip_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -955,10 +977,10 @@ public class WarGameStartView extends JFrame implements Observer{
 				public void mousePressed(MouseEvent e){
 					if(e.getButton() == MouseEvent.BUTTON3)
 					{
-						if(!equip[event_i].equals("null"))
+						if(!equip_view[event_i].equals("null"))
 						{
 							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(equip[event_i]);
+							pop_info.add(equip_view[event_i]);
 							pop_info.show(label_equip[event_i], e.getX(), e.getY());
 						}
 					}
@@ -981,13 +1003,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				label_backpack[i].setBounds(i*70-200, 300, 66, 66);
 			}
 			label_backpack[i].setOpaque(true);
-			if(backpack[i].equals("null"))
+			if(backpack_view[i].equals("null"))
 			{
 				label_backpack[i].setBackground(Color.black);
 			}
 			else
 			{
-				String prefix[] = backpack[i].trim().split(" ");
+				String prefix[] = backpack_view[i].trim().split(" ");
 				String itemName = prefix[0]+prefix[1];
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
@@ -997,10 +1019,10 @@ public class WarGameStartView extends JFrame implements Observer{
 				public void mousePressed(MouseEvent e){
 					if(e.getButton() == MouseEvent.BUTTON3)
 					{
-						if(!backpack[event_i].equals("null"))
+						if(!backpack_view[event_i].equals("null"))
 						{
 							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(backpack[event_i]);
+							pop_info.add(backpack_view[event_i]);
 							pop_info.show(label_backpack[event_i], e.getX(), e.getY());
 						}
 					}
@@ -1010,12 +1032,17 @@ public class WarGameStartView extends JFrame implements Observer{
 		//player panel end
 		
 		//logging window panel
-		JPanel logViewPanel = new JPanel();
-		logViewPanel.setFont(new Font("Simplified Arabic", Font.PLAIN, 15));
-		logViewPanel.setBounds(750, 480, 520, 200);
-		frame.getContentPane().add(logViewPanel);
-		logViewPanel.setLayout(null);
-		logViewPanel.setBackground(Color.gray);
+		text_logging.setBounds(750, 480, 520, 220);
+		text_logging.setLineWrap(true);
+		text_logging.setWrapStyleWord(true);
+		text_logging.setEditable(false);
+		text_logging.setLayout(null);
+		text_logging.setEnabled(false);
+		DefaultCaret caret = (DefaultCaret)text_logging.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		JScrollPane jsp = new JScrollPane(text_logging);
+		jsp.setBounds(750, 480, 520, 220);
+		frame.add(jsp);
 		//loogging window panel end
 		
 		frame.addKeyListener(new KeyAdapter() {
@@ -1809,10 +1836,10 @@ public class WarGameStartView extends JFrame implements Observer{
 		int picNum = characterModel.getPicNumber();
 		ImageIcon img = new ImageIcon("src/image/Character/"+picNum+".png");
 		label_pic.setIcon(img);
-		String equip[] = new String[7];
-		String backpack[] = new String[10];
-		equip = characterModel.getEquip();
-		backpack = characterModel.getBackpack();
+		equip_view = new String[7];
+		backpack_view = new String[10];
+		equip_view = characterModel.getEquip();
+		backpack_view = characterModel.getBackpack();
 		for(int i=0;i<12;i++)
 		{
 			String result[] = characterModel.getScore(i);
@@ -1820,14 +1847,14 @@ public class WarGameStartView extends JFrame implements Observer{
 		}
 		for(int i=0;i<7;i++)
 		{
-			if(equip[i].equals("null"))
+			if(equip_view[i].equals("null"))
 			{
 				label_equip[i].setIcon(null);
 				label_equip[i].setBackground(Color.gray);
 			}
 			else
 			{
-				String prefix[] = equip[i].trim().split(" ");
+				String prefix[] = equip_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_equip[i].setIcon(img_item);
 			}
@@ -1835,18 +1862,26 @@ public class WarGameStartView extends JFrame implements Observer{
 		
 		for(int i=0;i<10;i++)
 		{
-			if(backpack[i].equals("null"))
+			if(backpack_view[i].equals("null"))
 			{
 				label_backpack[i].setIcon(null);
 				label_backpack[i].setBackground(Color.black);
 			}
 			else
 			{
-				String prefix[] = backpack[i].trim().split(" ");
+				String prefix[] = backpack_view[i].trim().split(" ");
 				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
 				label_backpack[i].setIcon(img_item);
 			}
 		}
+	}
+	
+	/**
+	 * show log widow
+	 */
+	public static void logging(String newMessage)
+	{
+		text_logging.append(newMessage+"\r\n");
 	}
 	/**
 	 * character take action
@@ -1874,7 +1909,19 @@ public class WarGameStartView extends JFrame implements Observer{
 									enemyPos = strPos;
 								}
 							}
-							characterMovement(enemyPos, "Escape");
+							String result[];
+							result = characterMovement(enemyPos, "Escape").split(" ");
+							String pos = new String();
+							if(result[0].equals("f"))
+							{
+								pos = result[1]+" "+result[2]+" "+result[3];
+							}
+							else
+							{
+								String str[] = enemyPos.trim().split(" ");
+								pos = str[0]+" "+str[1]+" "+str[2];
+							}
+							showHighlight(characterForStrategy, "m",pos);
 						}
 					}
 					if(action.equals("Move_Aggressively")){
@@ -1888,10 +1935,20 @@ public class WarGameStartView extends JFrame implements Observer{
 								}
 							}
 							result = characterMovement(enemyPos, "Move_Aggressively").split(" ");
+							String pos = new String();
+							if(result[0].equals("f"))
+							{
+								pos = result[1]+" "+result[2]+" "+result[3];
+							}
+							else
+							{
+								String str[] = enemyPos.trim().split(" ");
+								pos = str[0]+" "+str[1]+" "+str[2];
+							}
+							showHighlight(characterForStrategy, "m",pos);
+							
 							if (result[0].equals("i")) {
 								//loot a chest
-								System.out.println("result:"+result[0]+" "+result[1]+" "+result[2]+" "+result[3]+" "+result[4]);
-								//String str[] = map[Integer.parseInt(result[3])][Integer.parseInt(result[4])].trim().split(" ");
 								itemModel = mapOnPage.getContainItems().get(Integer.parseInt(result[2]));
 								String itemType = itemModel.getItemType();
 								String enchanType = itemModel.getEnchanType();
@@ -1909,7 +1966,7 @@ public class WarGameStartView extends JFrame implements Observer{
 											backpack_npc[j] = itemType+" "+enchanType+" "+enchanNum;
 											map[Integer.parseInt(result[3])][Integer.parseInt(result[4])] = "f";
 											mapElementsLbls.get(Integer.parseInt(result[5])).setIcon(floor);
-											mapElementsLbls.get(Integer.parseInt(result[5])).setText(result[3]+" "+result[4]+" i");
+											mapElementsLbls.get(Integer.parseInt(result[5])).setText(result[3]+" "+result[4]+" f");
 											character.setBackpack(backpack_npc[j], j);
 											mapOnPage.getContainEnemies().set(Integer.parseInt(string.split(" ")[1]), character);
 											break;
@@ -1919,14 +1976,18 @@ public class WarGameStartView extends JFrame implements Observer{
 								System.out.println("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
 							}else if(result[0].equals("m")){
 								//attack
+								
 								System.out.println("Reach monster "+ mapOnPage.getContainEnemies().get(Integer.parseInt(result[2])));
 							}else if(result[0].equals("n")){
 								//attack
+								
 								System.out.println("Reach friend "+ mapOnPage.getContainFriends().get(Integer.parseInt(result[2])));
 							}else if(result[0].equals("h")){
 								//attack
+								
 								System.out.println("Reach player");
 							}
+							showHighlight(characterForStrategy, "m",pos);
 						}
 					}
 				}
@@ -1943,8 +2004,43 @@ public class WarGameStartView extends JFrame implements Observer{
 								}
 							}
 							result = characterMovement(friendPos, "Move_Randomly").split(" ");
+							String pos = new String();
+							if(result[0].equals("f"))
+							{
+								pos = result[1]+" "+result[2]+" "+result[3];
+							}
+							else
+							{
+								String str[] = enemyPos.trim().split(" ");
+								pos = str[0]+" "+str[1]+" "+str[2];
+							}
+							showHighlight(characterForStrategy, "n",pos);
 							if (result[0].equals("i")) {
 								//loot chest
+								itemModel = mapOnPage.getContainItems().get(Integer.parseInt(result[2]));
+								String itemType = itemModel.getItemType();
+								String enchanType = itemModel.getEnchanType();
+								String enchanNum = itemModel.getEnchanNumber();
+								WarGameStartModel startModel = new WarGameStartModel();
+								WarGameCharacterModel character = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
+								backpack_npc = character.getBackpack();
+								Boolean result_full = startModel.checkBackpack(backpack_npc);
+								if(result_full == true)
+								{
+									for(int j =0;j<10;j++)
+									{
+										if((backpack_npc[j] == null)||(backpack_npc[j].equals("null")))
+										{
+											backpack_npc[j] = itemType+" "+enchanType+" "+enchanNum;
+											map[Integer.parseInt(result[3])][Integer.parseInt(result[4])] = "f";
+											mapElementsLbls.get(Integer.parseInt(result[5])).setIcon(floor);
+											mapElementsLbls.get(Integer.parseInt(result[5])).setText(result[3]+" "+result[4]+" f");
+											character.setBackpack(backpack_npc[j], j);
+											mapOnPage.getContainEnemies().set(Integer.parseInt(string.split(" ")[1]), character);
+											break;
+										}
+									}
+								}
 								System.out.println("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
 							}
 						}
@@ -1958,7 +2054,7 @@ public class WarGameStartView extends JFrame implements Observer{
 	 */
 	public String characterMovement(String characterPos, String moveType){
 		String result = null;
-		
+
 		int posX;
 		int posY;
 		int index;
@@ -2007,6 +2103,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				if (rightPos[2].equals("f")) {
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) +1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index+1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2020,6 +2123,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					map[posY][posX] = "f";
 					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}else if(posX>posXC){
 				if (leftPos[2].equals("i")) {
@@ -2039,6 +2143,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				if (leftPos[2].equals("f")) {
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) -1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index-1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2052,6 +2163,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					map[posY][posX] = "f";
 					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}else{
 				if (posY<posYC) {
@@ -2072,6 +2184,13 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 					if (downPos[2].equals("f")) {
 						JLabel characterPosLbl = mapElementsLbls.get(index);
+						//change label_noneplayer_list
+						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+						String str[] = characterPosLbl.getText().trim().split(" ");
+						str[0] = Integer.parseInt(str[0]) +1+"";
+						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+						label_noneplayer_list.get(index_noneplayer).setText(back_text);
+						//end
 						Rectangle posB = characterPosLbl.getBounds();
 						JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
 						Rectangle desB = characterDesLbl.getBounds();
@@ -2085,6 +2204,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						result = "f "+result;
 					}
 				}else if(posY>posYC){
 					if (upPos[2].equals("i")) {
@@ -2104,6 +2224,13 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 					if (upPos[2].equals("f")) {
 						JLabel characterPosLbl = mapElementsLbls.get(index);
+						//change label_noneplayer_list
+						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+						String str[] = characterPosLbl.getText().trim().split(" ");
+						str[0] = Integer.parseInt(str[0]) -1+"";
+						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+						label_noneplayer_list.get(index_noneplayer).setText(back_text);
+						//end
 						Rectangle posB = characterPosLbl.getBounds();
 						JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
 						Rectangle desB = characterDesLbl.getBounds();
@@ -2117,6 +2244,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						result = "f "+result;
 					}
 				}
 			}
@@ -2139,6 +2267,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				if (rightPos[2].equals("f")) {
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) +1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index+1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2152,6 +2287,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					map[posY][posX] = "f";
 					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}else if(posX<posXC){
 				if (leftPos[2].equals("i")) {
@@ -2171,6 +2307,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				if (leftPos[2].equals("f")) {
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) -1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index-1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2184,6 +2327,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					map[posY][posX] = "f";
 					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}else{
 				if (posY>posYC) {
@@ -2204,6 +2348,13 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 					if (downPos[2].equals("f")) {
 						JLabel characterPosLbl = mapElementsLbls.get(index);
+						//change label_noneplayer_list
+						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+						String str[] = characterPosLbl.getText().trim().split(" ");
+						str[0] = Integer.parseInt(str[0]) +1+"";
+						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+						label_noneplayer_list.get(index_noneplayer).setText(back_text);
+						//end
 						Rectangle posB = characterPosLbl.getBounds();
 						JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
 						Rectangle desB = characterDesLbl.getBounds();
@@ -2217,6 +2368,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						result = "f "+result;
 					}
 				}else if(posY<posYC){
 					if (upPos[2].equals("i")) {
@@ -2236,6 +2388,13 @@ public class WarGameStartView extends JFrame implements Observer{
 					}
 					if (upPos[2].equals("f")) {
 						JLabel characterPosLbl = mapElementsLbls.get(index);
+						//change label_noneplayer_list
+						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+						String str[] = characterPosLbl.getText().trim().split(" ");
+						str[0] = Integer.parseInt(str[0]) -1+"";
+						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+						label_noneplayer_list.get(index_noneplayer).setText(back_text);
+						//end
 						Rectangle posB = characterPosLbl.getBounds();
 						JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
 						Rectangle desB = characterDesLbl.getBounds();
@@ -2249,6 +2408,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						map[posY][posX] = "f";
 						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
 						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						result = "f "+result;
 					}
 				}
 			}
@@ -2290,6 +2450,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				else if(upPos[2].equals("f")){
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[0] = Integer.parseInt(str[0]) -1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2301,8 +2468,9 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.remove(result);
 					friendPosList.add(result);
 					map[posY][posX] = "f";
-					map[posY-1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					map[posY-1][posX] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}
 			if (canMove.get(direction).equals("down")) {
@@ -2323,6 +2491,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				else if(downPos[2].equals("f")){
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[0] = Integer.parseInt(str[0]) +1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2334,8 +2509,9 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.remove(result);
 					friendPosList.add(result);
 					map[posY][posX] = "f";
-					map[posY+1][posX] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					map[posY+1][posX] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}
 			if (canMove.get(direction).equals("left")) {
@@ -2356,6 +2532,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				else if(leftPos[2].equals("f")){
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) -1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index-1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2367,8 +2550,9 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.remove(result);
 					friendPosList.add(result);
 					map[posY][posX] = "f";
-					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					map[posY][posX-1] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}
 			if (canMove.get(direction).equals("right")) {
@@ -2389,6 +2573,13 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 				else if(rightPos[2].equals("f")){
 					JLabel characterPosLbl = mapElementsLbls.get(index);
+					//change label_noneplayer_list
+					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+					String str[] = characterPosLbl.getText().trim().split(" ");
+					str[1] = Integer.parseInt(str[1]) +1+"";
+					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
+					label_noneplayer_list.get(index_noneplayer).setText(back_text);
+					//end
 					Rectangle posB = characterPosLbl.getBounds();
 					JLabel characterDesLbl = mapElementsLbls.get(index+1);
 					Rectangle desB = characterDesLbl.getBounds();
@@ -2400,8 +2591,9 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.remove(result);
 					friendPosList.add(result);
 					map[posY][posX] = "f";
-					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
+					map[posY][posX+1] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
 					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					result = "f "+result;
 				}
 			}
 		}
@@ -2422,75 +2614,139 @@ public class WarGameStartView extends JFrame implements Observer{
 	/**
 	 * show highlight
 	 */
-	public void showHighlight(WarGameCharacterModel characterForStrategy, String string){
-
-//		for (int i = 0; i < map.length; i++) {
-//			for (int j = 0; j < map[i].length; j++) {
-//				String str[] = map[i][j].trim().split(" ");
-//				for (JLabel lbl : mapElementsLbls) {
-//					switch (str[0]) {
-//					case "x":
-//						lbl.setIcon(wall);
-//						break;
-//					case "i":
-//						lbl.setIcon(chest);
-//						break;
-//					case "h":
-//						lbl.setIcon(hero);
-//						break;
-//					case "m":
-//						lbl.setIcon(monster);
-//						break;
-//					case "I":
-//						lbl.setIcon(door);
-//						break;
-//					case "O":
-//						lbl.setIcon(door);
-//						break;
-//					case "f":
-//						lbl.setIcon(floor);
-//						break;
-//					case "n":
-//						lbl.setIcon(friend);
-//						break;
-//					}
-//				}
-//
-//			}
-//		}
-		//get attack range
-//		attackRange = 2;
-//		ArrayList<String> range = new ArrayList<String>();
-//		String characterPos[];
-//		int posX;
-//		int posY;
-//		int index;
-//		if (string.equals("Player")) {
-//			characterPos = heroPos.split(" ");
-//			System.out.println("heropos "+heroPos);
-//			posY = Integer.parseInt(characterPos[0]);
-//			posX = Integer.parseInt(characterPos[1]);
-//			index = Integer.parseInt(characterPos[2]);
-//			for (int i = posY-attackRange; i < posY+attackRange+1; i++) {
-//				System.out.println("range in posy "+i);
-//			}
-//			for (int i = posX-attackRange; i < posX+attackRange+1; i++) {
-//				System.out.println("range in posx "+i);
-//			}
-//		}
-		//		else{
-		//			for (String keys : characterActionsByMap.keySet()) {
-		//				String indexInList = keys.split(" ")[1];
-		//				String enemyPos = null;
-		//				String friendPos = null;
-		//				if (string.startsWith("m")) {
-		//					for (String strPos : enemyPosList) {
-		//						if (strPos.split(" ")[3].equals(indexInList)) {
-		//							enemyPos = strPos;
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
+	public ArrayList<String> showHighlight(WarGameCharacterModel characterForStrategy, String identity,String pos){
+				for (String highLightStr : highLightList) {
+					String str[] = highLightStr.trim().split(" ");
+					System.out.println("before:"+highLightStr);
+					switch (str[0]) {
+					case "x":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(wall);
+						break;
+					case "i":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(chest);
+						break;
+					case "h":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(hero);
+						break;
+					case "m":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(monster);
+						break;
+					case "I":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(door);
+						break;
+					case "O":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(door);
+						break;
+					case "f":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(floor);
+						break;
+					case "n":
+						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(friend);
+						break;
+					}
+				}
+						
+		highLightList.clear();
+		int attackRange = 1;
+		int posX = 0;
+		int posY = 0;
+		int index = 0;
+		
+		
+		if (identity.equals("Player")) {
+			String str[] = pos.split(" ");
+			posY = Integer.parseInt(str[0]);
+			posX = Integer.parseInt(str[1]);
+			index = Integer.parseInt(str[2]);		
+		}
+		else if(identity.equals("m")){
+			String str[] = pos.trim().split(" ");
+			posY = Integer.parseInt(str[0]);
+			posX = Integer.parseInt(str[1]);
+			index = Integer.parseInt(str[2]);
+		}
+		else if(identity.equals("n")){
+			String str[] = pos.trim().split(" ");
+			posY = Integer.parseInt(str[0]);
+			posX = Integer.parseInt(str[1]);
+			index = Integer.parseInt(str[2]);
+		}
+			/*for (String keys : characterActionsByMap.keySet()) {
+				String indexInList = keys.split(" ")[1];
+				String enemyPos = null;
+				String friendPos = null;
+				if (keys.startsWith("m")) {
+					for (String strPos : enemyPosList) {
+						if (strPos.split(" ")[3].equals(indexInList)) {
+							enemyPos = strPos;
+							posY = Integer.parseInt(enemyPos.split(" ")[0]);
+							posX = Integer.parseInt(enemyPos.split(" ")[1]);
+							index = Integer.parseInt(enemyPos.split(" ")[2]);
+						}
+					}
+				}
+				else if(keys.startsWith("n")){
+					for (String strPos : friendPosList) {
+						if (strPos.split(" ")[3].equals(indexInList)) {
+							friendPos = strPos;
+							posY = Integer.parseInt(friendPos.split(" ")[0]);
+							posX = Integer.parseInt(friendPos.split(" ")[1]);
+							index = Integer.parseInt(friendPos.split(" ")[2]);
+						}
+					}
+				}
+			}*/
+		
+		//get xy list
+		for(int i=0;i<map.length;i++)
+		{
+			for(int j=0;j<map[0].length;j++)
+			{
+				//System.out.println("posY:"+posY);
+				//System.out.println("posX:"+posX);
+				//System.out.println("index:"+index);
+				//System.out.println("i:"+i);
+				//System.out.println("j:"+j);
+				int result = Math.abs(posY-i)+Math.abs(posX-j);
+				if(result<(attackRange+1))
+				{
+					int indexTarget = index-(posY-i)*(map[0].length)-(posX-j);
+					String str[] = map[i][j].trim().split(" ");
+					String hlMember = str[0]+" "+i+" "+j+" "+indexTarget;
+					highLightList.add(hlMember);
+					System.out.println("after:"+hlMember);
+				}
+			}
+		}
+		for (String highLightStr : highLightList) {
+			String str[] = highLightStr.trim().split(" ");
+			switch (str[0]) {
+			case "x":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(wall);
+				break;
+			case "i":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(chest);
+				break;
+			case "h":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(heroHighlight);
+				break;
+			case "m":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(monsterHighlight);
+				break;
+			case "I":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(door);
+				break;
+			case "O":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(door);
+				break;
+			case "f":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(floorHighlight);
+				break;
+			case "n":
+				mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(friendHighlight);
+				break;
+			}
+		}
+		return highLightList;
 	}
 }
