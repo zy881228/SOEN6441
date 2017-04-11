@@ -802,6 +802,19 @@ public class WarGameItemModel extends Observable{
             kF = false;
     }
 	
+	//key repeat
+	 protected void keyRepeated(int i)
+    {
+        int j = 0;
+        int k = i;
+        try
+        {
+            j = getGameAction(k);
+        }
+        catch(Exception exception) { }
+    }
+	
+	
 /****************************added******************************************/
 	private
     
