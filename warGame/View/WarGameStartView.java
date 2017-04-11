@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -92,6 +93,8 @@ public class WarGameStartView extends JFrame implements Observer{
 	ImageIcon floorHighlight;
 	ArrayList<JLabel> label_noneplayer_list = new ArrayList<JLabel>();
 	int noneplayer_label_count = 0;
+	int step_times = 0;
+	int fight_times = 0;
 	/**
      * Update the start game information according to the value that get from Model and show the view frame.
      * @param o
@@ -276,6 +279,29 @@ public class WarGameStartView extends JFrame implements Observer{
 							String itemType = itemModel.getItemType();
 							String enchanType = itemModel.getEnchanType();
 							String enchanNum = itemModel.getEnchanNumber();
+							String itemInfo = new String();
+							if(itemType.equals("Weapon"))
+							{
+								ArrayList<String> speList = itemModel.getEnchantList();
+								int attackRange = itemModel.getAttackRange();
+								String spe = new String();
+								for (String strspe : speList) {
+									int i = speList.indexOf(strspe);
+									if(i == 0)
+									{
+										spe = strspe;
+									}
+									else
+									{
+										spe = spe+","+strspe;
+									}
+								}
+								itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+							}
+							else
+							{
+								itemInfo = itemType+" "+enchanType+" "+enchanNum;
+							}
 							WarGameStartModel startModel = new WarGameStartModel();
 							Boolean result = startModel.checkBackpack(backpack);
 							if(result == true)
@@ -284,7 +310,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								{
 									if((backpack[i] == null)||(backpack[i].equals("null")))
 									{
-										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										backpack[i] = itemInfo;
 										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
 										label_backpack[i].setIcon(img_item);
 										map[posY][posX-1] = "f";
@@ -383,6 +409,29 @@ public class WarGameStartView extends JFrame implements Observer{
 							String itemType = itemModel.getItemType();
 							String enchanType = itemModel.getEnchanType();
 							String enchanNum = itemModel.getEnchanNumber();
+							String itemInfo = new String();
+							if(itemType.equals("Weapon"))
+							{
+								ArrayList<String> speList = itemModel.getEnchantList();
+								int attackRange = itemModel.getAttackRange();
+								String spe = new String();
+								for (String strspe : speList) {
+									int i = speList.indexOf(strspe);
+									if(i == 0)
+									{
+										spe = strspe;
+									}
+									else
+									{
+										spe = spe+","+strspe;
+									}
+								}
+								itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+							}
+							else
+							{
+								itemInfo = itemType+" "+enchanType+" "+enchanNum;
+							}
 							WarGameStartModel startModel = new WarGameStartModel();
 							Boolean result = startModel.checkBackpack(backpack);
 							if(result == true)
@@ -391,7 +440,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								{
 									if((backpack[i] == null)||(backpack[i].equals("null")))
 									{
-										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										backpack[i] = itemInfo;
 										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
 										label_backpack[i].setIcon(img_item);
 										map[posY][posX+1] = "f";
@@ -493,6 +542,29 @@ public class WarGameStartView extends JFrame implements Observer{
 							String itemType = itemModel.getItemType();
 							String enchanType = itemModel.getEnchanType();
 							String enchanNum = itemModel.getEnchanNumber();
+							String itemInfo = new String();
+							if(itemType.equals("Weapon"))
+							{
+								ArrayList<String> speList = itemModel.getEnchantList();
+								int attackRange = itemModel.getAttackRange();
+								String spe = new String();
+								for (String strspe : speList) {
+									int i = speList.indexOf(strspe);
+									if(i == 0)
+									{
+										spe = strspe;
+									}
+									else
+									{
+										spe = spe+","+strspe;
+									}
+								}
+								itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+							}
+							else
+							{
+								itemInfo = itemType+" "+enchanType+" "+enchanNum;
+							}
 							WarGameStartModel startModel = new WarGameStartModel();
 							Boolean result = startModel.checkBackpack(backpack);
 							if(result == true)
@@ -501,7 +573,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								{
 									if((backpack[i] == null)||(backpack[i].equals("null")))
 									{
-										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										backpack[i] = itemInfo;
 										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
 										label_backpack[i].setIcon(img_item);
 										map[posY-1][posX] = "f";
@@ -604,6 +676,29 @@ public class WarGameStartView extends JFrame implements Observer{
 							String itemType = itemModel.getItemType();
 							String enchanType = itemModel.getEnchanType();
 							String enchanNum = itemModel.getEnchanNumber();
+							String itemInfo = new String();
+							if(itemType.equals("Weapon"))
+							{
+								ArrayList<String> speList = itemModel.getEnchantList();
+								int attackRange = itemModel.getAttackRange();
+								String spe = new String();
+								for (String strspe : speList) {
+									int i = speList.indexOf(strspe);
+									if(i == 0)
+									{
+										spe = strspe;
+									}
+									else
+									{
+										spe = spe+","+strspe;
+									}
+								}
+								itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+							}
+							else
+							{
+								itemInfo = itemType+" "+enchanType+" "+enchanNum;
+							}
 							WarGameStartModel startModel = new WarGameStartModel();
 							Boolean result = startModel.checkBackpack(backpack);
 							if(result == true)
@@ -612,7 +707,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								{
 									if((backpack[i] == null)||(backpack[i].equals("null")))
 									{
-										backpack[i] = itemType+" "+enchanType+" "+enchanNum;
+										backpack[i] = itemInfo;
 										ImageIcon img_item = new ImageIcon("src/image/item/"+itemType+"/"+enchanType+".jpeg");
 										label_backpack[i].setIcon(img_item);
 										map[posY+1][posX] = "f";
@@ -674,7 +769,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							characterForStrategy = characterModel;
 							((WarGameStartModel) o).setStrategy(new HumanPlayer(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
-							//showHighlight(characterForStrategy, "Player", heroPos);
+							showHighlight(characterForStrategy, "Player", heroPos);
 							break;
 //							characterActionsByMap.put(string, actionList);
 //							takeAction(characterActionsByMap);
@@ -872,6 +967,46 @@ public class WarGameStartView extends JFrame implements Observer{
 							setPanel(characterModel);
 							showHighlight(characterModel, "m",pos);
 						}
+						if(e.getButton() == MouseEvent.BUTTON3)
+						{
+							if(fight_times == 0)
+							{
+								int count = 0;
+								JLabel label_buffer = new JLabel();
+								label_buffer = label_noneplayer_list.get(event_i);
+								String text = label_buffer.getText();
+								String strTarget[] = text.trim().split(" ");
+								WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
+								for (String hlTarget : highLightList) {
+									String strHL[] = hlTarget.trim().split(" ");
+									if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
+									{
+										String hitPoints[] = characterModelTarget.getScore(7);
+										if(Integer.parseInt(hitPoints[1]) > 0)
+										{
+											characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
+											mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+											fight_times =1;
+										}
+										else
+										{
+											logging("Character"+characterModelTarget.getCharacterID()+" is dead! Can't be attacked!");
+										}
+										count = 0;
+										break;
+									}
+									count++;
+								}
+								if(count == highLightList.size())
+								{
+									logging("Character"+characterModelTarget.getCharacterID()+" is not in the attack range");
+								}
+							}
+							else
+							{
+								logging("Player had attacked!");
+							}
+						}
 					}
 				});
 				noneplayer_label_count++;
@@ -904,6 +1039,30 @@ public class WarGameStartView extends JFrame implements Observer{
 							WarGameCharacterModel characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[4]));
 							setPanel(characterModel);
 							showHighlight(characterModel, "n",pos);
+						}
+						if(e.getButton() == MouseEvent.BUTTON3)
+						{
+							for (String hlTarget : highLightList) {
+								String strHL[] = hlTarget.trim().split(" ");
+								JLabel label_buffer = new JLabel();
+								label_buffer = label_noneplayer_list.get(event_i);
+								String text = label_buffer.getText();
+								String strTarget[] = text.trim().split(" ");
+								if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
+								{
+									WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
+									String hitPoints[] = characterModelTarget.getScore(7);
+									if(Integer.parseInt(hitPoints[1]) > 0)
+									{
+										characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
+										mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+									}
+									else
+									{
+										logging("Character"+characterModelTarget.getCharacterID()+" is dead! Can't be attack!");
+									}
+								}
+							}
 						}
 					}
 				});
@@ -1840,6 +1999,7 @@ public class WarGameStartView extends JFrame implements Observer{
 		backpack_view = new String[10];
 		equip_view = characterModel.getEquip();
 		backpack_view = characterModel.getBackpack();
+		System.out.println(equip_view[6]);
 		for(int i=0;i<12;i++)
 		{
 			String result[] = characterModel.getScore(i);
@@ -1946,13 +2106,35 @@ public class WarGameStartView extends JFrame implements Observer{
 								pos = str[0]+" "+str[1]+" "+str[2];
 							}
 							showHighlight(characterForStrategy, "m",pos);
-							
 							if (result[0].equals("i")) {
 								//loot a chest
 								itemModel = mapOnPage.getContainItems().get(Integer.parseInt(result[2]));
 								String itemType = itemModel.getItemType();
 								String enchanType = itemModel.getEnchanType();
 								String enchanNum = itemModel.getEnchanNumber();
+								String itemInfo = new String();
+								if(itemType.equals("Weapon"))
+								{
+									ArrayList<String> speList = itemModel.getEnchantList();
+									int attackRange = itemModel.getAttackRange();
+									String spe = new String();
+									for (String strspe : speList) {
+										int k = speList.indexOf(strspe);
+										if(k == 0)
+										{
+											spe = strspe;
+										}
+										else
+										{
+											spe = spe+","+strspe;
+										}
+									}
+									itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+								}
+								else
+								{
+									itemInfo = itemType+" "+enchanType+" "+enchanNum;
+								}
 								WarGameStartModel startModel = new WarGameStartModel();
 								WarGameCharacterModel character = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
 								backpack_npc = character.getBackpack();
@@ -1963,7 +2145,7 @@ public class WarGameStartView extends JFrame implements Observer{
 									{
 										if((backpack_npc[j] == null)||(backpack_npc[j].equals("null")))
 										{
-											backpack_npc[j] = itemType+" "+enchanType+" "+enchanNum;
+											backpack_npc[j] = itemInfo;
 											map[Integer.parseInt(result[3])][Integer.parseInt(result[4])] = "f";
 											mapElementsLbls.get(Integer.parseInt(result[5])).setIcon(floor);
 											mapElementsLbls.get(Integer.parseInt(result[5])).setText(result[3]+" "+result[4]+" f");
@@ -2021,6 +2203,29 @@ public class WarGameStartView extends JFrame implements Observer{
 								String itemType = itemModel.getItemType();
 								String enchanType = itemModel.getEnchanType();
 								String enchanNum = itemModel.getEnchanNumber();
+								String itemInfo = new String();
+								if(itemType.equals("Weapon"))
+								{
+									ArrayList<String> speList = itemModel.getEnchantList();
+									int attackRange = itemModel.getAttackRange();
+									String spe = new String();
+									for (String strspe : speList) {
+										int k = speList.indexOf(strspe);
+										if(k == 0)
+										{
+											spe = strspe;
+										}
+										else
+										{
+											spe = spe+","+strspe;
+										}
+									}
+									itemInfo = itemType+" "+enchanType+" "+enchanNum+" "+spe+" "+attackRange;
+								}
+								else
+								{
+									itemInfo = itemType+" "+enchanType+" "+enchanNum;
+								}
 								WarGameStartModel startModel = new WarGameStartModel();
 								WarGameCharacterModel character = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
 								backpack_npc = character.getBackpack();
@@ -2031,7 +2236,7 @@ public class WarGameStartView extends JFrame implements Observer{
 									{
 										if((backpack_npc[j] == null)||(backpack_npc[j].equals("null")))
 										{
-											backpack_npc[j] = itemType+" "+enchanType+" "+enchanNum;
+											backpack_npc[j] = itemInfo;
 											map[Integer.parseInt(result[3])][Integer.parseInt(result[4])] = "f";
 											mapElementsLbls.get(Integer.parseInt(result[5])).setIcon(floor);
 											mapElementsLbls.get(Integer.parseInt(result[5])).setText(result[3]+" "+result[4]+" f");
@@ -2647,11 +2852,11 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 						
 		highLightList.clear();
-		int attackRange = 1;
+		int attackRange = 0;
 		int posX = 0;
 		int posY = 0;
 		int index = 0;
-		
+		attackRange = characterForStrategy.getRange();
 		
 		if (identity.equals("Player")) {
 			String str[] = pos.split(" ");
