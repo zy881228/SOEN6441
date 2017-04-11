@@ -986,7 +986,14 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		{
 			if((backpack[i] == null)||(backpack[i].equals("null")))
 			{
-				backpack[i] = str[1]+" "+str[2]+" "+str[3];
+				if(str[1].equals("Weapon"))
+				{
+					backpack[i] = str[1]+" "+str[2]+" "+str[3]+" "+str[4]+" "+str[5];
+				}
+				else
+				{
+					backpack[i] = str[1]+" "+str[2]+" "+str[3];
+				}
 				break;
 			}
 			count++;
@@ -1022,7 +1029,7 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 			equip[5] = str[0]+" "+str[1]+" "+str[2];
 			break;
 		case "Weapon":
-			equip[6] = str[0]+" "+str[1]+" "+str[2];
+			equip[6] = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
 			break;
 		}
 	}
@@ -1294,7 +1301,31 @@ public void setEquipChanged(String changeBefore,String changeAfter){
 		multiple_attacks = getMultiple(attack_bonus);
 	}
 	
+	/**
+	 * get weapon's range
+	 */
+	public int getRange()
+	{
+		int attackRange = 0;
+		String str[] = equip[6].trim().split(" ");
+		attackRange = Integer.parseInt(str[4]);
+		return attackRange;
+	}
 	
+	/**
+	 * get weapon's spe enchantment
+	 */
+	public ArrayList<String> getSpeEnchantment()
+	{
+		ArrayList<String> speList = new ArrayList<String>();
+		String str[] = equip[6].trim().split(" ");
+		String str1[] = str[3].trim().split(",");
+		for(int i=0;i<str1.length;i++)
+		{
+			speList.add(str1[i]);
+		}
+		return speList;
+	}
 
 /**************************************added*******************************************************/
 	
