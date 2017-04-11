@@ -16,6 +16,9 @@ import java.util.Observable;
 import java.util.Map.Entry;
 import java.util.Random;
 
+import warGame.Strategy.CharacterStrategy;
+import warGame.View.WarGameStartView;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -126,10 +129,20 @@ public class WarGameStartModel extends Observable{
 			{
 				if(!equip[i].equals("null"))
 				{
-					String str[] = equip[i].trim().split(" ");
-					String changeBefore = equip[i];
-					equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
-					characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					if(i == 6)
+					{
+						String str[] = equip[i].trim().split(" ");
+						String changeBefore = equip[i];
+						equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level)+" "+str[3]+" "+str[4];
+						characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					}
+					else
+					{
+						String str[] = equip[i].trim().split(" ");
+						String changeBefore = equip[i];
+						equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+						characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					}
 				}
 						
 			}
@@ -138,7 +151,14 @@ public class WarGameStartModel extends Observable{
 				if(!backpack[i].equals("null"))
 				{
 					String str[] = backpack[i].trim().split(" ");
-					backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+					if(str[0].equals("Weapon"))
+					{
+						backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level)+" "+str[3]+" "+str[4];
+					}
+					else
+					{
+						backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+					}
 				}
 						
 			}
@@ -156,10 +176,20 @@ public class WarGameStartModel extends Observable{
 			{
 				if(!equip[i].equals("null"))
 				{
-					String str[] = equip[i].trim().split(" ");
-					String changeBefore = equip[i];
-					equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
-					characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					if(i == 6)
+					{
+						String str[] = equip[i].trim().split(" ");
+						String changeBefore = equip[i];
+						equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level)+" "+str[3]+" "+str[4];
+						characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					}
+					else
+					{
+						String str[] = equip[i].trim().split(" ");
+						String changeBefore = equip[i];
+						equip[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+						characterModel_buffer.setEquipChanged(changeBefore, equip[i]);
+					}
 				}
 						
 			}
@@ -168,7 +198,14 @@ public class WarGameStartModel extends Observable{
 				if(!backpack[i].equals("null"))
 				{
 					String str[] = backpack[i].trim().split(" ");
-					backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+					if(str[0].equals("Weapon"))
+					{
+						backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level)+" "+str[3]+" "+str[4];
+					}
+					else
+					{
+						backpack[i] = str[0]+" "+str[1]+" "+itemModel.itemAdaption(level);
+					}
 				}
 						
 			}
@@ -180,6 +217,7 @@ public class WarGameStartModel extends Observable{
 		count =0;
 		for(WarGameItemModel itemModel_buffer : mapModel.getContainItems())
 		{
+			System.out.println(itemModel_buffer.getAttackRange());
 			String enchanNum = itemModel_buffer.itemAdaption(level);
 			itemModel_buffer.setEnchanNum(enchanNum);
 			mapModel.getContainItems().set(count, itemModel_buffer);
@@ -296,20 +334,75 @@ public class WarGameStartModel extends Observable{
 		{
 			int attackRand = rand.nextInt(20)+1;
 			int attackTotal = attackRand + Integer.parseInt(attack[1]);
+			WarGameStartView.logging("Attack random number is "+attackRand);
+			WarGameStartView.logging("Attack ability number is "+attack[1]);
+			WarGameStartView.logging("Armor class number is "+armorClass[1]);
 			if(attackTotal > Integer.parseInt(armorClass[1]))
 			{
 				int damageRand = rand.nextInt(8)+1;
+				WarGameStartView.logging("Damage random number is "+damageRand);
+				WarGameStartView.logging("Damage ability number is "+damage[1]);
 				int damageTotal = damageRand + Integer.parseInt(damage[1]);
 				int result = Integer.parseInt(hitPoints[1]) - damageTotal;
+				WarGameStartView.logging("Character"+character2.getCharacterID()+" lose Hitpoints from "+hitPoints[1]+" to "+result);
+				if(result<1)
+				{
+					WarGameStartView.logging("Character"+character2.getCharacterID()+" is dead in this attack!");
+				}
 				character2.setHitPoints(result);
 				output = character2;
+			}
+			else
+			{
+				WarGameStartView.logging("Character"+character2.getCharacterID()+" can't be attacked, because Armor class too high!");
 			}
 		}
 		
 		return output;
 	}
 	
-	
+	//build3
+		/**
+		 * strategy
+		 */
+		private CharacterStrategy strategy;
+		/**
+		 * character for strategy
+		 */
+		private WarGameCharacterModel characterForStrategy;
+		/**
+		 * Plugs in a specific strategr to be used
+		 *@param strategy the turn method to be aplied 
+		*/
+		public void setStrategy(CharacterStrategy strategy, WarGameCharacterModel character){
+			this.strategy = strategy;
+			this.characterForStrategy = character;
+		}
+		/**
+		 * turn method to decide the action for all players on the map
+		 * this method return depending on what strategy is
+		 */
+		public ArrayList<String> turn(){
+			ArrayList<String> actionList = this.strategy.turn();
+			return actionList;
+		}
+		
+	public CharacterStrategy getStrategy() {
+			return strategy;
+		}
+
+		public void setStrategy(CharacterStrategy strategy) {
+			this.strategy = strategy;
+		}
+
+		public WarGameCharacterModel getCharacterForStrategy() {
+			return characterForStrategy;
+		}
+
+		public void setCharacterForStrategy(WarGameCharacterModel characterForStrategy) {
+			this.characterForStrategy = characterForStrategy;
+		}
+		//build3
 	
 	
 /************************************added************************************/
@@ -336,7 +429,7 @@ public class WarGameStartModel extends Observable{
 	/**
 	 * order list
 	 */
-	private ArrayList<WarGameCharacterModel> orderList;
+	private ArrayList<String> orderList;
 
 	/**
 	 * get the campaign model to play with
@@ -390,7 +483,7 @@ public class WarGameStartModel extends Observable{
 	 * get order list
 	 * @return
 	 */
-	public ArrayList<WarGameCharacterModel> getOrderList() {
+	public ArrayList<String> getOrderList() {
 		return orderList;
 	}
 
@@ -398,7 +491,7 @@ public class WarGameStartModel extends Observable{
 	 * set order list
 	 * @param orderList
 	 */
-	public void setOrderList(ArrayList<WarGameCharacterModel> orderList) {
+	public void setOrderList(ArrayList<String> orderList) {
 		this.orderList = orderList;
 	}
 }
