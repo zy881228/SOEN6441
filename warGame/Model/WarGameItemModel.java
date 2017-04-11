@@ -788,6 +788,19 @@ public class WarGameItemModel extends Observable{
         }
         catch(Exception exception) { }
     }
+	//release key
+	protected void keyReleased(int i)
+    {
+        int j = 0;
+        int k = i;
+        try
+        {
+            j = getGameAction(k);
+        }
+        catch(Exception exception) { }
+        if(k == 52 || k == 54)
+            kF = false;
+    }
 	
 /****************************added******************************************/
 	private
