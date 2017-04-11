@@ -355,6 +355,13 @@ public class WarGameItemModel extends Observable{
         }
     }
 	
+	//change set
+	public void setGConf(int i, boolean flag)
+    {
+        mH = i;
+        sE = flag;
+    }
+	
 /****************************added******************************************/
 	private
     
