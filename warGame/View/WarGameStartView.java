@@ -1433,124 +1433,6 @@ public class WarGameStartView extends JFrame implements Observer{
 			});
 		}
 	}
-	
-	/**
-     * create the character view frame
-     * @param characterModel
-     */
-	/*
-	public void createCharacterView(WarGameCharacterModel characterModel){
-		JFrame frame = new JFrame("Character Info");
-		frame.setBounds(300, 0, 520, 700);
-		frame.setVisible(true);
-		frame.setLayout(null);
-		JLabel label_pic = new JLabel();
-		JLabel label_scores[] = new JLabel[12];
-		final JLabel label_equip[] = new JLabel[7];
-		final JLabel label_backpack[] = new JLabel[10];
-		JLabel label_showScore[] = new JLabel[12];
-		final String backpack[] = characterModel.getBackpack();
-		final String equip[] = characterModel.getEquip();
-		for(int i=0;i<12;i++)
-		{
-			
-			String result[] = characterModel.getScore(i);
-			label_scores[i] = new JLabel(result[0]+":"+result[1]);
-			
-			if(i<4)
-			{
-				label_scores[i].setBounds(25, i*30, 150, 30);
-			}
-			if(i>3 && i<8)
-			{
-				label_scores[i].setBounds(192, i*30-120, 150, 30);
-			}
-			if(i>7)
-			{
-				label_scores[i].setBounds(359, i*30-240, 150, 30);
-			}
-			frame.add(label_scores[i]);
-		}
-		int picNum = characterModel.getPicNumber();
-		ImageIcon img = new ImageIcon("src/image/Character/"+picNum+".png");
-		label_pic.setIcon(img);
-		label_pic.setBounds(210, 150, 150, 250);
-		frame.add(label_pic);
-		
-		for(int i=0;i<7;i++)
-		{
-			final int event_i = i;
-			label_equip[i] = new JLabel();
-			frame.add(label_equip[i]);
-			label_equip[i].setBounds(i*70+18, 400, 66, 66);
-			label_equip[i].setOpaque(true);
-			if(equip[i].equals("null"))
-			{
-				label_equip[i].setBackground(Color.GRAY);
-			}
-			else
-			{
-				String prefix[] = equip[i].trim().split(" ");
-				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
-				label_equip[i].setIcon(img_item);
-			}
-			label_equip[i].addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e){
-					if(e.getButton() == MouseEvent.BUTTON3)
-					{
-						if(!equip[event_i].equals("null"))
-						{
-							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(equip[event_i]);
-							pop_info.show(label_equip[event_i], e.getX(), e.getY());
-						}
-					}
-				}
-			});
-		}
-		for(int i=0;i<10;i++)
-		{
-			final int event_i = i;
-			label_backpack[i] = new JLabel();
-			label_backpack[i].setOpaque(true);
-			frame.add(label_backpack[i]);
-			if(i<5)
-			{
-				label_backpack[i].setBounds(i*70+85, 500, 66, 66);
-			}
-			if(i>4)
-			{
-				label_backpack[i].setBounds(i*70-265, 570, 66, 66);
-			}
-			if(backpack[i].equals("null"))
-			{
-				label_backpack[i].setBackground(Color.BLACK);
-			}
-			else
-			{
-				String prefix[] = backpack[i].trim().split(" ");
-				String itemName = prefix[0]+prefix[1];
-				ImageIcon img_item = new ImageIcon("src/image/item/"+prefix[0]+"/"+prefix[1]+".jpeg");
-				label_backpack[i].setIcon(img_item);
-			}
-			label_backpack[i].addMouseListener(new MouseAdapter() {
-				@Override
-				public void mousePressed(MouseEvent e){
-					if(e.getButton() == MouseEvent.BUTTON3)
-					{
-						if(!backpack[event_i].equals("null"))
-						{
-							JPopupMenu pop_info = new JPopupMenu();
-							pop_info.add(backpack[event_i]);
-							pop_info.show(label_backpack[event_i], e.getX(), e.getY());
-						}
-					}
-				}
-			});
-		}
-	}
-	*/
 
 	/**
      * get the item from the loot when monster dead
@@ -2822,7 +2704,6 @@ public class WarGameStartView extends JFrame implements Observer{
 	public ArrayList<String> showHighlight(WarGameCharacterModel characterForStrategy, String identity,String pos){
 				for (String highLightStr : highLightList) {
 					String str[] = highLightStr.trim().split(" ");
-					System.out.println("before:"+highLightStr);
 					switch (str[0]) {
 					case "x":
 						mapElementsLbls.get(Integer.parseInt(str[3])).setIcon(wall);
@@ -2876,42 +2757,12 @@ public class WarGameStartView extends JFrame implements Observer{
 			posX = Integer.parseInt(str[1]);
 			index = Integer.parseInt(str[2]);
 		}
-			/*for (String keys : characterActionsByMap.keySet()) {
-				String indexInList = keys.split(" ")[1];
-				String enemyPos = null;
-				String friendPos = null;
-				if (keys.startsWith("m")) {
-					for (String strPos : enemyPosList) {
-						if (strPos.split(" ")[3].equals(indexInList)) {
-							enemyPos = strPos;
-							posY = Integer.parseInt(enemyPos.split(" ")[0]);
-							posX = Integer.parseInt(enemyPos.split(" ")[1]);
-							index = Integer.parseInt(enemyPos.split(" ")[2]);
-						}
-					}
-				}
-				else if(keys.startsWith("n")){
-					for (String strPos : friendPosList) {
-						if (strPos.split(" ")[3].equals(indexInList)) {
-							friendPos = strPos;
-							posY = Integer.parseInt(friendPos.split(" ")[0]);
-							posX = Integer.parseInt(friendPos.split(" ")[1]);
-							index = Integer.parseInt(friendPos.split(" ")[2]);
-						}
-					}
-				}
-			}*/
 		
 		//get xy list
 		for(int i=0;i<map.length;i++)
 		{
 			for(int j=0;j<map[0].length;j++)
 			{
-				//System.out.println("posY:"+posY);
-				//System.out.println("posX:"+posX);
-				//System.out.println("index:"+index);
-				//System.out.println("i:"+i);
-				//System.out.println("j:"+j);
 				int result = Math.abs(posY-i)+Math.abs(posX-j);
 				if(result<(attackRange+1))
 				{
@@ -2919,7 +2770,6 @@ public class WarGameStartView extends JFrame implements Observer{
 					String str[] = map[i][j].trim().split(" ");
 					String hlMember = str[0]+" "+i+" "+j+" "+indexTarget;
 					highLightList.add(hlMember);
-					System.out.println("after:"+hlMember);
 				}
 			}
 		}
