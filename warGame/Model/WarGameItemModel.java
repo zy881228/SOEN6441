@@ -362,6 +362,27 @@ public class WarGameItemModel extends Observable{
         sE = flag;
     }
 	
+	//change save
+	public void saveData()
+    {
+        if(rStore == null)
+            return;
+        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+        DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);
+        try
+        {
+            dataoutputstream.writeInt(mH);
+            dataoutputstream.writeBoolean(sE);
+        }
+        catch(IOException ioexception) { }
+        byte abyte0[] = bytearrayoutputstream.toByteArray();
+        try
+        {
+            rStore.setRecord(1, abyte0, 0, abyte0.length);
+        }
+        catch(RecordStoreException recordstoreexception) { }
+    }
+	
 /****************************added******************************************/
 	private
     
