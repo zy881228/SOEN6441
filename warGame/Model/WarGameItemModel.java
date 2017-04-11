@@ -336,6 +336,24 @@ public class WarGameItemModel extends Observable{
         repaint();
     }
 	
+	//add resume
+	public void resumePlease()
+    {
+        if(tgS == 1)
+        {
+            resumeFlag = true;
+            if(pS < 0)
+            {
+                drawBobbles(ofSg2, 0);
+                drawGameOver(ofSg2);
+            }
+            repaint();
+            serviceRepaints();
+        } else
+        {
+            repaint();
+        }
+    }
 	
 /****************************added******************************************/
 	private
