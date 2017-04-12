@@ -467,6 +467,21 @@ public class WarGameItemModel extends Observable{
         hForm.addCommand(cBack);
         hForm.setCommandListener(this);
     }
+	
+	//change sign
+	public void initSign()
+    {
+        tgS = -1;
+        try
+        {
+            if(nI == null)
+                nI = Image.createImage("/nT.png");
+        }
+        catch(Exception exception) { }
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+	
 /****************************added******************************************/
 	private
     
