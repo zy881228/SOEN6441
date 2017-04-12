@@ -239,6 +239,17 @@ public class WarGameCampaignModel extends Observable{
             g.drawImage(awaI[Bobble.aM - 1], Bobble.aX - aWidth / 2, Bobble.aY - aWidth / 2, 0x10 | 0x4);
         }
     }
+	//add command
+	public void commandAction(Command command, Displayable displayable)
+    {
+        if(command == cBack && displayable == hForm)
+        {
+            indeX = 0;
+            resumeFlag = true;
+            Display.getDisplay(owM).setCurrent(this);
+            repaint();
+        }
+    }
 	
 	/**
 	 * load the specific campaign by campaignID
