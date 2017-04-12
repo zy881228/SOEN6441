@@ -166,6 +166,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					logging("Player  roll "+randomNum);
 					logging("Player's dexterity modifier is "+characterModel.getScore(13)[1]);
 					randomNum += Integer.parseInt(characterModel.getScore(13)[1]);
+//					randomNum +=100;
 				}else if (orderList.get(i).startsWith("m")) {
 					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
 					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
@@ -262,18 +263,13 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(leftPos[2].equals("m")){
-//							String str[] = map[posY][posX-1].trim().split(" ");
-//							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-//							if(leftPos[3].equals("alive"))
-//							{
-//								JOptionPane.showMessageDialog(null, "Monster Dead!");
-//								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
-//							}
-//							if(leftPos[3].equals("dead"))
-//							{
-//								getAllItem();
-//								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-//							}
+							String str[] = map[posY][posX-1].trim().split(" ");
+							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
+							{
+								getAllItem();
+								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+							}
 						}else if(leftPos[2].equals("i")){
 							String str[] = map[posY][posX-1].trim().split(" ");
 							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
@@ -404,14 +400,9 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(rightPos[2].equals("m")){
-							String str[] = map[posY][posX+1].trim().split(" ");
+							String str[] = map[posY][posX-1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(rightPos[3].equals("alive"))
-							{
-								JOptionPane.showMessageDialog(null, "Monster Dead!");
-								mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"m dead");
-							}
-							if(rightPos[3].equals("dead"))
+							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -549,14 +540,9 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(upPos[2].equals("m")){
-							String str[] = map[posY-1][posX].trim().split(" ");
+							String str[] = map[posY][posX-1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(upPos[3].equals("alive"))
-							{
-								JOptionPane.showMessageDialog(null, "Monster Dead!");
-								mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"m dead");
-							}
-							if(upPos[3].equals("dead"))
+							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -695,14 +681,9 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(downPos[2].equals("m")){
-							String str[] = map[posY+1][posX].trim().split(" ");
+							String str[] = map[posY][posX-1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(downPos[3].equals("alive"))
-							{
-								JOptionPane.showMessageDialog(null, "Monster Dead!");
-								mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"m dead");
-							}
-							if(downPos[3].equals("dead"))
+							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -821,25 +802,28 @@ public class WarGameStartView extends JFrame implements Observer{
 							actionList = ((WarGameStartModel) o).turn();
 							showHighlight(characterForStrategy, "Player", heroPos);
 							break;
-						}else if (string.startsWith("m")) {
-							fight_times = 0;
-							logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
-							characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
-							((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-							actionList = ((WarGameStartModel) o).turn();
-							characterActionsByMap.clear();
-							characterActionsByMap.put(string, actionList);
-							try {
-								takeAction(characterActionsByMap);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
+						}else {
+							if (string.startsWith("m")) {
+								fight_times = 0;
+								logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+								characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
+								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
+									orderList.remove(string);
+								}else{
+									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+									actionList = ((WarGameStartModel) o).turn();
+								}
+							}else if (string.startsWith("n")) {
+								fight_times = 0;
+								logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+								characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]));
+								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
+									orderList.remove(string);
+								}else{
+									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+									actionList = ((WarGameStartModel) o).turn();
+								}
 							}
-						}else if (string.startsWith("n")) {
-							fight_times = 0;
-							logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
-							characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]));
-							((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
-							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
 							characterActionsByMap.put(string, actionList);
 							try {
@@ -864,28 +848,29 @@ public class WarGameStartView extends JFrame implements Observer{
 								fight_times = 0;
 								logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 								characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-								((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-								actionList = ((WarGameStartModel) o).turn();
-								characterActionsByMap.clear();
-								characterActionsByMap.put(orderList.get(i), actionList);
-								try {
-									takeAction(characterActionsByMap);
-								} catch (InterruptedException e1) {
-									e1.printStackTrace();
+								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
+									orderList.remove(orderList.get(i));
+								}else{
+									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+									actionList = ((WarGameStartModel) o).turn();
 								}
 							}else if (orderList.get(i).startsWith("n")) {
 								fight_times = 0;
 								logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 								characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-								((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
-								actionList = ((WarGameStartModel) o).turn();
-								characterActionsByMap.clear();
-								characterActionsByMap.put(orderList.get(i), actionList);
-								try {
-									takeAction(characterActionsByMap);
-								} catch (InterruptedException e1) {
-									e1.printStackTrace();
+								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
+									orderList.remove(orderList.get(i));
+								}else{
+									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+									actionList = ((WarGameStartModel) o).turn();
 								}
+							}
+							characterActionsByMap.clear();
+							characterActionsByMap.put(orderList.get(i), actionList);
+							try {
+								takeAction(characterActionsByMap);
+							} catch (InterruptedException e1) {
+								e1.printStackTrace();
 							}
 						}
 						round++;
@@ -1090,7 +1075,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								label_buffer = label_noneplayer_list.get(event_i);
 								String text = label_buffer.getText();
 								String strTarget[] = text.trim().split(" ");
-								WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
+								WarGameCharacterModel characterModelTarget = mapOnPage.getContainFriends().get(Integer.parseInt(strTarget[4]));
 								for (String hlTarget : highLightList) {
 									String strHL[] = hlTarget.trim().split(" ");
 									if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
@@ -1099,7 +1084,17 @@ public class WarGameStartView extends JFrame implements Observer{
 										if(Integer.parseInt(hitPoints[1]) > 0)
 										{
 											characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
-											mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+											mapOnPage.getContainFriends().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+											map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterModelTarget.getCharacterID()+" "+strTarget[4];
+											int indexInOrder = orderList.indexOf("n "+strTarget[4]);
+											mapOnPage.getContainEnemies().add(characterModelTarget);
+											orderList.set(indexInOrder, "m "+(mapOnPage.getContainEnemies().size()-1));
+											mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monsterHighlight);
+											mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strTarget[4]);
+											String posToDelete = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strTarget[4];
+											String posToAdd = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+(mapOnPage.getContainEnemies().size()-1);
+											friendPosList.remove(posToDelete);
+											enemyPosList.add(posToAdd);
 											fight_times =1;
 										}
 										else
@@ -2918,15 +2913,16 @@ public class WarGameStartView extends JFrame implements Observer{
 					{
 						characterTarget = startModel.fightChange(characterForStrategy, characterTarget);
 						mapOnPage.getContainFriends().set(Integer.parseInt(strIndex[2]), characterTarget);
-						int indexInOrder = orderList.indexOf("n "+strIndex[2]);
-						friendPosList.remove(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
-						enemyPosList.add(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
 						map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterTarget.getCharacterID()+" "+strIndex[2];
-						mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monster);
-						mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strIndex[2]);
-						frame.repaint();
-						orderList.set(indexInOrder, "m "+mapOnPage.getContainEnemies().size());
+						int indexInOrder = orderList.indexOf("n "+strIndex[2]);
 						mapOnPage.getContainEnemies().add(characterTarget);
+						orderList.set(indexInOrder, "m "+(mapOnPage.getContainEnemies().size()-1));
+						mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monsterHighlight);
+						mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strIndex[2]);
+						String posToDelete = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2];
+						String posToAdd = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+(mapOnPage.getContainEnemies().size()-1);
+						friendPosList.remove(posToDelete);
+						enemyPosList.add(posToAdd);
 						fight_times = 1;
 					}
 					else
