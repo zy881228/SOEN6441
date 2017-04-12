@@ -432,6 +432,13 @@ public class WarGameItemModel extends Observable{
     {
         pauseFlag = true;
     }
+	
+
+	protected void showNotify()
+    {
+        pauseFlag = false;
+        resumePlease();
+    }
 /****************************added******************************************/
 	private
     
