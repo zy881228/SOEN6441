@@ -546,6 +546,9 @@ public class WarGameItemModel extends Observable{
 		this.enchanNumber = newNum;
 	}
 	
+    public void setEnchanType(String newType){
+        this.enchanType = newType;
+    }
 	/**
      * <p>change item info to string<br/>
      */
