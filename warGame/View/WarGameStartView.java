@@ -166,7 +166,6 @@ public class WarGameStartView extends JFrame implements Observer{
 					logging("Player  roll "+randomNum);
 					logging("Player's dexterity modifier is "+characterModel.getScore(13)[1]);
 					randomNum += Integer.parseInt(characterModel.getScore(13)[1]);
-//					randomNum +=100;
 				}else if (orderList.get(i).startsWith("m")) {
 					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
 					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
@@ -263,13 +262,18 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(leftPos[2].equals("m")){
-							String str[] = map[posY][posX-1].trim().split(" ");
-							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
-							{
-								getAllItem();
-								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-							}
+//							String str[] = map[posY][posX-1].trim().split(" ");
+//							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+//							if(leftPos[3].equals("alive"))
+//							{
+//								JOptionPane.showMessageDialog(null, "Monster Dead!");
+//								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
+//							}
+//							if(leftPos[3].equals("dead"))
+//							{
+//								getAllItem();
+//								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+//							}
 						}else if(leftPos[2].equals("i")){
 							String str[] = map[posY][posX-1].trim().split(" ");
 							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
@@ -400,9 +404,14 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(rightPos[2].equals("m")){
-							String str[] = map[posY][posX-1].trim().split(" ");
+							String str[] = map[posY][posX+1].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
+							if(rightPos[3].equals("alive"))
+							{
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index+1).setText(posY+" "+(posX+1)+" "+"m dead");
+							}
+							if(rightPos[3].equals("dead"))
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -540,9 +549,14 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(upPos[2].equals("m")){
-							String str[] = map[posY][posX-1].trim().split(" ");
+							String str[] = map[posY-1][posX].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
+							if(upPos[3].equals("alive"))
+							{
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index-(map[0].length)).setText((posY-1)+" "+posX+" "+"m dead");
+							}
+							if(upPos[3].equals("dead"))
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -681,9 +695,14 @@ public class WarGameStartView extends JFrame implements Observer{
 							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(downPos[2].equals("m")){
-							String str[] = map[posY][posX-1].trim().split(" ");
+							String str[] = map[posY+1][posX].trim().split(" ");
 							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(Integer.parseInt(nonePlayerModel.getScore(7)[1])<1)
+							if(downPos[3].equals("alive"))
+							{
+								JOptionPane.showMessageDialog(null, "Monster Dead!");
+								mapElementsLbls.get(index+(map[0].length)).setText((posY+1)+" "+posX+" "+"m dead");
+							}
+							if(downPos[3].equals("dead"))
 							{
 								getAllItem();
 								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
@@ -802,28 +821,25 @@ public class WarGameStartView extends JFrame implements Observer{
 							actionList = ((WarGameStartModel) o).turn();
 							showHighlight(characterForStrategy, "Player", heroPos);
 							break;
-						}else {
-							if (string.startsWith("m")) {
-								fight_times = 0;
-								logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
-								characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
-								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
-									orderList.remove(string);
-								}else{
-									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-									actionList = ((WarGameStartModel) o).turn();
-								}
-							}else if (string.startsWith("n")) {
-								fight_times = 0;
-								logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
-								characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]));
-								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
-									orderList.remove(string);
-								}else{
-									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-									actionList = ((WarGameStartModel) o).turn();
-								}
+						}else if (string.startsWith("m")) {
+							fight_times = 0;
+							logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+							characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
+							((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+							actionList = ((WarGameStartModel) o).turn();
+							characterActionsByMap.clear();
+							characterActionsByMap.put(string, actionList);
+							try {
+								takeAction(characterActionsByMap);
+							} catch (InterruptedException e1) {
+								e1.printStackTrace();
 							}
+						}else if (string.startsWith("n")) {
+							fight_times = 0;
+							logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+							characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]));
+							((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
+							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
 							characterActionsByMap.put(string, actionList);
 							try {
@@ -848,29 +864,28 @@ public class WarGameStartView extends JFrame implements Observer{
 								fight_times = 0;
 								logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 								characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
-									orderList.remove(orderList.get(i));
-								}else{
-									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-									actionList = ((WarGameStartModel) o).turn();
+								((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+								actionList = ((WarGameStartModel) o).turn();
+								characterActionsByMap.clear();
+								characterActionsByMap.put(orderList.get(i), actionList);
+								try {
+									takeAction(characterActionsByMap);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
 								}
 							}else if (orderList.get(i).startsWith("n")) {
 								fight_times = 0;
 								logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
 								characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-								if (Integer.parseInt(characterForStrategy.getScore(7)[1])<1) {
-									orderList.remove(orderList.get(i));
-								}else{
-									((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-									actionList = ((WarGameStartModel) o).turn();
+								((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
+								actionList = ((WarGameStartModel) o).turn();
+								characterActionsByMap.clear();
+								characterActionsByMap.put(orderList.get(i), actionList);
+								try {
+									takeAction(characterActionsByMap);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
 								}
-							}
-							characterActionsByMap.clear();
-							characterActionsByMap.put(orderList.get(i), actionList);
-							try {
-								takeAction(characterActionsByMap);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
 							}
 						}
 						round++;
@@ -1075,7 +1090,7 @@ public class WarGameStartView extends JFrame implements Observer{
 								label_buffer = label_noneplayer_list.get(event_i);
 								String text = label_buffer.getText();
 								String strTarget[] = text.trim().split(" ");
-								WarGameCharacterModel characterModelTarget = mapOnPage.getContainFriends().get(Integer.parseInt(strTarget[4]));
+								WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
 								for (String hlTarget : highLightList) {
 									String strHL[] = hlTarget.trim().split(" ");
 									if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
@@ -1084,17 +1099,7 @@ public class WarGameStartView extends JFrame implements Observer{
 										if(Integer.parseInt(hitPoints[1]) > 0)
 										{
 											characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
-											mapOnPage.getContainFriends().set(Integer.parseInt(strTarget[4]), characterModelTarget);
-											map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterModelTarget.getCharacterID()+" "+strTarget[4];
-											int indexInOrder = orderList.indexOf("n "+strTarget[4]);
-											mapOnPage.getContainEnemies().add(characterModelTarget);
-											orderList.set(indexInOrder, "m "+(mapOnPage.getContainEnemies().size()-1));
-											mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monsterHighlight);
-											mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strTarget[4]);
-											String posToDelete = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strTarget[4];
-											String posToAdd = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+(mapOnPage.getContainEnemies().size()-1);
-											friendPosList.remove(posToDelete);
-											enemyPosList.add(posToAdd);
+											mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
 											fight_times =1;
 										}
 										else
@@ -2227,334 +2232,202 @@ public class WarGameStartView extends JFrame implements Observer{
 		indexC = Integer.parseInt(heroPosArray[2]);
 		
 		if (moveType.equals("Move_Aggressively")) {
-			if (posX<posXC) {
-				if (rightPos[2].equals("i")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result =map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
+			
+			ArrayList<String> moveAble =new ArrayList<String>();
+			String nextMove = new String();
+			int lastDis = 0;
+			String right[] = map[posY][posX+1].trim().split(" ");
+			String left[] = map[posY][posX-1].trim().split(" ");
+			String up[] = map[posY-1][posX].trim().split(" ");
+			String down[] = map[posY+1][posX].trim().split(" ");
+			if(!(right[0].equals("x")||right[0].equals("n")||right[0].equals("m")||right[0].equals("O")||right[0].equals("I")))
+			{
+				moveAble.add(right[0]+" "+posY+" "+(posX+1));
+			}
+			if(!(left[0].equals("x")||left[0].equals("n")||left[0].equals("m")||left[0].equals("O")||left[0].equals("I")))
+			{
+				moveAble.add(left[0]+" "+posY+" "+(posX-1));
+			}
+			if(!(up[0].equals("x")||up[0].equals("n")||up[0].equals("m")||up[0].equals("O")||up[0].equals("I")))
+			{
+				moveAble.add(up[0]+" "+(posY-1)+" "+posX);
+			}
+			if(!(down[0].equals("x")||down[0].equals("n")||down[0].equals("m")||down[0].equals("O")||down[0].equals("I")))
+			{
+				moveAble.add(down[0]+" "+(posY+1)+" "+posX);
+			}
+			for (String str_buffer : moveAble) 
+			{
+				String str[] =str_buffer.trim().split(" ");
+				if(moveAble.indexOf(str_buffer) == 0)
+				{
+					lastDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					nextMove = str_buffer;
 				}
-				if (rightPos[2].equals("m")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result =map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
-				}
-				if (rightPos[2].equals("n")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result =map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
-				}
-				if (rightPos[2].equals("h")) {
-					result = "h";
-				}
-				if (rightPos[2].equals("f")) {
-					JLabel characterPosLbl = mapElementsLbls.get(index);
-					//change label_noneplayer_list
-					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-					String str[] = characterPosLbl.getText().trim().split(" ");
-					str[1] = Integer.parseInt(str[1]) +1+"";
-					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-					label_noneplayer_list.get(index_noneplayer).setText(back_text);
-					//end
-					Rectangle posB = characterPosLbl.getBounds();
-					JLabel characterDesLbl = mapElementsLbls.get(index+1);
-					Rectangle desB = characterDesLbl.getBounds();
-					characterPosLbl.setBounds(desB);
-					characterDesLbl.setBounds(posB);
-					mapElementsLbls.set(index, characterDesLbl);
-					mapElementsLbls.set((index+1), characterPosLbl);
-					result = posY + " " + (posX+1) + " " + (index+1) + " " + indexInList;
-					enemyPosList.remove(result);
-					enemyPosList.add(result);
-					map[posY][posX] = "f";
-					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-					result = "f "+result;
-				}
-			}else if(posX>posXC){
-				if (leftPos[2].equals("i")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result =map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("m")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result =map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("n")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result =map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("h")) {
-					result = "h";
-				}
-				if (leftPos[2].equals("f")) {
-					JLabel characterPosLbl = mapElementsLbls.get(index);
-					//change label_noneplayer_list
-					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-					String str[] = characterPosLbl.getText().trim().split(" ");
-					str[1] = Integer.parseInt(str[1]) -1+"";
-					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-					label_noneplayer_list.get(index_noneplayer).setText(back_text);
-					//end
-					Rectangle posB = characterPosLbl.getBounds();
-					JLabel characterDesLbl = mapElementsLbls.get(index-1);
-					Rectangle desB = characterDesLbl.getBounds();
-					characterPosLbl.setBounds(desB);
-					characterDesLbl.setBounds(posB);
-					mapElementsLbls.set(index, characterDesLbl);
-					mapElementsLbls.set((index-1), characterPosLbl);
-					result = posY + " " + (posX-1) + " " + (index-1) + " " + indexInList;
-					enemyPosList.remove(result);
-					enemyPosList.add(result);
-					map[posY][posX] = "f";
-					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-					result = "f "+result;
-				}
-			}else{
-				if (posY<posYC) {
-					if (downPos[2].equals("i")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("m")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("n")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("h")) {
-						result = "h";
-					}
-					if (downPos[2].equals("f")) {
-						JLabel characterPosLbl = mapElementsLbls.get(index);
-						//change label_noneplayer_list
-						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-						String str[] = characterPosLbl.getText().trim().split(" ");
-						str[0] = Integer.parseInt(str[0]) +1+"";
-						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-						label_noneplayer_list.get(index_noneplayer).setText(back_text);
-						//end
-						Rectangle posB = characterPosLbl.getBounds();
-						JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
-						Rectangle desB = characterDesLbl.getBounds();
-						characterPosLbl.setBounds(desB);
-						characterDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, characterDesLbl);
-						mapElementsLbls.set((index+(map[0]).length), characterPosLbl);
-						result = (posY+1) + " " + posX + " " + (index+(map[0].length)) + " " + indexInList;
-						enemyPosList.remove(result);
-						enemyPosList.add(result);
-						map[posY][posX] = "f";
-						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-						result = "f "+result;
-					}
-				}else if(posY>posYC){
-					if (upPos[2].equals("i")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("m")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("n")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("h")) {
-						result = "h";
-					}
-					if (upPos[2].equals("f")) {
-						JLabel characterPosLbl = mapElementsLbls.get(index);
-						//change label_noneplayer_list
-						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-						String str[] = characterPosLbl.getText().trim().split(" ");
-						str[0] = Integer.parseInt(str[0]) -1+"";
-						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-						label_noneplayer_list.get(index_noneplayer).setText(back_text);
-						//end
-						Rectangle posB = characterPosLbl.getBounds();
-						JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
-						Rectangle desB = characterDesLbl.getBounds();
-						characterPosLbl.setBounds(desB);
-						characterDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, characterDesLbl);
-						mapElementsLbls.set((index-(map[0]).length), characterPosLbl);
-						result = (posY-1) + " " + posX + " " + (index-(map[0].length)) + " " + indexInList;
-						enemyPosList.remove(result);
-						enemyPosList.add(result);
-						map[posY][posX] = "f";
-						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-						result = "f "+result;
+				else
+				{
+					int curDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					if(lastDis > curDis)
+					{
+						lastDis = curDis;
+						nextMove = str_buffer;
 					}
 				}
+			}
+			String nextInfo[] = nextMove.trim().split(" ");
+			int nextIndex = 0;
+			if(Integer.parseInt(nextInfo[2]) == posX)
+			{
+				if(Integer.parseInt(nextInfo[1])>posY)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+map[0].length);
+					nextIndex = index+map[0].length;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-map[0].length);
+					nextIndex = index-map[0].length;
+				}
+			}
+			if(Integer.parseInt(nextInfo[1]) == posY)
+			{
+				if(Integer.parseInt(nextInfo[2])>posX)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+1);
+					nextIndex = index+1;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-1);
+					nextIndex = index-1;
+				}
+			}
+			if(nextInfo[0].equals("f"))	
+			{
+				JLabel characterPosLbl = mapElementsLbls.get(index);
+				//change label_noneplayer_list
+				int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+				String str[] = characterPosLbl.getText().trim().split(" ");
+				String back_text = nextInfo[1]+" "+nextInfo[2]+" "+str[2]+" "+str[3]+" "+str[4];
+				label_noneplayer_list.get(index_noneplayer).setText(back_text);
+				//end
+				Rectangle posB = characterPosLbl.getBounds();
+				JLabel characterDesLbl = mapElementsLbls.get(nextIndex);
+				Rectangle desB = characterDesLbl.getBounds();
+				characterPosLbl.setBounds(desB);
+				characterDesLbl.setBounds(posB);
+				mapElementsLbls.set(index, characterDesLbl);
+				mapElementsLbls.set(nextIndex, characterPosLbl);
+				String posIndex = nextInfo[1]+" "+nextInfo[2] + " " + nextIndex + " " + indexInList;
+				enemyPosList.remove(posIndex);
+				enemyPosList.add(posIndex);
+				map[posY][posX] = "f";
+				map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
+				logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 			}
 		}else if(moveType.equals("Escape")){
-			if (posX>posXC) {
-				if (rightPos[2].equals("i")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result = map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
+			ArrayList<String> moveAble =new ArrayList<String>();
+			String nextMove = new String();
+			int lastDis = 0;
+			String right[] = map[posY][posX+1].trim().split(" ");
+			String left[] = map[posY][posX-1].trim().split(" ");
+			String up[] = map[posY-1][posX].trim().split(" ");
+			String down[] = map[posY+1][posX].trim().split(" ");
+			if(!(right[0].equals("x")||right[0].equals("n")||right[0].equals("m")||right[0].equals("O")||right[0].equals("I")))
+			{
+				moveAble.add(right[0]+" "+posY+" "+(posX+1));
+			}
+			if(!(left[0].equals("x")||left[0].equals("n")||left[0].equals("m")||left[0].equals("O")||left[0].equals("I")))
+			{
+				moveAble.add(left[0]+" "+posY+" "+(posX-1));
+			}
+			if(!(up[0].equals("x")||up[0].equals("n")||up[0].equals("m")||up[0].equals("O")||up[0].equals("I")))
+			{
+				moveAble.add(up[0]+" "+(posY-1)+" "+posX);
+			}
+			if(!(down[0].equals("x")||down[0].equals("n")||down[0].equals("m")||down[0].equals("O")||down[0].equals("I")))
+			{
+				moveAble.add(down[0]+" "+(posY+1)+" "+posX);
+			}
+			for (String str_buffer : moveAble) 
+			{
+				String str[] =str_buffer.trim().split(" ");
+				if(moveAble.indexOf(str_buffer) == 0)
+				{
+					lastDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					nextMove = str_buffer;
 				}
-				if (rightPos[2].equals("m")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result = map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
-				}
-				if (rightPos[2].equals("n")) {
-					String str[] = map[posY][posX+1].trim().split(" ");
-					result = map[posY][posX+1]+" "+posY+" "+(posX+1)+" "+(index+1);
-				}
-				if (rightPos[2].equals("h")) {
-					result = "h";
-				}
-				if (rightPos[2].equals("f")) {
-					JLabel characterPosLbl = mapElementsLbls.get(index);
-					//change label_noneplayer_list
-					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-					String str[] = characterPosLbl.getText().trim().split(" ");
-					str[1] = Integer.parseInt(str[1]) +1+"";
-					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-					label_noneplayer_list.get(index_noneplayer).setText(back_text);
-					//end
-					Rectangle posB = characterPosLbl.getBounds();
-					JLabel characterDesLbl = mapElementsLbls.get(index+1);
-					Rectangle desB = characterDesLbl.getBounds();
-					characterPosLbl.setBounds(desB);
-					characterDesLbl.setBounds(posB);
-					mapElementsLbls.set(index, characterDesLbl);
-					mapElementsLbls.set((index+1), characterPosLbl);
-					result = posY + " " + (posX+1) + " " + (index+1) + " " + indexInList;
-					enemyPosList.remove(result);
-					enemyPosList.add(result);
-					map[posY][posX] = "f";
-					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-					result = "f "+result;
-				}
-			}else if(posX<posXC){
-				if (leftPos[2].equals("i")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result = map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("m")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result = map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("n")) {
-					String str[] = map[posY][posX-1].trim().split(" ");
-					result = map[posY][posX-1]+" "+posY+" "+(posX-1)+" "+(index-1);
-				}
-				if (leftPos[2].equals("h")) {
-					result = "h";
-				}
-				if (leftPos[2].equals("f")) {
-					JLabel characterPosLbl = mapElementsLbls.get(index);
-					//change label_noneplayer_list
-					int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-					String str[] = characterPosLbl.getText().trim().split(" ");
-					str[1] = Integer.parseInt(str[1]) -1+"";
-					String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-					label_noneplayer_list.get(index_noneplayer).setText(back_text);
-					//end
-					Rectangle posB = characterPosLbl.getBounds();
-					JLabel characterDesLbl = mapElementsLbls.get(index-1);
-					Rectangle desB = characterDesLbl.getBounds();
-					characterPosLbl.setBounds(desB);
-					characterDesLbl.setBounds(posB);
-					mapElementsLbls.set(index, characterDesLbl);
-					mapElementsLbls.set((index-1), characterPosLbl);
-					result = posY + " " + (posX-1) + " " + (index-1) + " " + indexInList;
-					enemyPosList.remove(result);
-					enemyPosList.add(result);
-					map[posY][posX] = "f";
-					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-					result = "f "+result;
-				}
-			}else{
-				if (posY>posYC) {
-					if (downPos[2].equals("i")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("m")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("n")) {
-						String str[] = map[posY+1][posX].trim().split(" ");
-						result = map[posY+1][posX]+" "+(posY+1)+" "+posX+" "+(index+map[0].length);
-					}
-					if (downPos[2].equals("h")) {
-						result = "h";
-					}
-					if (downPos[2].equals("f")) {
-						JLabel characterPosLbl = mapElementsLbls.get(index);
-						//change label_noneplayer_list
-						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-						String str[] = characterPosLbl.getText().trim().split(" ");
-						str[0] = Integer.parseInt(str[0]) +1+"";
-						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-						label_noneplayer_list.get(index_noneplayer).setText(back_text);
-						//end
-						Rectangle posB = characterPosLbl.getBounds();
-						JLabel characterDesLbl = mapElementsLbls.get(index+(map[0].length));
-						Rectangle desB = characterDesLbl.getBounds();
-						characterPosLbl.setBounds(desB);
-						characterDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, characterDesLbl);
-						mapElementsLbls.set((index+(map[0]).length), characterPosLbl);
-						result = (posY+1) + " " + posX + " " + (index+(map[0].length)) + " " + indexInList;
-						enemyPosList.remove(result);
-						enemyPosList.add(result);
-						map[posY][posX] = "f";
-						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-						result = "f "+result;
-					}
-				}else if(posY<posYC){
-					if (upPos[2].equals("i")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("m")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("n")) {
-						String str[] = map[posY-1][posX].trim().split(" ");
-						result = map[posY-1][posX]+" "+(posY-1)+" "+posX+" "+(index-map[0].length);
-					}
-					if (upPos[2].equals("h")) {
-						result = "h";
-					}
-					if (upPos[2].equals("f")) {
-						JLabel characterPosLbl = mapElementsLbls.get(index);
-						//change label_noneplayer_list
-						int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
-						String str[] = characterPosLbl.getText().trim().split(" ");
-						str[0] = Integer.parseInt(str[0]) -1+"";
-						String back_text = str[0]+" "+str[1]+" "+str[2]+" "+str[3]+" "+str[4];
-						label_noneplayer_list.get(index_noneplayer).setText(back_text);
-						//end
-						Rectangle posB = characterPosLbl.getBounds();
-						JLabel characterDesLbl = mapElementsLbls.get(index-(map[0].length));
-						Rectangle desB = characterDesLbl.getBounds();
-						characterPosLbl.setBounds(desB);
-						characterDesLbl.setBounds(posB);
-						mapElementsLbls.set(index, characterDesLbl);
-						mapElementsLbls.set((index-(map[0]).length), characterPosLbl);
-						result = (posY-1) + " " + posX + " " + (index-(map[0].length)) + " " + indexInList;
-						enemyPosList.remove(result);
-						enemyPosList.add(result);
-						map[posY][posX] = "f";
-						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
-						result = "f "+result;
+				else
+				{
+					int curDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					if(lastDis < curDis)
+					{
+						lastDis = curDis;
+						nextMove = str_buffer;
 					}
 				}
 			}
-		}else if(moveType.equals("Move_Randomly")){
+			String nextInfo[] = nextMove.trim().split(" ");
+			int nextIndex = 0;
+			if(Integer.parseInt(nextInfo[2]) == posX)
+			{
+				if(Integer.parseInt(nextInfo[1])>posY)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+map[0].length);
+					nextIndex = index+map[0].length;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-map[0].length);
+					nextIndex = index-map[0].length;
+				}
+			}
+			if(Integer.parseInt(nextInfo[1]) == posY)
+			{
+				if(Integer.parseInt(nextInfo[2])>posX)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+1);
+					nextIndex = index+1;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-1);
+					nextIndex = index-1;
+				}
+			}
+			if(nextInfo[0].equals("f"))	
+			{
+				JLabel characterPosLbl = mapElementsLbls.get(index);
+				//change label_noneplayer_list
+				int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+				String str[] = characterPosLbl.getText().trim().split(" ");
+				String back_text = nextInfo[1]+" "+nextInfo[2]+" "+str[2]+" "+str[3]+" "+str[4];
+				label_noneplayer_list.get(index_noneplayer).setText(back_text);
+				//end
+				Rectangle posB = characterPosLbl.getBounds();
+				JLabel characterDesLbl = mapElementsLbls.get(nextIndex);
+				Rectangle desB = characterDesLbl.getBounds();
+				characterPosLbl.setBounds(desB);
+				characterDesLbl.setBounds(posB);
+				mapElementsLbls.set(index, characterDesLbl);
+				mapElementsLbls.set(nextIndex, characterPosLbl);
+				String posIndex = nextInfo[1]+" "+nextInfo[2] + " " + nextIndex + " " + indexInList;
+				enemyPosList.remove(posIndex);
+				enemyPosList.add(posIndex);
+				map[posY][posX] = "f";
+				map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
+				logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+			}
+		}
+		else if(moveType.equals("Move_Randomly")){
 			ArrayList<String> canMove = new ArrayList<String>();
 
 			if (upPos[2].equals("f")) {
@@ -2739,6 +2612,333 @@ public class WarGameStartView extends JFrame implements Observer{
 				}
 			}
 		}
+		else if(moveType.equals("Loot_Chest"))
+		{
+			ArrayList<String> moveAble =new ArrayList<String>();
+			String nextMove = new String();
+			int lastDis = 0;
+			String right[] = map[posY][posX+1].trim().split(" ");
+			String left[] = map[posY][posX-1].trim().split(" ");
+			String up[] = map[posY-1][posX].trim().split(" ");
+			String down[] = map[posY+1][posX].trim().split(" ");
+			if(!(right[0].equals("x")||right[0].equals("n")||right[0].equals("I")))
+			{
+				moveAble.add(right[0]+" "+posY+" "+(posX+1));
+			}
+			if(!(left[0].equals("x")||left[0].equals("n")||left[0].equals("I")))
+			{
+				moveAble.add(left[0]+" "+posY+" "+(posX-1));
+			}
+			if(!(up[0].equals("x")||up[0].equals("n")||up[0].equals("I")))
+			{
+				moveAble.add(up[0]+" "+(posY-1)+" "+posX);
+			}
+			if(!(down[0].equals("x")||down[0].equals("n")||down[0].equals("I")))
+			{
+				moveAble.add(down[0]+" "+(posY+1)+" "+posX);
+			}
+			for(JLabel label_chest : mapElementsLbls)
+			{
+				String str[] = label_chest.getText().trim().split(" ");
+				if(str[0].equals("i"))
+				{
+					posYC = Integer.parseInt(str[1]);
+					posXC = Integer.parseInt(str[2]);
+					break;
+				}
+			}
+			for (String str_buffer : moveAble) 
+			{
+				String str[] =str_buffer.trim().split(" ");
+				if(moveAble.indexOf(str_buffer) == 0)
+				{
+					lastDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					nextMove = str_buffer;
+				}
+				else
+				{
+					int curDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					if(lastDis > curDis)
+					{
+						lastDis = curDis;
+						nextMove = str_buffer;
+					}
+				}
+			}
+			String nextInfo[] = nextMove.trim().split(" ");
+			int nextIndex = 0;
+			if(Integer.parseInt(nextInfo[2]) == posX)
+			{
+				if(Integer.parseInt(nextInfo[1])>posY)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+map[0].length);
+					nextIndex = index+map[0].length;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-map[0].length);
+					nextIndex = index-map[0].length;
+				}
+			}
+			if(Integer.parseInt(nextInfo[1]) == posY)
+			{
+				if(Integer.parseInt(nextInfo[2])>posX)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+1);
+					nextIndex = index+1;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-1);
+					nextIndex = index-1;
+				}
+			}
+			if(nextInfo[0].equals("f"))	
+			{
+				JLabel characterPosLbl = mapElementsLbls.get(index);
+				//change label_noneplayer_list
+				int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+				String str[] = characterPosLbl.getText().trim().split(" ");
+				String back_text = nextInfo[1]+" "+nextInfo[2]+" "+str[2]+" "+str[3]+" "+str[4];
+				label_noneplayer_list.get(index_noneplayer).setText(back_text);
+				//end
+				Rectangle posB = characterPosLbl.getBounds();
+				JLabel characterDesLbl = mapElementsLbls.get(nextIndex);
+				Rectangle desB = characterDesLbl.getBounds();
+				characterPosLbl.setBounds(desB);
+				characterDesLbl.setBounds(posB);
+				mapElementsLbls.set(index, characterDesLbl);
+				mapElementsLbls.set(nextIndex, characterPosLbl);
+				String posIndex = nextInfo[1]+" "+nextInfo[2] + " " + nextIndex + " " + indexInList;
+				enemyPosList.remove(posIndex);
+				enemyPosList.add(posIndex);
+				map[posY][posX] = "f";
+				map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
+				logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+			}
+		}
+		else if(moveType.equals("Kill_Enemy"))
+		{
+			ArrayList<String> moveAble =new ArrayList<String>();
+			String nextMove = new String();
+			int lastDis = 0;
+			String right[] = map[posY][posX+1].trim().split(" ");
+			String left[] = map[posY][posX-1].trim().split(" ");
+			String up[] = map[posY-1][posX].trim().split(" ");
+			String down[] = map[posY+1][posX].trim().split(" ");
+			if(!(right[0].equals("x")||right[0].equals("n")||right[0].equals("I")))
+			{
+				moveAble.add(right[0]+" "+posY+" "+(posX+1));
+			}
+			if(!(left[0].equals("x")||left[0].equals("n")||left[0].equals("I")))
+			{
+				moveAble.add(left[0]+" "+posY+" "+(posX-1));
+			}
+			if(!(up[0].equals("x")||up[0].equals("n")||up[0].equals("I")))
+			{
+				moveAble.add(up[0]+" "+(posY-1)+" "+posX);
+			}
+			if(!(down[0].equals("x")||down[0].equals("n")||down[0].equals("I")))
+			{
+				moveAble.add(down[0]+" "+(posY+1)+" "+posX);
+			}
+			for(JLabel label_chest : mapElementsLbls)
+			{
+				String str[] = label_chest.getText().trim().split(" ");
+				if(str[0].equals("m"))
+				{
+					posYC = Integer.parseInt(str[1]);
+					posXC = Integer.parseInt(str[2]);
+					break;
+				}
+			}
+			for (String str_buffer : moveAble) 
+			{
+				String str[] =str_buffer.trim().split(" ");
+				if(moveAble.indexOf(str_buffer) == 0)
+				{
+					lastDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					nextMove = str_buffer;
+				}
+				else
+				{
+					int curDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					if(lastDis > curDis)
+					{
+						lastDis = curDis;
+						nextMove = str_buffer;
+					}
+				}
+			}
+			String nextInfo[] = nextMove.trim().split(" ");
+			int nextIndex = 0;
+			if(Integer.parseInt(nextInfo[2]) == posX)
+			{
+				if(Integer.parseInt(nextInfo[1])>posY)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+map[0].length);
+					nextIndex = index+map[0].length;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-map[0].length);
+					nextIndex = index-map[0].length;
+				}
+			}
+			if(Integer.parseInt(nextInfo[1]) == posY)
+			{
+				if(Integer.parseInt(nextInfo[2])>posX)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+1);
+					nextIndex = index+1;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-1);
+					nextIndex = index-1;
+				}
+			}
+			if(nextInfo[0].equals("f"))	
+			{
+				JLabel characterPosLbl = mapElementsLbls.get(index);
+				//change label_noneplayer_list
+				int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+				String str[] = characterPosLbl.getText().trim().split(" ");
+				String back_text = nextInfo[1]+" "+nextInfo[2]+" "+str[2]+" "+str[3]+" "+str[4];
+				label_noneplayer_list.get(index_noneplayer).setText(back_text);
+				//end
+				Rectangle posB = characterPosLbl.getBounds();
+				JLabel characterDesLbl = mapElementsLbls.get(nextIndex);
+				Rectangle desB = characterDesLbl.getBounds();
+				characterPosLbl.setBounds(desB);
+				characterDesLbl.setBounds(posB);
+				mapElementsLbls.set(index, characterDesLbl);
+				mapElementsLbls.set(nextIndex, characterPosLbl);
+				String posIndex = nextInfo[1]+" "+nextInfo[2] + " " + nextIndex + " " + indexInList;
+				enemyPosList.remove(posIndex);
+				enemyPosList.add(posIndex);
+				map[posY][posX] = "f";
+				map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
+				logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+			}
+		}
+		else if(moveType.equals("Reach_Exit"))
+		{
+			ArrayList<String> moveAble =new ArrayList<String>();
+			String nextMove = new String();
+			int lastDis = 0;
+			String right[] = map[posY][posX+1].trim().split(" ");
+			String left[] = map[posY][posX-1].trim().split(" ");
+			String up[] = map[posY-1][posX].trim().split(" ");
+			String down[] = map[posY+1][posX].trim().split(" ");
+			if(!(right[0].equals("x")||right[0].equals("n")||right[0].equals("I")))
+			{
+				moveAble.add(right[0]+" "+posY+" "+(posX+1));
+			}
+			if(!(left[0].equals("x")||left[0].equals("n")||left[0].equals("I")))
+			{
+				moveAble.add(left[0]+" "+posY+" "+(posX-1));
+			}
+			if(!(up[0].equals("x")||up[0].equals("n")||up[0].equals("I")))
+			{
+				moveAble.add(up[0]+" "+(posY-1)+" "+posX);
+			}
+			if(!(down[0].equals("x")||down[0].equals("n")||down[0].equals("I")))
+			{
+				moveAble.add(down[0]+" "+(posY+1)+" "+posX);
+			}
+			for(JLabel label_chest : mapElementsLbls)
+			{
+				String str[] = label_chest.getText().trim().split(" ");
+				if(str[0].equals("O"))
+				{
+					posYC = Integer.parseInt(str[1]);
+					posXC = Integer.parseInt(str[2]);
+					break;
+				}
+			}
+			for (String str_buffer : moveAble) 
+			{
+				String str[] =str_buffer.trim().split(" ");
+				if(moveAble.indexOf(str_buffer) == 0)
+				{
+					lastDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					nextMove = str_buffer;
+				}
+				else
+				{
+					int curDis = Math.abs(Integer.parseInt(str[1])-posYC)+Math.abs(Integer.parseInt(str[2])-posXC);
+					if(lastDis > curDis)
+					{
+						lastDis = curDis;
+						nextMove = str_buffer;
+					}
+				}
+			}
+			String nextInfo[] = nextMove.trim().split(" ");
+			int nextIndex = 0;
+			if(Integer.parseInt(nextInfo[2]) == posX)
+			{
+				if(Integer.parseInt(nextInfo[1])>posY)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+map[0].length);
+					nextIndex = index+map[0].length;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-map[0].length);
+					nextIndex = index-map[0].length;
+				}
+			}
+			if(Integer.parseInt(nextInfo[1]) == posY)
+			{
+				if(Integer.parseInt(nextInfo[2])>posX)
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index+1);
+					nextIndex = index+1;
+				}
+				else
+				{
+					result =map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])]+" "+nextInfo[1]
+							+" "+nextInfo[2]+" "+(index-1);
+					nextIndex = index-1;
+				}
+			}
+			if(nextInfo[0].equals("f"))	
+			{
+				JLabel characterPosLbl = mapElementsLbls.get(index);
+				//change label_noneplayer_list
+				int index_noneplayer = label_noneplayer_list.indexOf(characterPosLbl);
+				String str[] = characterPosLbl.getText().trim().split(" ");
+				String back_text = nextInfo[1]+" "+nextInfo[2]+" "+str[2]+" "+str[3]+" "+str[4];
+				label_noneplayer_list.get(index_noneplayer).setText(back_text);
+				//end
+				Rectangle posB = characterPosLbl.getBounds();
+				JLabel characterDesLbl = mapElementsLbls.get(nextIndex);
+				Rectangle desB = characterDesLbl.getBounds();
+				characterPosLbl.setBounds(desB);
+				characterDesLbl.setBounds(posB);
+				mapElementsLbls.set(index, characterDesLbl);
+				mapElementsLbls.set(nextIndex, characterPosLbl);
+				String posIndex = nextInfo[1]+" "+nextInfo[2] + " " + nextIndex + " " + indexInList;
+				enemyPosList.remove(posIndex);
+				enemyPosList.add(posIndex);
+				map[posY][posX] = "f";
+				map[Integer.parseInt(nextInfo[1])][Integer.parseInt(nextInfo[2])] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
+				logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+			}
+		}
 		return result;
 	}
 	/**
@@ -2913,16 +3113,16 @@ public class WarGameStartView extends JFrame implements Observer{
 					{
 						characterTarget = startModel.fightChange(characterForStrategy, characterTarget);
 						mapOnPage.getContainFriends().set(Integer.parseInt(strIndex[2]), characterTarget);
-						map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterTarget.getCharacterID()+" "+strIndex[2];
 						int indexInOrder = orderList.indexOf("n "+strIndex[2]);
-						mapOnPage.getContainEnemies().add(characterTarget);
-						orderList.set(indexInOrder, "m "+(mapOnPage.getContainEnemies().size()-1));
-						mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monsterHighlight);
+						friendPosList.remove(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
+						enemyPosList.add(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
+						map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterTarget.getCharacterID()+" "+strIndex[2];
+						mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monster);
 						mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strIndex[2]);
-						String posToDelete = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2];
-						String posToAdd = strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+(mapOnPage.getContainEnemies().size()-1);
-						friendPosList.remove(posToDelete);
-						enemyPosList.add(posToAdd);
+						frame.repaint();
+						orderList.set(indexInOrder, "m "+mapOnPage.getContainEnemies().size());
+						mapOnPage.getContainEnemies().add(characterTarget);
+						//mapOnPage.getContainEnemies().set(Integer.parseInt(strIndex[2]), characterTarget);
 						fight_times = 1;
 					}
 					else
