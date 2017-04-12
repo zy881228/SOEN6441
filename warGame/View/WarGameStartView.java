@@ -163,16 +163,16 @@ public class WarGameStartView extends JFrame implements Observer{
 			for (int i = 0; i < orderList.size(); i++) {
 				int randomNum = random.nextInt(20)+1;
 				if (orderList.get(i).equals("Player")) {
-					System.out.println("Player  roll "+randomNum);
-					System.out.println("Player's dexterity modifier is "+characterModel.getScore(13)[1]);
+					logging("Player  roll "+randomNum);
+					logging("Player's dexterity modifier is "+characterModel.getScore(13)[1]);
 					randomNum += Integer.parseInt(characterModel.getScore(13)[1]);
 				}else if (orderList.get(i).startsWith("m")) {
-					System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
-					System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
+					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
+					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
 					randomNum += Integer.parseInt(mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
 				}else if (orderList.get(i).startsWith("n")) {
-					System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
-					System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
+					logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+" roll "+randomNum);
+					logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s dexterity modifier is "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
 					randomNum += Integer.parseInt(mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1])).getScore(13)[1]);
 				}
 				if (orderListMap.containsKey(randomNum)) {
@@ -200,14 +200,14 @@ public class WarGameStartView extends JFrame implements Observer{
 			for (Integer integer : allKeysInMap) {
 				orderList.add(orderListMap.get(integer));
 			}
-			System.out.println("The order to take turn:");
+			logging("The order to take turn:");
 			for (String string : orderList) {
 				if (string.equals("Player")) {
-					System.out.println("Player");
+					logging("Player");
 				}else if (string.startsWith("m")) {
-					System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1])));
+					logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1])));
 				}else if (string.startsWith("n")) {
-					System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1])));
+					logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1])));
 				}
 			}
 			((WarGameStartModel) o).setOrderList(orderList);
@@ -235,7 +235,7 @@ public class WarGameStartView extends JFrame implements Observer{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_LEFT){
-					if(characterForStrategy.equals(characterModel))
+					if(characterForStrategy.equals(characterModel)&&(step_times<3)&&(!characterModel.getStatus().contains("Freezing")))
 					{
 						setPanel(characterModel);
 						frame.repaint();
@@ -259,20 +259,21 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = posY + " " + (posX-1) + " " + (index-1);
 							map[posY][posX] = "f";
 							map[posY][posX-1] = "h";
+							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(leftPos[2].equals("m")){
-							String str[] = map[posY][posX-1].trim().split(" ");
-							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
-							if(leftPos[3].equals("alive"))
-							{
-								JOptionPane.showMessageDialog(null, "Monster Dead!");
-								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
-							}
-							if(leftPos[3].equals("dead"))
-							{
-								getAllItem();
-								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
-							}
+//							String str[] = map[posY][posX-1].trim().split(" ");
+//							nonePlayerModel = mapOnPage.getContainEnemies().get(Integer.parseInt(str[2]));
+//							if(leftPos[3].equals("alive"))
+//							{
+//								JOptionPane.showMessageDialog(null, "Monster Dead!");
+//								mapElementsLbls.get(index-1).setText(posY+" "+(posX-1)+" "+"m dead");
+//							}
+//							if(leftPos[3].equals("dead"))
+//							{
+//								getAllItem();
+//								mapOnPage.getContainEnemies().set(Integer.parseInt(str[2]), nonePlayerModel);
+//							}
 						}else if(leftPos[2].equals("i")){
 							String str[] = map[posY][posX-1].trim().split(" ");
 							itemModel = mapOnPage.getContainItems().get(Integer.parseInt(str[2]));
@@ -363,9 +364,20 @@ public class WarGameStartView extends JFrame implements Observer{
 							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
 					}
+					else
+					{
+						if(step_times>2)
+						{
+							logging("Player had move 3 times, Player can't move!");
+						}
+						else if(characterModel.getStatus().contains("Freezing"))
+						{
+							logging("Player's status is Freezing, Player can't move!");
+						}
+					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-					if(characterForStrategy.equals(characterModel))
+					if(characterForStrategy.equals(characterModel)&&(step_times<3)&&(!characterModel.getStatus().contains("Freezing")))
 					{
 						setPanel(characterModel);
 						frame.repaint();
@@ -389,6 +401,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = posY + " " + (posX+1) + " " + (index+1);
 							map[posY][posX] = "f";
 							map[posY][posX+1] = "h";		
+							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(rightPos[2].equals("m")){
 							String str[] = map[posY][posX+1].trim().split(" ");
@@ -493,9 +506,20 @@ public class WarGameStartView extends JFrame implements Observer{
 							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
 					}
+					else
+					{
+						if(step_times>2)
+						{
+							logging("Player had move 3 times, Player can't move!");
+						}
+						else if(characterModel.getStatus().contains("Freezing"))
+						{
+							logging("Player's status is Freezing, Player can't move!");
+						}
+					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_UP){
-					if(characterForStrategy.equals(characterModel))
+					if(characterForStrategy.equals(characterModel)&&(step_times<3)&&(!characterModel.getStatus().contains("Freezing")))
 					{
 						setPanel(characterModel);
 						frame.repaint();
@@ -522,6 +546,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = (posY-1) + " " + posX + " " + (index-(map[0].length));
 							map[posY][posX] = "f";
 							map[posY-1][posX] = "h";
+							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(upPos[2].equals("m")){
 							String str[] = map[posY-1][posX].trim().split(" ");
@@ -627,9 +652,20 @@ public class WarGameStartView extends JFrame implements Observer{
 							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
 					}
+					else
+					{
+						if(step_times>2)
+						{
+							logging("Player had move 3 times, Player can't move!");
+						}
+						else if(characterModel.getStatus().contains("Freezing"))
+						{
+							logging("Player's status is Freezing, Player can't move!");
+						}
+					}
 				}
 				if(e.getKeyCode() == KeyEvent.VK_DOWN){
-					if(characterForStrategy.equals(characterModel))
+					if(characterForStrategy.equals(characterModel)&&(step_times<3)&&(!characterModel.getStatus().contains("Freezing")))
 					{
 						setPanel(characterModel);
 						frame.repaint();
@@ -656,6 +692,7 @@ public class WarGameStartView extends JFrame implements Observer{
 							heroPos = (posY+1) + " " + posX + " " + (index+(map[0].length));
 							map[posY][posX] = "f";
 							map[posY+1][posX] = "h";		
+							step_times++;
 							showHighlight(characterForStrategy, "Player",heroPos);
 						}else if(downPos[2].equals("m")){
 							String str[] = map[posY+1][posX].trim().split(" ");
@@ -760,37 +797,34 @@ public class WarGameStartView extends JFrame implements Observer{
 							mapOnPage.getContainFriends().set(Integer.parseInt(str[2]), nonePlayerModel);
 						}
 					}
+					else
+					{
+						if(step_times>2)
+						{
+							logging("Player had move 3 times, Player can't move!");
+						}
+						else if(characterModel.getStatus().contains("Freezing"))
+						{
+							logging("Player's status is Freezing, Player can't move!");
+						}
+					}
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_SPACE){
-					System.out.println("Round "+round);
+					logging("Round "+round);
 					for (String string : orderList) {
 						if (string.equals("Player")) {
-							System.out.println("Player turn");
+							fight_times = 0;
+							step_times = 0;
+							logging("Player turn");
 							characterForStrategy = characterModel;
 							((WarGameStartModel) o).setStrategy(new HumanPlayer(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
 							showHighlight(characterForStrategy, "Player", heroPos);
 							break;
-//							characterActionsByMap.put(string, actionList);
-//							takeAction(characterActionsByMap);
-//							if (actionList.contains("Freezing")) {
-//								if (specialTurn<1) {
-//									characterForStrategy = characterModel;
-//									actionList.remove("Freezing");
-//									break;
-//								}else{
-//									System.out.println("Play is freezing for "+specialTurn+" turn(s)");
-//									break;
-//								}
-//							}else{
-//								characterForStrategy = characterModel;
-//								break;
-//							}
-							
 						}else if (string.startsWith("m")) {
-							System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+							fight_times = 0;
+							logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
 							characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
-//							showHighlight(characterForStrategy, string);
 							((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
@@ -800,11 +834,10 @@ public class WarGameStartView extends JFrame implements Observer{
 							} catch (InterruptedException e1) {
 								e1.printStackTrace();
 							}
-//							frame.repaint();
 						}else if (string.startsWith("n")) {
-							System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
+							fight_times = 0;
+							logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]))+"'s turn");
 							characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(string.split(" ")[1]));
-//							showHighlight(characterForStrategy, string);
 							((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
 							actionList = ((WarGameStartModel) o).turn();
 							characterActionsByMap.clear();
@@ -814,44 +847,53 @@ public class WarGameStartView extends JFrame implements Observer{
 							} catch (InterruptedException e1) {
 								e1.printStackTrace();
 							}
-//							frame.repaint();
 						}
-					}//for	
+					}//for
+					
 				}
 				else if(e.getKeyCode() == KeyEvent.VK_O){
-					for (int i = orderList.indexOf("Player")+1; i < orderList.size(); i++) {
-						if (orderList.get(i).startsWith("m")) {
-							System.out.println("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
-							characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-							//showHighlight(characterForStrategy, orderList.get(i));
-							((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
-							actionList = ((WarGameStartModel) o).turn();
-							characterActionsByMap.clear();
-							characterActionsByMap.put(orderList.get(i), actionList);
-							try {
-								takeAction(characterActionsByMap);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
+					if (orderList.indexOf("Player")==orderList.size()-1) {
+						round++;
+						JOptionPane.showMessageDialog(null, "Round End!");
+						if (characterModel.getStatus().contains("Freezing")) {
+							characterModel.getStatus().remove("Freezing");
+						}
+					}else{
+						for (int i = orderList.indexOf("Player")+1; i < orderList.size(); i++) {
+							if (orderList.get(i).startsWith("m")) {
+								fight_times = 0;
+								logging("Aggressive "+mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
+								characterForStrategy = mapOnPage.getContainEnemies().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
+								((WarGameStartModel) o).setStrategy(new AggressiveNPC(), characterForStrategy);
+								actionList = ((WarGameStartModel) o).turn();
+								characterActionsByMap.clear();
+								characterActionsByMap.put(orderList.get(i), actionList);
+								try {
+									takeAction(characterActionsByMap);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
+							}else if (orderList.get(i).startsWith("n")) {
+								fight_times = 0;
+								logging("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
+								characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
+								((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
+								actionList = ((WarGameStartModel) o).turn();
+								characterActionsByMap.clear();
+								characterActionsByMap.put(orderList.get(i), actionList);
+								try {
+									takeAction(characterActionsByMap);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
 							}
-//							frame.repaint();
-						}else if (orderList.get(i).startsWith("n")) {
-							System.out.println("Friendly "+mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]))+"'s turn");
-							characterForStrategy = mapOnPage.getContainFriends().get(Integer.parseInt(orderList.get(i).split(" ")[1]));
-							//showHighlight(characterForStrategy, orderList.get(i));
-							((WarGameStartModel) o).setStrategy(new FriendlyNPC(), characterForStrategy);
-							actionList = ((WarGameStartModel) o).turn();
-							characterActionsByMap.clear();
-							characterActionsByMap.put(orderList.get(i), actionList);
-							try {
-								takeAction(characterActionsByMap);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
-							}
-//							frame.repaint();
+						}
+						round++;
+						JOptionPane.showMessageDialog(null, "Round End!");
+						if (characterModel.getStatus().contains("Freezing")) {
+							characterModel.getStatus().remove("Freezing");
 						}
 					}
-					round++;
-					JOptionPane.showMessageDialog(null, "Round End!");
 				}
 			}//keypressed
 		});
@@ -1033,7 +1075,6 @@ public class WarGameStartView extends JFrame implements Observer{
 							JLabel label_buffer = new JLabel();
 							label_buffer = label_noneplayer_list.get(event_i);
 							String text = label_buffer.getText();
-							
 							String str[] = text.trim().split(" ");
 							String pos = str[0]+" "+str[1]+" "+(Integer.parseInt(str[0])*(map[0].length)+Integer.parseInt(str[1]));
 							WarGameCharacterModel characterModel = mapOnPage.getContainFriends().get(Integer.parseInt(str[4]));
@@ -1042,26 +1083,42 @@ public class WarGameStartView extends JFrame implements Observer{
 						}
 						if(e.getButton() == MouseEvent.BUTTON3)
 						{
-							for (String hlTarget : highLightList) {
-								String strHL[] = hlTarget.trim().split(" ");
+							if(fight_times == 0)
+							{
+								int count = 0;
 								JLabel label_buffer = new JLabel();
 								label_buffer = label_noneplayer_list.get(event_i);
 								String text = label_buffer.getText();
 								String strTarget[] = text.trim().split(" ");
-								if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
-								{
-									WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
-									String hitPoints[] = characterModelTarget.getScore(7);
-									if(Integer.parseInt(hitPoints[1]) > 0)
+								WarGameCharacterModel characterModelTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strTarget[4]));
+								for (String hlTarget : highLightList) {
+									String strHL[] = hlTarget.trim().split(" ");
+									if(strHL[1].equals(strTarget[0])&&strHL[2].equals(strTarget[1]))
 									{
-										characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
-										mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+										String hitPoints[] = characterModelTarget.getScore(7);
+										if(Integer.parseInt(hitPoints[1]) > 0)
+										{
+											characterModelTarget = ((WarGameStartModel) o).fightChange(characterModel, characterModelTarget);
+											mapOnPage.getContainEnemies().set(Integer.parseInt(strTarget[4]), characterModelTarget);
+											fight_times =1;
+										}
+										else
+										{
+											logging("Character"+characterModelTarget.getCharacterID()+" is dead! Can't be attack!");
+										}
+										count = 0;
+										break;
 									}
-									else
-									{
-										logging("Character"+characterModelTarget.getCharacterID()+" is dead! Can't be attack!");
-									}
+									count++;
 								}
+								if(count == highLightList.size())
+								{
+									logging("Character"+characterModelTarget.getCharacterID()+" is not in the attack range");
+								}
+							}
+							else
+							{
+								logging("Player had attacked!");
 							}
 						}
 					}
@@ -1438,7 +1495,6 @@ public class WarGameStartView extends JFrame implements Observer{
      * get the item from the loot when monster dead
      * 
      */
-	
 	public void getAllItem()
 	{
 		String equip_buffer[] = nonePlayerModel.getEquip();
@@ -1881,7 +1937,6 @@ public class WarGameStartView extends JFrame implements Observer{
 		backpack_view = new String[10];
 		equip_view = characterModel.getEquip();
 		backpack_view = characterModel.getBackpack();
-		System.out.println(equip_view[6]);
 		for(int i=0;i<12;i++)
 		{
 			String result[] = characterModel.getScore(i);
@@ -1939,16 +1994,18 @@ public class WarGameStartView extends JFrame implements Observer{
 				ArrayList<String> actions = characterActionsByMap.get(string);
 				for (String action : actions) {
 					if (action.equals("Freezing")) {
-						System.out.println("Freezing, Cannot move");
+						logging("Freezing, Cannot move");
 						break;
 					}
 					if(action.equals("Frightening")){
 						//反向移动
-						System.out.println("Frightening, Escape");
+						logging("Frightening, Escape");
 						for (int i = 0; i < 3; i++) {
 							for (String strPos : enemyPosList) {
 								if (strPos.split(" ")[3].equals(indexInList)) {
 									enemyPos = strPos;
+									showHighlight(characterForStrategy, "m",enemyPos);
+									getTargetAndAttack();
 								}
 							}
 							String result[];
@@ -1957,23 +2014,28 @@ public class WarGameStartView extends JFrame implements Observer{
 							if(result[0].equals("f"))
 							{
 								pos = result[1]+" "+result[2]+" "+result[3];
+								showHighlight(characterForStrategy, "m",pos);
+								getTargetAndAttack();
 							}
 							else
 							{
 								String str[] = enemyPos.trim().split(" ");
 								pos = str[0]+" "+str[1]+" "+str[2];
+								showHighlight(characterForStrategy, "m",pos);
 							}
-							showHighlight(characterForStrategy, "m",pos);
 						}
 					}
 					if(action.equals("Move_Aggressively")){
 						//目标移动
-						System.out.println("Move aggressively");
+						logging("Move aggressively");
 						String result[];
 						for (int i = 0; i < 3; i++) {
+							
 							for (String strPos : enemyPosList) {
 								if (strPos.split(" ")[3].equals(indexInList)) {
 									enemyPos = strPos;
+									showHighlight(characterForStrategy, "m",enemyPos);
+									getTargetAndAttack();
 								}
 							}
 							result = characterMovement(enemyPos, "Move_Aggressively").split(" ");
@@ -1981,15 +2043,18 @@ public class WarGameStartView extends JFrame implements Observer{
 							if(result[0].equals("f"))
 							{
 								pos = result[1]+" "+result[2]+" "+result[3];
+								showHighlight(characterForStrategy, "m",pos);
+								getTargetAndAttack();
 							}
 							else
 							{
 								String str[] = enemyPos.trim().split(" ");
 								pos = str[0]+" "+str[1]+" "+str[2];
+								showHighlight(characterForStrategy, "m",pos);
 							}
-							showHighlight(characterForStrategy, "m",pos);
 							if (result[0].equals("i")) {
 								//loot a chest
+								i = i-1;
 								itemModel = mapOnPage.getContainItems().get(Integer.parseInt(result[2]));
 								String itemType = itemModel.getItemType();
 								String enchanType = itemModel.getEnchanType();
@@ -2037,21 +2102,14 @@ public class WarGameStartView extends JFrame implements Observer{
 										}
 									}
 								}
-								System.out.println("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
+								logging("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
 							}else if(result[0].equals("m")){
-								//attack
-								
-								System.out.println("Reach monster "+ mapOnPage.getContainEnemies().get(Integer.parseInt(result[2])));
+								//attack	
 							}else if(result[0].equals("n")){
-								//attack
-								
-								System.out.println("Reach friend "+ mapOnPage.getContainFriends().get(Integer.parseInt(result[2])));
+								//attack										
 							}else if(result[0].equals("h")){
 								//attack
-								
-								System.out.println("Reach player");
 							}
-							showHighlight(characterForStrategy, "m",pos);
 						}
 					}
 				}
@@ -2059,7 +2117,7 @@ public class WarGameStartView extends JFrame implements Observer{
 				ArrayList<String> actions = characterActionsByMap.get(string);
 				for (String action : actions) {
 					if(action.equals("Move_Randomly")){
-						System.out.println("Move Randomly");
+						logging("Move Randomly");
 						String result[];
 						for (int i = 0; i < 3; i++) {
 							for (String strPos : friendPosList) {
@@ -2072,15 +2130,17 @@ public class WarGameStartView extends JFrame implements Observer{
 							if(result[0].equals("f"))
 							{
 								pos = result[1]+" "+result[2]+" "+result[3];
+								showHighlight(characterForStrategy, "n",pos);
 							}
 							else
 							{
 								String str[] = enemyPos.trim().split(" ");
 								pos = str[0]+" "+str[1]+" "+str[2];
+								showHighlight(characterForStrategy, "n",pos);
 							}
-							showHighlight(characterForStrategy, "n",pos);
 							if (result[0].equals("i")) {
 								//loot chest
+								i = i-1;
 								itemModel = mapOnPage.getContainItems().get(Integer.parseInt(result[2]));
 								String itemType = itemModel.getItemType();
 								String enchanType = itemModel.getEnchanType();
@@ -2128,7 +2188,7 @@ public class WarGameStartView extends JFrame implements Observer{
 										}
 									}
 								}
-								System.out.println("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
+								logging("Reach item "+ mapOnPage.getContainItems().get(Integer.parseInt(result[2])));
 							}
 						}
 					}
@@ -2209,7 +2269,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					enemyPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}else if(posX>posXC){
@@ -2249,7 +2309,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					enemyPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}else{
@@ -2290,7 +2350,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						enemyPosList.add(result);
 						map[posY][posX] = "f";
 						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 						result = "f "+result;
 					}
 				}else if(posY>posYC){
@@ -2330,7 +2390,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						enemyPosList.add(result);
 						map[posY][posX] = "f";
 						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 						result = "f "+result;
 					}
 				}
@@ -2373,7 +2433,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					enemyPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX+1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}else if(posX<posXC){
@@ -2413,7 +2473,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					enemyPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX-1] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+					logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}else{
@@ -2454,7 +2514,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						enemyPosList.add(result);
 						map[posY][posX] = "f";
 						map[posY+1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 						result = "f "+result;
 					}
 				}else if(posY<posYC){
@@ -2494,7 +2554,7 @@ public class WarGameStartView extends JFrame implements Observer{
 						enemyPosList.add(result);
 						map[posY][posX] = "f";
 						map[posY-1][posX] = "m"+" "+ mapOnPage.getContainEnemies().get(indexInList).getCharacterID() + " " + indexInList;
-						System.out.println(mapOnPage.getContainEnemies().get(indexInList)+" moved");
+						logging(mapOnPage.getContainEnemies().get(indexInList)+" moved");
 						result = "f "+result;
 					}
 				}
@@ -2556,7 +2616,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY-1][posX] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					logging(mapOnPage.getContainFriends().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}
@@ -2597,7 +2657,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY+1][posX] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					logging(mapOnPage.getContainFriends().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}
@@ -2638,7 +2698,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX-1] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					logging(mapOnPage.getContainFriends().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}
@@ -2679,7 +2739,7 @@ public class WarGameStartView extends JFrame implements Observer{
 					friendPosList.add(result);
 					map[posY][posX] = "f";
 					map[posY][posX+1] = "n"+" "+ mapOnPage.getContainFriends().get(indexInList).getCharacterID() + " " + indexInList;
-					System.out.println(mapOnPage.getContainFriends().get(indexInList)+" moved");
+					logging(mapOnPage.getContainFriends().get(indexInList)+" moved");
 					result = "f "+result;
 				}
 			}
@@ -2766,10 +2826,11 @@ public class WarGameStartView extends JFrame implements Observer{
 				int result = Math.abs(posY-i)+Math.abs(posX-j);
 				if(result<(attackRange+1))
 				{
-					int indexTarget = index-(posY-i)*(map[0].length)-(posX-j);
-					String str[] = map[i][j].trim().split(" ");
-					String hlMember = str[0]+" "+i+" "+j+" "+indexTarget;
-					highLightList.add(hlMember);
+						int indexTarget = index-(posY-i)*(map[0].length)-(posX-j);
+						String str[] = map[i][j].trim().split(" ");
+						String hlMember = str[0]+" "+i+" "+j+" "+indexTarget;
+						highLightList.add(hlMember);
+					
 				}
 			}
 		}
@@ -2803,5 +2864,82 @@ public class WarGameStartView extends JFrame implements Observer{
 			}
 		}
 		return highLightList;
+	}
+	
+	public void getTargetAndAttack()
+	{
+		if (fight_times == 0) 
+		{
+			if (highLightList.contains("h "+heroPos))
+			{
+				String hitPoints[] = characterModel.getScore(7);
+				if (Integer.parseInt(hitPoints[1])>0) 
+				{
+					WarGameStartModel startModel = new WarGameStartModel();
+					//WarGameCharacterModel character = mapOnPage.getContainEnemies().get(Integer.parseInt(string.split(" ")[1]));
+					characterModel = startModel.fightChange(characterForStrategy, characterModel);
+					//mapOnPage.getContainEnemies().set(Integer.parseInt(result[2]), characterTarget);
+					fight_times = 1;
+				}
+				else
+				{
+					logging("Player is dead! Can't be attacked!");
+				}
+			}
+			for (String hlTarget : highLightList)
+			{
+				String strHL[] = hlTarget.trim().split(" ");
+				String strIndex[] = map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])].trim().split(" ");
+				if(strHL[0].equals("m"))
+				{
+					String currentPos[] = mapElementsLbls.get(Integer.parseInt(strHL[3])).getText().trim().split(" ");
+					if(!(strHL[1].equals(currentPos[0])&&strHL[2].equals(currentPos[1])))
+					{
+						WarGameStartModel startModel = new WarGameStartModel();
+						WarGameCharacterModel characterTarget = mapOnPage.getContainEnemies().get(Integer.parseInt(strIndex[2]));
+						if(Integer.parseInt(characterTarget.getScore(7)[1])>0)
+						{
+							characterTarget = startModel.fightChange(characterForStrategy, characterTarget);
+							mapOnPage.getContainEnemies().set(Integer.parseInt(strIndex[2]), characterTarget);
+							fight_times = 1;
+						}
+						else
+						{
+							logging("Character"+characterTarget.getCharacterID()+" is dead! Can't be attacked!");
+						}
+					}
+					
+				}
+				if(strHL[0].equals("n"))
+				{
+					WarGameStartModel startModel = new WarGameStartModel();
+					WarGameCharacterModel characterTarget = mapOnPage.getContainFriends().get(Integer.parseInt(strIndex[2]));
+					if(Integer.parseInt(characterTarget.getScore(7)[1])>0)
+					{
+						characterTarget = startModel.fightChange(characterForStrategy, characterTarget);
+						mapOnPage.getContainFriends().set(Integer.parseInt(strIndex[2]), characterTarget);
+						int indexInOrder = orderList.indexOf("n "+strIndex[2]);
+						friendPosList.remove(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
+						enemyPosList.add(strHL[1]+" "+strHL[2]+" "+strHL[3]+" "+strIndex[2]);
+						map[Integer.parseInt(strHL[1])][Integer.parseInt(strHL[2])] = "m"+" "+characterTarget.getCharacterID()+" "+strIndex[2];
+						mapElementsLbls.get(Integer.parseInt(strHL[3])).setIcon(monster);
+						mapElementsLbls.get(Integer.parseInt(strHL[3])).setText(strHL[1]+" "+strHL[2]+" "+"m alive"+" "+strIndex[2]);
+						frame.repaint();
+						orderList.set(indexInOrder, "m "+mapOnPage.getContainEnemies().size());
+						mapOnPage.getContainEnemies().add(characterTarget);
+						fight_times = 1;
+					}
+					else
+					{
+						logging("Character"+characterTarget.getCharacterID()+" is dead! Can't be attacked!");
+					}
+				}
+			}
+		
+		}
+		else
+		{
+			logging("Character"+characterForStrategy.getCharacterID()+" had attacked!");
+		}
 	}
 }
