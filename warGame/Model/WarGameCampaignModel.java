@@ -50,7 +50,12 @@ public class WarGameCampaignModel extends Observable{
 		this.campaignName = campaignName;
 	}
 	
-	/**
+    public void setCampaignView(){
+        setChanged();
+        notifyObservers(this);
+    }
+	
+    /**
 	 * used in controller to call the viewer
 	 */
 	public void setCampaignCreationView(){
