@@ -439,6 +439,34 @@ public class WarGameItemModel extends Observable{
         pauseFlag = false;
         resumePlease();
     }
+	
+	//change initial
+	public void pbInit()
+    {
+        try
+        {
+            rStore = RecordStore.openRecordStore("pbRS", true);
+        }
+        catch(Exception exception) { }
+        loadData();
+        loadImages();
+        setBGImage();
+        sD = new Sound[3];
+        setSound("pyonpa.wav", 0);
+        setSound("erase.wav", 1);
+        setSound("shot.wav", 2);
+        strItem = new StringItem[pMstr.length];
+        for(int i = 0; i < pMstr.length; i++)
+            strItem[i] = new StringItem("", pMstr[i]);
+
+        cBack = new Command("back", 2, 1);
+        hForm = new Form("Help");
+        for(int j = 0; j < pMstr.length; j++)
+            hForm.append(strItem[j]);
+
+        hForm.addCommand(cBack);
+        hForm.setCommandListener(this);
+    }
 /****************************added******************************************/
 	private
     
