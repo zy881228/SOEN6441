@@ -123,6 +123,7 @@ public class WarGameItemModel extends Observable{
 		notifyObservers(this);
 	}
 	
+   
     
     /**
      * Get all items
@@ -298,6 +299,11 @@ public class WarGameItemModel extends Observable{
 		fw.close();
 		return true;
 	}
+    
+    public void setItemView(){
+        setChanged();
+        notifyObservers(this);
+    }
 	
 	/**
 	 * item adaption
