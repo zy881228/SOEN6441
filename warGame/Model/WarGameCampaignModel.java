@@ -26,10 +26,13 @@ public class WarGameCampaignModel extends Observable{
 	 * campaign name
 	 */
 	private String campaignName;
+    private String campaignType;
 	/**
 	 * contains map
 	 */
 	private ArrayList<String> mapLists;
+    
+    
 
 	
 //--------------------------------------------------Methods--------------------------------------------------	
@@ -298,7 +301,12 @@ public class WarGameCampaignModel extends Observable{
 	public void setMapLists(ArrayList<String> mapLists) {
 		this.mapLists = mapLists;
 	}
-	
+    public String getCampaignType(){
+        return campaignType;
+    }
+    public void setCampaignType(String newType){
+        this.campaignType = newType;
+    }
 	/**
 	 * override the toString method
 	 */
