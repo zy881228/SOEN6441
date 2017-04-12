@@ -538,7 +538,15 @@ public class WarGameItemModel extends Observable{
 		String info = itemType+" "+enchanType+" "+enchanNumber;
 		return info;
 	}
-	
+    public void setItemType(String newType){
+        this.itemType = newType;
+    }
+    public void setViewType(int newViewTpe){
+        this.viewType = newViewTpe;
+    }
+    public void setItemID(String newItemID){
+        this.ItemID = newItemID;
+    }
 	 /**
      * <p>set the item enchanNum<br/>
      */
