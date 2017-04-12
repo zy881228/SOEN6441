@@ -217,7 +217,6 @@ public class WarGameStartModel extends Observable{
 		count =0;
 		for(WarGameItemModel itemModel_buffer : mapModel.getContainItems())
 		{
-			System.out.println(itemModel_buffer.getAttackRange());
 			String enchanNum = itemModel_buffer.itemAdaption(level);
 			itemModel_buffer.setEnchanNum(enchanNum);
 			mapModel.getContainItems().set(count, itemModel_buffer);
@@ -329,6 +328,11 @@ public class WarGameStartModel extends Observable{
 		String armorClass[] = character2.getScore(8);
 		String attack[] = character1.getScore(9);
 		String damage[] = character1.getScore(10);
+		ArrayList<String> special = character1.getSpeEnchantment();
+		String affect = null;
+		for (String string : special) {
+			affect += string+" ";
+		}
 		Random rand = new Random();
 		if(Integer.parseInt(hitPoints[1]) > 0)
 		{
@@ -339,18 +343,32 @@ public class WarGameStartModel extends Observable{
 			WarGameStartView.logging("Armor class number is "+armorClass[1]);
 			if(attackTotal > Integer.parseInt(armorClass[1]))
 			{
-				int damageRand = rand.nextInt(8)+1;
-				WarGameStartView.logging("Damage random number is "+damageRand);
-				WarGameStartView.logging("Damage ability number is "+damage[1]);
-				int damageTotal = damageRand + Integer.parseInt(damage[1]);
-				int result = Integer.parseInt(hitPoints[1]) - damageTotal;
-				WarGameStartView.logging("Character"+character2.getCharacterID()+" lose Hitpoints from "+hitPoints[1]+" to "+result);
-				if(result<1)
-				{
+				if (special.contains("Slaying")) {
+					character2.setHitPoints(0);
 					WarGameStartView.logging("Character"+character2.getCharacterID()+" is dead in this attack!");
 				}
-				character2.setHitPoints(result);
-				output = character2;
+				else
+				{
+					int damageRand = rand.nextInt(8)+1;
+					WarGameStartView.logging("Damage random number is "+damageRand);
+					WarGameStartView.logging("Damage ability number is "+damage[1]);
+
+					int damageTotal = damageRand + Integer.parseInt(damage[1]);
+					if (character2.getStatus().contains("Burning")) {
+						damageTotal = damageRand +5*(Integer.parseInt(damage[1]));
+						WarGameStartView.logging("Burning!");
+					}
+					int result = Integer.parseInt(hitPoints[1]) - damageTotal;
+					WarGameStartView.logging("Character"+character2.getCharacterID()+" lose Hitpoints from "+hitPoints[1]+" to "+result);
+					WarGameStartView.logging("Character"+character2.getCharacterID()+" get affected "+affect);
+					character2.setStatus(special);
+					if(result<1)
+					{
+						WarGameStartView.logging("Character"+character2.getCharacterID()+" is dead in this attack!");
+					}
+					character2.setHitPoints(result);
+					output = character2;
+				}
 			}
 			else
 			{
