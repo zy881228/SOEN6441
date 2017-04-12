@@ -427,7 +427,11 @@ public class WarGameItemModel extends Observable{
         }
         catch(Exception exception) { }
     }
-	
+	//motify
+	 protected void hideNotify()
+    {
+        pauseFlag = true;
+    }
 /****************************added******************************************/
 	private
     
